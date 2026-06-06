@@ -1,58 +1,92 @@
-// 1. Storage for our live API data
+// 1. Core State variables
+let masterQuestionsList = {};
 let filteredQuestions = [];
 let index = 0;
 
-// 2. Unified Live Database Fetch and Filter Function
+// 2. Load the JSON configuration when the browser finishes rendering the page
+fetch('./questions.json')
+    .then(response => response.json())
+    .then(data => {
+        masterQuestionsList = data;
+        console.log("Dynamic Curriculum Engine active.");
+        buildDropdowns();
+        
+        // Reset instructions once loaded
+        document.getElementById("questionOutput").textContent = "Pick an AP course and unit above, then click Start Studying!";
+    })
+    .catch(error => {
+        console.error("Critical database connection error:", error);
+        document.getElementById("questionOutput").textContent = "Error loading database. Ensure questions.json is present and valid.";
+    });
+
+// Dynamic configuration generator
+function buildDropdowns() {
+    const subjectDropdown = document.getElementById("subjectDropdown");
+    subjectDropdown.innerHTML = "";
+    
+    const subjects = Object.keys(masterQuestionsList);
+    if (subjects.length === 0) return;
+
+    subjects.forEach(subject => {
+        const option = document.createElement("option");
+        option.value = subject;
+        option.textContent = subject;
+        subjectDropdown.appendChild(option);
+    });
+
+    subjectDropdown.addEventListener("change", updateUnitDropdown);
+    updateUnitDropdown();
+}
+
+function updateUnitDropdown() {
+    const selectedSubject = document.getElementById("subjectDropdown").value;
+    const unitDropdown = document.getElementById("unitDropdown");
+    
+    unitDropdown.innerHTML = '<option value="all">All Units Combined</option>';
+    if (!masterQuestionsList[selectedSubject]) return;
+
+    const units = Object.keys(masterQuestionsList[selectedSubject]);
+    
+    units.sort((a, b) => parseInt(a) - parseInt(b)).forEach(unitNum => {
+        const option = document.createElement("option");
+        option.value = unitNum;
+        option.textContent = `Unit ${unitNum}`;
+        unitDropdown.appendChild(option);
+    });
+}
+
+// 3. Selection parsing logic
 function filterQuestions() {
     const selectedSubject = document.getElementById("subjectDropdown").value;
-    
-    // Map your dropdown choices to the API's category ID numbers
-    // 22 = History, 19 = Mathematics/Science
-    let categoryId = (selectedSubject === "AP US History") ? 22 : 19;
+    const selectedUnitValue = document.getElementById("unitDropdown").value;
 
-    // Reset filtering variables
     filteredQuestions = [];
     index = 0;
 
-    const typeLabel = document.getElementById("typeOutput");
-    const questionLabel = document.getElementById("questionOutput");
-    typeLabel.textContent = "Loading...";
-    questionLabel.textContent = "Fetching fresh questions from the live database...";
+    if (!masterQuestionsList[selectedSubject]) {
+        displayQuestion();
+        return;
+    }
 
-    // Fetch 10 random questions from the public database matching the category
-    fetch(`https://opentdb.com/api.php?amount=10&category=${categoryId}&type=multiple`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.results && data.results.length > 0) {
-                // Format the public database layout to fit your website's UI labels
-                filteredQuestions = data.results.map(q => {
-                    return {
-                        type: q.type.toUpperCase() + " CHOICE",
-                        question: decodeHTML(q.question),
-                        answer: "The correct answer is: " + decodeHTML(q.correct_answer)
-                    };
-                });
-                displayQuestion();
-            } else {
-                typeLabel.textContent = "Error";
-                questionLabel.textContent = "No questions found. Try clicking Study again.";
-            }
-        })
-        .catch(error => {
-            console.error("Error loading remote database:", error);
-            typeLabel.textContent = "Error";
-            questionLabel.textContent = "Could not connect to the database.";
+    if (selectedUnitValue === "all") {
+        const units = Object.keys(masterQuestionsList[selectedSubject]);
+        units.forEach(unitNum => {
+            filteredQuestions = filteredQuestions.concat(masterQuestionsList[selectedSubject][unitNum]);
         });
+        
+        // Optional: Shuffle when studying mixed lists to maximize retention
+        filteredQuestions.sort(() => Math.random() - 0.5);
+    } else {
+        if (masterQuestionsList[selectedSubject][selectedUnitValue]) {
+            // Clone the array to protect core assets
+            filteredQuestions = [...masterQuestionsList[selectedSubject][selectedUnitValue]];
+        }
+    }
+
+    displayQuestion();
 }
 
-// Helper function to fix weird text symbols (like &quot; or &#039;) from the internet
-function decodeHTML(html) {
-    const txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
-}
-
-// 3. UI Display Logic
+// 4. Interface Rendering Pipeline
 function displayQuestion() {
     const typeLabel = document.getElementById("typeOutput");
     const questionLabel = document.getElementById("questionOutput");
@@ -60,29 +94,27 @@ function displayQuestion() {
     const progressLabel = document.getElementById("progressLabel");
     const answerBtn = document.getElementById("showAnswerButton");
 
-    // Always clear the previous answer field on question change
     answerLabel.textContent = "";
 
     if (filteredQuestions.length === 0) {
         typeLabel.textContent = "Empty";
-        questionLabel.textContent = "No questions found for this specific subject and unit yet.";
+        questionLabel.textContent = "No curriculum items loaded matching your active query configurations.";
         progressLabel.textContent = "";
         answerBtn.style.display = "none";
     } else {
-        // Show current question data
         typeLabel.textContent = filteredQuestions[index].type;
         questionLabel.textContent = filteredQuestions[index].question;
-        progressLabel.textContent = `${index + 1} of ${filteredQuestions.length}`;
+        progressLabel.textContent = `${index + 1} / ${filteredQuestions.length}`;
         answerBtn.style.display = "inline-block";
     }
 }
 
-// 4. Event Listeners
+// 5. System Event Registration mappings
 document.getElementById("submitButton").addEventListener("click", filterQuestions);
 
 document.getElementById("showAnswerButton").addEventListener("click", function() {
     if (filteredQuestions.length > 0) {
-        document.getElementById("answerOutput").textContent = "💡 " + filteredQuestions[index].answer;
+        document.getElementById("answerOutput").textContent = "💡 Solution: " + filteredQuestions[index].answer;
     }
 });
 
