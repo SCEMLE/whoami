@@ -2,6 +2,10 @@ let masterQuestionsList = {};
 let filteredQuestions = [];
 let index = 0;
 
+// Tracker state
+let correctCount = 0;
+let incorrectCount = 0;
+
 fetch('./questions.json')
     .then(response => response.json())
     .then(data => {
@@ -16,7 +20,6 @@ fetch('./questions.json')
 function buildDropdowns() {
     const subjectDropdown = document.getElementById("subjectDropdown");
     subjectDropdown.innerHTML = "";
-    
     const subjects = Object.keys(masterQuestionsList);
     if (subjects.length === 0) return;
 
@@ -39,8 +42,6 @@ function updateUnitDropdown() {
     if (!masterQuestionsList[selectedSubject]) return;
 
     const units = Object.keys(masterQuestionsList[selectedSubject]);
-    
-    // Extract numbers to sort the descriptive string headings correctly (Unit 1, Unit 2, etc.)
     units.sort((a, b) => {
         const numA = parseInt(a.replace("Unit ", ""));
         const numB = parseInt(b.replace("Unit ", ""));
@@ -72,12 +73,18 @@ function filterQuestions() {
         units.forEach(unitNum => {
             filteredQuestions = filteredQuestions.concat(masterQuestionsList[selectedSubject][unitNum]);
         });
-        filteredQuestions.sort(() => Math.random() - 0.5); // Randomize for review variation
+        filteredQuestions.sort(() => Math.random() - 0.5);
     } else {
         if (masterQuestionsList[selectedSubject][selectedUnitValue]) {
             filteredQuestions = [...masterQuestionsList[selectedSubject][selectedUnitValue]];
         }
     }
+
+    // Initialize tracking variables for the current session run
+    filteredQuestions.forEach(q => {
+        q.userAttempted = false;
+        q.userCorrect = null;
+    });
 
     displayQuestion();
 }
@@ -85,32 +92,85 @@ function filterQuestions() {
 function displayQuestion() {
     const typeLabel = document.getElementById("typeOutput");
     const questionLabel = document.getElementById("questionOutput");
-    const answerLabel = document.getElementById("answerOutput");
+    const feedbackLabel = document.getElementById("feedbackOutput");
+    const explanationLabel = document.getElementById("explanationOutput");
     const progressLabel = document.getElementById("progressLabel");
-    const answerBtn = document.getElementById("showAnswerButton");
+    const inputSection = document.getElementById("inputSection");
+    const userInput = document.getElementById("userAnswer");
 
-    answerLabel.textContent = "";
+    feedbackLabel.textContent = "";
+    explanationLabel.textContent = "";
+    explanationLabel.style.display = "none";
+    userInput.value = "";
 
     if (filteredQuestions.length === 0) {
         typeLabel.textContent = "Empty";
         questionLabel.textContent = "No math problems found matching this selection.";
         progressLabel.textContent = "";
-        answerBtn.style.display = "none";
-    } else {
-        typeLabel.textContent = filteredQuestions[index].type;
-        questionLabel.textContent = filteredQuestions[index].question;
-        progressLabel.textContent = `${index + 1} / ${filteredQuestions.length}`;
-        answerBtn.style.display = "inline-block";
+        inputSection.style.display = "none";
+        return;
+    }
+
+    inputSection.style.display = "flex";
+    const currentQ = filteredQuestions[index];
+    
+    typeLabel.textContent = currentQ.type;
+    questionLabel.textContent = currentQ.question;
+    progressLabel.textContent = `${index + 1} / ${filteredQuestions.length}`;
+
+    // If already answered previously in the session, lock it down and show explanation
+    if (currentQ.userAttempted) {
+        userInput.value = currentQ.savedInput || "";
+        if (currentQ.userCorrect) {
+            feedbackLabel.textContent = "✅ Correct";
+            feedbackLabel.style.color = "#2ecc71";
+        } else {
+            feedbackLabel.textContent = `❌ Incorrect (Correct Answer: ${currentQ.answer})`;
+            feedbackLabel.style.color = "#e74c3c";
+        }
+        showExplanation(currentQ);
     }
 }
 
-document.getElementById("submitButton").addEventListener("click", filterQuestions);
+function checkAnswer() {
+    if (filteredQuestions.length === 0) return;
+    const currentQ = filteredQuestions[index];
+    
+    if (currentQ.userAttempted) return; // Prevent double checking/score stuffing
 
-document.getElementById("showAnswerButton").addEventListener("click", function() {
-    if (filteredQuestions.length > 0) {
-        document.getElementById("answerOutput").textContent = "💡 Solution: " + filteredQuestions[index].answer;
+    const userInput = document.getElementById("userAnswer").value.trim().toLowerCase().replace(/\s+/g, '');
+    const cleanAnswer = currentQ.answer.trim().toLowerCase().replace(/\s+/g, '');
+    
+    currentQ.userAttempted = true;
+    currentQ.savedInput = document.getElementById("userAnswer").value;
+
+    const feedbackLabel = document.getElementById("feedbackOutput");
+
+    if (userInput === cleanAnswer) {
+        currentQ.userCorrect = true;
+        correctCount++;
+        document.getElementById("correctCounter").textContent = correctCount;
+        feedbackLabel.textContent = "✅ Correct!";
+        feedbackLabel.style.color = "#2ecc71";
+    } else {
+        currentQ.userCorrect = false;
+        incorrectCount++;
+        document.getElementById("incorrectCounter").textContent = incorrectCount;
+        feedbackLabel.textContent = `❌ Incorrect. Expected: ${currentQ.answer}`;
+        feedbackLabel.style.color = "#e74c3c";
     }
-});
+
+    showExplanation(currentQ);
+}
+
+function showExplanation(questionObj) {
+    const explanationLabel = document.getElementById("explanationOutput");
+    explanationLabel.innerHTML = `<strong>Explanation:</strong> ${questionObj.explanation || "No explanation breakdown provided for this equation."}`;
+    explanationLabel.style.display = "block";
+}
+
+document.getElementById("submitButton").addEventListener("click", filterQuestions);
+document.getElementById("checkAnswerButton").addEventListener("click", checkAnswer);
 
 document.getElementById("rightButton").addEventListener("click", function() {
     if (index < filteredQuestions.length - 1) {
@@ -123,5 +183,12 @@ document.getElementById("leftButton").addEventListener("click", function() {
     if (index > 0) {
         index--;
         displayQuestion();
+    }
+});
+
+// Allow hitting entry key inside text box to process submission
+document.getElementById("userAnswer").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        checkAnswer();
     }
 });
