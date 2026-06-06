@@ -2,15 +2,55 @@ let masterQuestionsList = [];
 let filteredQuestions = [];
 let index = 0;
 
-// Fetch the data from the JSON file
-fetch('./questions.json')
-    .then(response => response.json())
-    .then(data => {
-        masterQuestionsList = data;
-        console.log("Database loaded successfully!");
-    })
-    .catch(error => console.error("Error loading questions database:", error));
+// 1 & 2. Unified Database Fetch and Filter Function
+function filterQuestions() {
+    const selectedSubject = document.getElementById("subjectDropdown").value;
+    
+    // Map your dropdown choices to the API's category ID numbers
+    // 22 = Geography/History, 19 = Mathematics/Science
+    let categoryId = (selectedSubject === "AP US History") ? 22 : 19;
 
+    // Reset filtering variables
+    filteredQuestions = [];
+    index = 0;
+
+    const typeLabel = document.getElementById("typeOutput");
+    const questionLabel = document.getElementById("questionOutput");
+    typeLabel.textContent = "Loading...";
+    questionLabel.textContent = "Fetching fresh questions from the live database...";
+
+    // Fetch 10 random questions from the public database matching the category
+    fetch(`https://opentdb.com/api.php?amount=10&category=${categoryId}&type=multiple`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.results && data.results.length > 0) {
+                // Format the public database layout to fit your website's UI labels
+                filteredQuestions = data.results.map(q => {
+                    return {
+                        type: q.type.toUpperCase() + " CHOICE",
+                        question: decodeHTML(q.question),
+                        answer: "The correct answer is: " + decodeHTML(q.correct_answer)
+                    };
+                });
+                displayQuestion();
+            } else {
+                typeLabel.textContent = "Error";
+                questionLabel.textContent = "No questions found. Try clicking Study again.";
+            }
+        })
+        .catch(error => {
+            console.error("Error loading remote database:", error);
+            typeLabel.textContent = "Error";
+            questionLabel.textContent = "Could not connect to the database.";
+        });
+}
+
+// Helper function to fix weird text symbols (like &quot; or &#039;) from the internet
+function decodeHTML(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}
 // Filter questions based on selections
 function filterQuestions() {
     const selectedSubject = document.getElementById("subjectDropdown").value;
