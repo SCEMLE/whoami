@@ -1,0 +1,23 @@
+[
+  {
+    "subject": "AP Calculus AB",
+    "unit": 1,
+    "type": "Multiple Choice",
+    "question": "Find the limit: lim (x->2) (x^2 - 4) / (x - 2)",
+    "answer": "The answer is 4. Factor the numerator to (x-2)(x+2), cancel out the (x-2) terms, and substitute x = 2."
+  },
+  {
+    "subject": "AP Calculus AB",
+    "unit": 1,
+    "type": "Multiple Choice",
+    "question": "True or False: If a function is continuous at x = c, then it must be differentiable at x = c.",
+    "answer": "False. A classic counterexample is f(x) = |x| at x = 0. It is continuous but has a sharp point, meaning it is not differentiable there."
+  },
+  {
+    "subject": "AP US History",
+    "unit": 3,
+    "type": "Free Response (DBQ)",
+    "question": "Evaluate the extent to which the Seven Years' War (French and Indian War) changed relations between Great Britain and its American colonies from 1754 to 1776.",
+    "answer": "Key points should include: The end of salutary neglect, massive British war debt leading to new taxation (Stamp Act, Townshend Acts), and colonial ideological resistance ('No taxation without representation')."
+  }
+]
