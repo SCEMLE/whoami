@@ -22,7 +22,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        h1 { text-align: center; color: #2c3e50; margin-top: 0; }
+        h1 { text-align: center; color: #2c3e50; margin-top: 10px; }
         .controls {
             display: flex;
             flex-direction: column;
@@ -89,19 +89,18 @@
 <body>
 
 <div class="container">
-    <h1>AP Study Hub</h1>
+    <a href="index.html" style="text-decoration: none; color: #3498db; font-weight: bold; font-size: 14px;">← Back to Portal</a>
+    <h1>AP Calculus Practice</h1>
     
     <div class="controls">
-        <select id="subjectDropdown">
-            </select>
-        <select id="unitDropdown">
-            </select>
+        <select id="subjectDropdown"></select>
+        <select id="unitDropdown"></select>
         <button id="submitButton">Start Studying</button>
     </div>
 
     <div class="card">
-        <div id="typeOutput">Get Started</div>
-        <div id="questionOutput">Loading database... Please wait.</div>
+        <div id="typeOutput">Problem Type</div>
+        <div id="questionOutput">Pick an AP unit above, then click Start Studying!</div>
         <div id="answerOutput"></div>
     </div>
 
