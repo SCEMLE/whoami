@@ -1,1 +1,36 @@
-[]
+{
+  "AP Calculus AB": {
+    "1": [
+      { "type": "Multiple Choice", "question": "Evaluate the limit: lim (x -> 3) (x^2 - 9) / (x - 3).", "answer": "6" },
+      { "type": "Multiple Choice", "question": "Find lim (x -> 0) (sin(5x) / x).", "answer": "5" },
+      { "type": "Multiple Choice", "question": "What type of discontinuity occurs at x = 2 for f(x) = (x - 2) / (x^2 - 4)?", "answer": "Removable discontinuity (a hole)" },
+      { "type": "Multiple Choice", "question": "Find the vertical asymptote of the function f(x) = (x + 2) / (x - 4).", "answer": "x = 4" },
+      { "type": "Multiple Choice", "question": "Evaluate lim (x -> infinity) (5x^2 - 3) / (2x^2 + 4x).", "answer": "5/2" },
+      { "type": "Multiple Choice", "question": "Find lim (x -> 2) (x^2 - 4) / (x^2 - 2x).", "answer": "2" },
+      { "type": "Multiple Choice", "question": "Find lim (x -> 0) (cos(x) - 1) / x.", "answer": "0" },
+      { "type": "Multiple Choice", "question": "Evaluate lim (x -> 4) (sqrt(x) - 2) / (x - 4).", "answer": "1/4" },
+      { "type": "Multiple Choice", "question": "Find the horizontal asymptote of f(x) = (3x^3 - 1) / (2 - 5x^3).", "answer": "y = -3/5" },
+      { "type": "Multiple Choice", "question": "Evaluate lim (x -> -infinity) e^x.", "answer": "0" },
+      { "type": "Multiple Choice", "question": "Find lim (x -> 3+) 1 / (x - 3).", "answer": "Infinity" },
+      { "type": "Multiple Choice", "question": "Find lim (x -> 3-) 1 / (x - 3).", "answer": "-Infinity" },
+      { "type": "Multiple Choice", "question": "If lim (x -> c) f(x) = 4 and lim (x -> c) g(x) = -2, find lim (x -> c) [f(x) * g(x)].", "answer": "-8" },
+      { "type": "Multiple Choice", "question": "Evaluate lim (x -> 1) (x^3 - 1) / (x - 1).", "answer": "3" },
+      { "type": "Multiple Choice", "question": "Find lim (x -> 0) (x / tan(x)).", "answer": "1" },
+      { "type": "Multiple Choice", "question": "What is the value of lim (x -> 0) ln(x)?", "answer": "Does not exist (approaches -Infinity from the right)" },
+      { "type": "Multiple Choice", "question": "Evaluate lim (x -> infinity) (ln(x) / x).", "answer": "0" },
+      { "type": "Multiple Choice", "question": "Find lim (x -> 2) (3x^2 - 5x + 2).", "answer": "4" },
+      { "type": "Multiple Choice", "question": "Evaluate lim (x -> -1) (x^2 - 1) / (x + 1).", "answer": "-2" },
+      { "type": "Multiple Choice", "question": "Find lim (x -> 0) ((1/x+3) - 1/3) / x.", "answer": "-1/9" },
+      { "type": "Multiple Choice", "question": "True or False: If f(x) is defined at x = c, then lim (x -> c) f(x) must exist.", "answer": "False" },
+      { "type": "Multiple Choice", "question": "True or False: If lim (x -> c) f(x) exists, f(x) must be continuous at x = c.", "answer": "False" },
+      { "type": "Multiple Choice", "question": "If f(x) is continuous on [0, 2], f(0) = 1, and f(2) = 5, does the IVT guarantee a value c where f(c) = 3?", "answer": "Yes, because 3 is between 1 and 5." },
+      { "type": "Multiple Choice", "question": "Find the value of k that makes f(x) continuous at x = 2 if f(x) = kx for x <= 2 and f(x) = 4 for x > 2.", "answer": "k = 2" },
+      { "type": "Multiple Choice", "question": "Evaluate lim (x -> infinity) (sin(x) / x).", "answer": "0 (by the Squeeze Theorem)" },
+      { "type": "Free Response", "question": "Explain the three mathematical conditions required for a function f(x) to be continuous at x = c.", "answer": "1) f(c) is defined. 2) lim (x -> c) f(x) exists. 3) lim (x -> c) f(x) = f(c)." },
+      { "type": "Free Response", "question": "Let f(x) = (x^2 - x - 6) / (x - 3). Define f(3) so that the function is continuous everywhere.", "answer": "f(3) = 5. Factor to (x-3)(x+2)/(x-3), cancel to get x+2. Plug in 3 to get 5." },
+      { "type": "Free Response", "question": "Use the Squeeze Theorem to evaluate lim (x -> 0) [x^2 * cos(1/x)].", "answer": "0. Since -1 <= cos(1/x) <= 1, then -x^2 <= x^2*cos(1/x) <= x^2. Since both outer limits go to 0, the middle goes to 0." },
+      { "type": "Free Response", "question": "State why the Intermediate Value Theorem applies to f(x) = x^2 - 4 on [0, 3] to prove there is a root.", "answer": "f(x) is a polynomial (continuous everywhere). f(0) = -4 and f(3) = 5. Since 0 is between -4 and 5, a root exists." },
+      { "type": "Free Response", "question": "Describe the difference between an infinite discontinuity and a removable discontinuity.", "answer": "An infinite discontinuity occurs where a vertical asymptote splits the graph. A removable discontinuity is just a missing single point (hole)." }
+    ]
+  }
+}
