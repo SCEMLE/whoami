@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Study Hub Portal</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        p { color: #7f8c8d; font-size: 18px; margin-bottom: 40px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        .subject-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-decoration: none;
+            color: inherit;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.2s ease-in-out;
+        }
+        .subject-card:hover {
+            transform: translateY(-5px);
+            border-color: #3498db;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .subject-card h2 { color: #2c3e50; margin: 0 0 10px 0; font-size: 20px; }
+        .subject-card span { color: #3498db; font-weight: bold; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to the AP Study Hub</h1>
+    <p>Select a subject dashboard below to begin practicing</p>
+
+    <div class="grid">
+        <a href="calc.html" class="subject-card">
+            <h2>AP Calculus AB</h2>
+            <span>8 Units • 240 Questions →</span>
+        </a>
+
+        <a href="#" class="subject-card" style="opacity: 0.6; cursor: not-allowed;">
+            <h2>AP US History</h2>
+            <span>Coming Soon</span>
+        </a>
+    </div>
+
+</body>
+</html>
