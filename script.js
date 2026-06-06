@@ -1,13 +1,13 @@
-let masterQuestionsList = [];
+// 1. Storage for our live API data
 let filteredQuestions = [];
 let index = 0;
 
-// 1 & 2. Unified Database Fetch and Filter Function
+// 2. Unified Live Database Fetch and Filter Function
 function filterQuestions() {
     const selectedSubject = document.getElementById("subjectDropdown").value;
     
     // Map your dropdown choices to the API's category ID numbers
-    // 22 = Geography/History, 19 = Mathematics/Science
+    // 22 = History, 19 = Mathematics/Science
     let categoryId = (selectedSubject === "AP US History") ? 22 : 19;
 
     // Reset filtering variables
@@ -51,24 +51,8 @@ function decodeHTML(html) {
     txt.innerHTML = html;
     return txt.value;
 }
-// Filter questions based on selections
-function filterQuestions() {
-    const selectedSubject = document.getElementById("subjectDropdown").value;
-    const selectedUnit = parseInt(document.getElementById("unitDropdown").value);
 
-    filteredQuestions = [];
-    index = 0;
-
-    for (let i = 0; i < masterQuestionsList.length; i++) {
-        if (masterQuestionsList[i].subject === selectedSubject && masterQuestionsList[i].unit === selectedUnit) {
-            filteredQuestions.push(masterQuestionsList[i]);
-        }
-    }
-
-    displayQuestion();
-}
-
-// Update the user interface
+// 3. UI Display Logic
 function displayQuestion() {
     const typeLabel = document.getElementById("typeOutput");
     const questionLabel = document.getElementById("questionOutput");
@@ -76,6 +60,7 @@ function displayQuestion() {
     const progressLabel = document.getElementById("progressLabel");
     const answerBtn = document.getElementById("showAnswerButton");
 
+    // Always clear the previous answer field on question change
     answerLabel.textContent = "";
 
     if (filteredQuestions.length === 0) {
@@ -84,6 +69,7 @@ function displayQuestion() {
         progressLabel.textContent = "";
         answerBtn.style.display = "none";
     } else {
+        // Show current question data
         typeLabel.textContent = filteredQuestions[index].type;
         questionLabel.textContent = filteredQuestions[index].question;
         progressLabel.textContent = `${index + 1} of ${filteredQuestions.length}`;
@@ -91,7 +77,7 @@ function displayQuestion() {
     }
 }
 
-// Setup click actions
+// 4. Event Listeners
 document.getElementById("submitButton").addEventListener("click", filterQuestions);
 
 document.getElementById("showAnswerButton").addEventListener("click", function() {
