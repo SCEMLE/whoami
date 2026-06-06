@@ -1,25 +1,18 @@
-// 1. Core State variables
 let masterQuestionsList = {};
 let filteredQuestions = [];
 let index = 0;
 
-// 2. Load the JSON configuration when the browser finishes rendering the page
 fetch('./questions.json')
     .then(response => response.json())
     .then(data => {
         masterQuestionsList = data;
-        console.log("Dynamic Curriculum Engine active.");
         buildDropdowns();
-        
-        // Reset instructions once loaded
-        document.getElementById("questionOutput").textContent = "Pick an AP course and unit above, then click Start Studying!";
     })
     .catch(error => {
-        console.error("Critical database connection error:", error);
-        document.getElementById("questionOutput").textContent = "Error loading database. Ensure questions.json is present and valid.";
+        console.error("Error connecting to database:", error);
+        document.getElementById("questionOutput").textContent = "Error loading equations database.";
     });
 
-// Dynamic configuration generator
 function buildDropdowns() {
     const subjectDropdown = document.getElementById("subjectDropdown");
     subjectDropdown.innerHTML = "";
@@ -47,15 +40,21 @@ function updateUnitDropdown() {
 
     const units = Object.keys(masterQuestionsList[selectedSubject]);
     
-    units.sort((a, b) => parseInt(a) - parseInt(b)).forEach(unitNum => {
+    // Extract numbers to sort the descriptive string headings correctly (Unit 1, Unit 2, etc.)
+    units.sort((a, b) => {
+        const numA = parseInt(a.replace("Unit ", ""));
+        const numB = parseInt(b.replace("Unit ", ""));
+        return numA - numB;
+    });
+
+    units.forEach(unitName => {
         const option = document.createElement("option");
-        option.value = unitNum;
-        option.textContent = `Unit ${unitNum}`;
+        option.value = unitName;
+        option.textContent = unitName;
         unitDropdown.appendChild(option);
     });
 }
 
-// 3. Selection parsing logic
 function filterQuestions() {
     const selectedSubject = document.getElementById("subjectDropdown").value;
     const selectedUnitValue = document.getElementById("unitDropdown").value;
@@ -73,12 +72,9 @@ function filterQuestions() {
         units.forEach(unitNum => {
             filteredQuestions = filteredQuestions.concat(masterQuestionsList[selectedSubject][unitNum]);
         });
-        
-        // Optional: Shuffle when studying mixed lists to maximize retention
-        filteredQuestions.sort(() => Math.random() - 0.5);
+        filteredQuestions.sort(() => Math.random() - 0.5); // Randomize for review variation
     } else {
         if (masterQuestionsList[selectedSubject][selectedUnitValue]) {
-            // Clone the array to protect core assets
             filteredQuestions = [...masterQuestionsList[selectedSubject][selectedUnitValue]];
         }
     }
@@ -86,7 +82,6 @@ function filterQuestions() {
     displayQuestion();
 }
 
-// 4. Interface Rendering Pipeline
 function displayQuestion() {
     const typeLabel = document.getElementById("typeOutput");
     const questionLabel = document.getElementById("questionOutput");
@@ -98,7 +93,7 @@ function displayQuestion() {
 
     if (filteredQuestions.length === 0) {
         typeLabel.textContent = "Empty";
-        questionLabel.textContent = "No curriculum items loaded matching your active query configurations.";
+        questionLabel.textContent = "No math problems found matching this selection.";
         progressLabel.textContent = "";
         answerBtn.style.display = "none";
     } else {
@@ -109,7 +104,6 @@ function displayQuestion() {
     }
 }
 
-// 5. System Event Registration mappings
 document.getElementById("submitButton").addEventListener("click", filterQuestions);
 
 document.getElementById("showAnswerButton").addEventListener("click", function() {
