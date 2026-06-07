@@ -22,45 +22,57 @@ const progressLabel = document.getElementById("progressLabel");
 const correctCounter = document.getElementById("correctCounter");
 const incorrectCounter = document.getElementById("incorrectCounter");
 
-// Connectors for your Missed Questions Panel (Make sure these IDs exist in your HTML)
+// Connectors for your Missed Questions Panel
 const reviewListContent = document.getElementById("reviewListContent");
 const clearReviewBtn = document.getElementById("clearReviewBtn");
 
-// Logs missed questions into localStorage grouped by the active subject
+// Logs missed questions along with the specific page source to the central hub
 function logMissedQuestion(questionText, correctAnswer) {
     const currentActiveSubject = subjectDropdown ? subjectDropdown.value : "AP Calculus AB";
+    
+    // Extracts the current filename (e.g., "calc.html") dynamically
+    const currentFilePage = window.location.pathname.split("/").pop() || "calc.html";
+    
     let globalLog = JSON.parse(localStorage.getItem("ap_global_missed_log") || "{}");
     
     if (!globalLog[currentActiveSubject]) {
         globalLog[currentActiveSubject] = [];
     }
     
+    // Check for duplicates within this specific subject
     const duplicate = globalLog[currentActiveSubject].some(item => item.question === questionText);
+    
     if (!duplicate) {
-        globalLog[currentActiveSubject].push({ question: questionText, answer: correctAnswer });
+        globalLog[currentActiveSubject].push({ 
+            question: questionText, 
+            answer: correctAnswer,
+            sourcePage: currentFilePage // Saves filename so main.js can generate direct review links
+        });
         localStorage.setItem("ap_global_missed_log", JSON.stringify(globalLog));
-        renderMissedQuestionsList();
+        renderLocalMissedQuestions();
     }
 }
 
-// Renders the list of missed questions onto your page UI
-function renderMissedQuestionsList() {
+// Renders ONLY the missed questions for the currently selected subject on this page
+function renderLocalMissedQuestions() {
     if (!reviewListContent) return;
+    
     const currentActiveSubject = subjectDropdown ? subjectDropdown.value : "AP Calculus AB";
     const globalLog = JSON.parse(localStorage.getItem("ap_global_missed_log") || "{}");
-    const missedQuestionsLog = globalLog[currentActiveSubject] || [];
+    const localMissedLog = globalLog[currentActiveSubject] || [];
 
-    if (missedQuestionsLog.length === 0) {
-        reviewListContent.innerHTML = "<em>No incorrect entries logged yet!</em>";
+    if (localMissedLog.length === 0) {
+        reviewListContent.innerHTML = "<em>No incorrect entries logged for this subject yet!</em>";
         return;
     }
     
     let htmlContent = "";
-    missedQuestionsLog.forEach((item) => {
-        htmlContent += `<div class="review-item" style="margin-bottom: 10px; padding: 5px; border-bottom: 1px solid #ccc;">
-            <strong>Q:</strong> ${item.question}<br>
-            <span style="color:#2ecc71;"><strong>Correct Answer:</strong> ${item.answer}</span>
-        </div>`;
+    localMissedLog.forEach((item) => {
+        htmlContent += `
+            <div class="review-item" style="margin-bottom: 12px; padding: 10px; border-left: 3px solid #946E83; background: rgba(0,0,0,0.02); border-radius: 0 4px 4px 0;">
+                <strong>Q:</strong> ${item.question}<br>
+                <span style="color:#2ecc71;"><strong>Correct Answer:</strong> ${item.answer}</span>
+            </div>`;
     });
     reviewListContent.innerHTML = htmlContent;
 }
@@ -79,7 +91,7 @@ async function loadInitializationData() {
         
         populateSubjectDropdown();
         startStudyingSession();
-        renderMissedQuestionsList();
+        renderLocalMissedQuestions();
     } catch (err) {
         console.error("Fetch Error:", err);
         if (questionOutput) {
@@ -99,7 +111,7 @@ function populateSubjectDropdown() {
     subjectDropdown.addEventListener("change", () => {
         populateUnitDropdown();
         startStudyingSession();
-        renderMissedQuestionsList(); // Refresh log view for the new subject selection
+        renderLocalMissedQuestions(); // Refreshes the local sheet log view for the new subject
     });
     populateUnitDropdown();
 }
@@ -282,7 +294,7 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
             if (b.textContent === cleanAnswer) b.classList.add("correct");
         });
 
-        // Track and save the missed question
+        // Track and save the missed question with its metadata
         logMissedQuestion(questionObj.question, cleanAnswer);
     }
     showExplanationPanel(questionObj);
@@ -298,14 +310,16 @@ function showExplanationPanel(questionObj) {
     explanationOutput.style.display = "block";
 }
 
-// Clear button logic for your review dashboard
+// Clear button logic local to this specific practice sheet template
 if (clearReviewBtn) {
     clearReviewBtn.addEventListener("click", () => {
         const currentActiveSubject = subjectDropdown ? subjectDropdown.value : "AP Calculus AB";
         let globalLog = JSON.parse(localStorage.getItem("ap_global_missed_log") || "{}");
+        
+        // Reset only this specific subject's array sequence within the shared storage object
         globalLog[currentActiveSubject] = [];
         localStorage.setItem("ap_global_missed_log", JSON.stringify(globalLog));
-        renderMissedQuestionsList();
+        renderLocalMissedQuestions();
     });
 }
 
