@@ -20,7 +20,12 @@ const rightButton = document.getElementById("rightButton");
 const progressLabel = document.getElementById("progressLabel");
 const correctCounter = document.getElementById("correctCounter");
 const incorrectCounter = document.getElementById("incorrectCounter");
+const progressLabel = document.getElementById("progressLabel");
+const correctCounter = document.getElementById("correctCounter");
+const incorrectCounter = document.getElementById("incorrectCounter");
 
+// ADD THIS LINE RIGHT HERE:
+const bgMusic = document.getElementById("bgMusic");
 /**
  * Loads the database JSON file on page load
  */
