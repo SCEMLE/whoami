@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #B4A6AB; /* Custom Lilac Ash Background */
+            background-color: #B4A6AB; 
             color: #333;
             margin: 0;
             padding: 40px 20px;
@@ -16,13 +16,41 @@
             align-items: center;
             -webkit-font-smoothing: antialiased;
         }
+        /* Dashboard Account Banner */
+        .header-profile {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #615055;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            max-width: 760px;
+            width: 100%;
+            margin-bottom: 30px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .header-profile button {
+            background: #946E83;
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .header-profile button:hover {
+            background: #FAF3DD;
+            color: #615055;
+        }
         h1 { 
-            color: #615055; /* Main Title in Taupe Grey */
+            color: #615055; 
             font-size: 38px;
             font-weight: 900; 
             letter-spacing: -0.5px;
             margin-bottom: 8px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         p { 
             color: #615055; 
@@ -46,12 +74,12 @@
             text-decoration: none;
             color: inherit;
             text-align: center;
-            border: 4px solid #946E83; /* Thick Dusty Mauve Outline */
+            border: 4px solid #946E83; 
             transition: all 0.2s ease-in-out;
         }
         .subject-card:hover {
             transform: translateY(-6px);
-            border-color: #615055; /* Shifts to Taupe Grey on hover */
+            border-color: #615055; 
             box-shadow: 0 10px 22px rgba(97, 80, 85, 0.18);
         }
         .subject-card h2 { 
@@ -69,7 +97,6 @@
             padding: 8px 18px;
             border-radius: 20px;
             display: inline-block;
-            transition: background-color 0.2s;
             letter-spacing: 0.3px;
         }
         .subject-card:hover span {
@@ -81,16 +108,17 @@
             box-shadow: none;
             cursor: not-allowed;
         }
-        .disabled-card h2 {
-            color: rgba(97, 80, 85, 0.5);
-        }
-        .disabled-card span {
-            color: white;
-            background: rgba(97, 80, 85, 0.4);
-        }
+        .disabled-card h2 { color: rgba(97, 80, 85, 0.5); }
+        .disabled-card span { background: rgba(97, 80, 85, 0.4); }
     </style>
 </head>
 <body>
+
+    <div class="header-profile">
+        <span>Student: <span id="usernameDisplay">Guest</span></span>
+        <span>🔥 Streak: <span id="streakDisplay">0</span> Days</span>
+        <button id="loginActionBtn">Login</button>
+    </div>
 
     <h1>Welcome to the AP Study Hub</h1>
     <p>Select a subject dashboard below to begin practicing</p>
@@ -107,5 +135,6 @@
         </div>
     </div>
 
+    <script src="main.js"></script>
 </body>
 </html>
