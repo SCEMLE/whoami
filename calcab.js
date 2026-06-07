@@ -1,4 +1,4 @@
-const DATA_URL = "calcab.json";
+const DATA_URL = "questions.json";
 
 let masterQuestionsList = {}; 
 let filteredQuestions = [];   
@@ -28,12 +28,7 @@ async function loadInitializationData() {
         populateSubjectDropdown();
     } catch (err) {
         console.error("Fetch Error:", err);
-        if (questionOutput) {
-            questionOutput.innerHTML = `<strong>Error loading data file.</strong><br>
-            Please check that:<br>
-            1. Your file is named exactly <code>calcab.json</code><br>
-            2. You are using a local environment tracker like <strong>Live Server</strong> instead of opening the file locally.`;
-        }
+        if (questionOutput) questionOutput.textContent = "Error loading questions.json file.";
     }
 }
 
@@ -96,7 +91,7 @@ function startStudyingSession() {
     const selectedUnit = unitDropdown.value;
     filteredQuestions = [];
 
-    if (masterQuestionsList[selectedSubject]) {
+  if (masterQuestionsList[selectedSubject]) {
         if (selectedUnit === "ALL") {
             Object.keys(masterQuestionsList[selectedSubject]).forEach(u => {
                 if (Array.isArray(masterQuestionsList[selectedSubject][u])) {
@@ -143,79 +138,30 @@ function displayActiveQuestion() {
     questionOutput.textContent = activeQuestion.question || "";
     progressLabel.textContent = `${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
 
-    if (activeQuestion.type === "Multiple Choice") {
-        if (Array.isArray(activeQuestion.generatedOptionsList)) {
-            activeQuestion.generatedOptionsList.forEach(choice => {
-                const btn = document.createElement("button");
-                btn.className = "option-btn";
-                btn.textContent = choice;
-                
-                if (activeQuestion.userAttempted) {
-                    btn.disabled = true;
-                    if (choice === cleanAnswer) btn.classList.add("correct");
-                    else if (choice === activeQuestion.chosenAnswer) btn.classList.add("incorrect");
-                } else {
-                    btn.addEventListener("click", () => handleAnswerValidation(btn, choice, activeQuestion));
-                }
-                optionsContainer.appendChild(btn);
-            });
-        }
-    } 
-    else if (activeQuestion.type === "Free Response") {
-        const inputWrapper = document.createElement("div");
-        inputWrapper.style.display = "flex";
-        inputWrapper.style.gap = "12px";
-        inputWrapper.style.width = "100%";
-
-        const txtInput = document.createElement("input");
-        txtInput.type = "text";
-        txtInput.placeholder = "Type your exact answer here...";
-        txtInput.style.flexGrow = "1";
-        txtInput.style.boxSizing = "border-box";
-
-        const submitAnsBtn = document.createElement("button");
-        submitAnsBtn.textContent = "Check Answer";
-        submitAnsBtn.style.width = "auto";
-        submitAnsBtn.style.padding = "14px 24px";
-        submitAnsBtn.style.whiteSpace = "nowrap";
-
-        if (activeQuestion.userAttempted) {
-            txtInput.value = activeQuestion.chosenAnswer || "";
-            txtInput.disabled = true;
-            submitAnsBtn.disabled = true;
-            submitAnsBtn.style.backgroundColor = "#cbd5e1";
-            submitAnsBtn.style.color = "#475569";
-            submitAnsBtn.style.cursor = "not-allowed";
-            submitAnsBtn.style.transform = "none";
-            submitAnsBtn.style.boxShadow = "none";
-        } else {
-            const processSubmission = () => {
-                const userVal = txtInput.value.trim();
-                if (!userVal) return;
-                handleFreeResponseValidation(userVal, activeQuestion);
-            };
-
-            submitAnsBtn.addEventListener("click", processSubmission);
-            txtInput.addEventListener("keypress", (e) => {
-                if (e.key === 'Enter') processSubmission();
-            });
-        }
-
-        inputWrapper.appendChild(txtInput);
-        inputWrapper.appendChild(submitAnsBtn);
-        optionsContainer.appendChild(inputWrapper);
+    if (Array.isArray(activeQuestion.generatedOptionsList)) {
+        activeQuestion.generatedOptionsList.forEach(choice => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.textContent = choice;
+            
+            if (activeQuestion.userAttempted) {
+                btn.disabled = true;
+                if (choice === cleanAnswer) btn.classList.add("correct");
+                else if (choice === activeQuestion.chosenAnswer) btn.classList.add("incorrect");
+            } else {
+                btn.addEventListener("click", () => handleAnswerValidation(btn, choice, activeQuestion));
+            }
+            optionsContainer.appendChild(btn);
+        });
     }
 
     if (activeQuestion.userAttempted) {
-        const userClean = activeQuestion.chosenAnswer ? String(activeQuestion.chosenAnswer).trim().toLowerCase() : "";
-        const systemClean = cleanAnswer.toLowerCase();
-
-        if (userClean === systemClean) {
+        if (activeQuestion.chosenAnswer === cleanAnswer) {
             feedbackOutput.textContent = "Correct! 🎉";
-            feedbackOutput.style.color = "#10b981";
+            feedbackOutput.style.color = "#2ecc71";
         } else {
             feedbackOutput.textContent = `Incorrect. Correct answer: ${cleanAnswer}`;
-            feedbackOutput.style.color = "#ef4444";
+            feedbackOutput.style.color = "#e74c3c";
         }
         showExplanationPanel(activeQuestion);
     }
@@ -232,13 +178,13 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
     if (userChoice === cleanAnswer) {
         clickedBtn.classList.add("correct");
         feedbackOutput.textContent = "Correct! 🎉";
-        feedbackOutput.style.color = "#10b981";
+        feedbackOutput.style.color = "#2ecc71";
         correctCount++;
         correctCounter.textContent = correctCount;
     } else {
         clickedBtn.classList.add("incorrect");
         feedbackOutput.textContent = `Incorrect. Correct answer: ${cleanAnswer}`;
-        feedbackOutput.style.color = "#ef4444";
+        feedbackOutput.style.color = "#e74c3c";
         incorrectCount++;
         incorrectCounter.textContent = incorrectCount;
 
@@ -247,22 +193,6 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
         });
     }
     showExplanationPanel(questionObj);
-}
-
-function handleFreeResponseValidation(userChoice, questionObj) {
-    questionObj.userAttempted = true;
-    questionObj.chosenAnswer = userChoice;
-    const cleanAnswer = questionObj.answer ? String(questionObj.answer).trim() : "";
-
-    if (userChoice.toLowerCase() === cleanAnswer.toLowerCase()) {
-        correctCount++;
-        correctCounter.textContent = correctCount;
-    } else {
-        incorrectCount++;
-        incorrectCounter.textContent = incorrectCount;
-    }
-    
-    displayActiveQuestion(); 
 }
 
 function showExplanationPanel(questionObj) {
