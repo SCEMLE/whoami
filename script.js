@@ -1,4 +1,4 @@
-const DATA_URL = "questions.json"; // Must match your GitHub filename perfectly
+econst DATA_URL = "questions.json";
 
 let masterQuestionsList = {}; 
 let filteredQuestions = [];   
@@ -47,7 +47,6 @@ function populateUnitDropdown() {
     const selectedSubject = subjectDropdown.value;
     if (!masterQuestionsList[selectedSubject]) return;
 
-    // Pull the exact unit keys from your JSON tree
     const units = Object.keys(masterQuestionsList[selectedSubject]);
     
     let dropdownHTML = `<option value="ALL">All Units</option>`;
@@ -99,7 +98,7 @@ function startStudyingSession() {
                     filteredQuestions = filteredQuestions.concat(masterQuestionsList[selectedSubject][u]);
                 }
             });
-            filteredQuestions.sort(() => Math.random() - 0.5); // Shuffle if all selected
+            filteredQuestions.sort(() => Math.random() - 0.5);
         } else if (masterQuestionsList[selectedSubject][selectedUnit]) {
             filteredQuestions = [...masterQuestionsList[selectedSubject][selectedUnit]];
         }
@@ -134,92 +133,4 @@ function displayActiveQuestion() {
     const activeQuestion = filteredQuestions[currentQuestionIndex];
     if (!activeQuestion) return;
 
-    const cleanAnswer = activeQuestion.answer ? String(activeQuestion.answer).trim() : "";
-    typeOutput.textContent = activeQuestion.type || "Multiple Choice";
-    questionOutput.textContent = activeQuestion.question || "";
-    progressLabel.textContent = `${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
-
-    if (Array.isArray(activeQuestion.generatedOptionsList)) {
-        activeQuestion.generatedOptionsList.forEach(choice => {
-            const btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.textContent = choice;
-            
-            if (activeQuestion.userAttempted) {
-                btn.disabled = true;
-                if (choice === cleanAnswer) btn.classList.add("correct");
-                else if (choice === activeQuestion.chosenAnswer) btn.classList.add("incorrect");
-            } else {
-                btn.addEventListener("click", () => handleAnswerValidation(btn, choice, activeQuestion));
-            }
-            optionsContainer.appendChild(btn);
-        });
-    }
-
-    if (activeQuestion.userAttempted) {
-        if (activeQuestion.chosenAnswer === cleanAnswer) {
-            feedbackOutput.textContent = "Correct! 🎉";
-            feedbackOutput.style.color = "#2ecc71";
-        } else {
-            feedbackOutput.textContent = `Incorrect. Correct answer: ${cleanAnswer}`;
-            feedbackOutput.style.color = "#e74c3c";
-        }
-        showExplanationPanel(activeQuestion);
-    }
-}
-
-function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
-    const allOptionButtons = optionsContainer.querySelectorAll(".option-btn");
-    allOptionButtons.forEach(b => b.disabled = true);
-
-    questionObj.userAttempted = true;
-    questionObj.chosenAnswer = userChoice;
-    const cleanAnswer = questionObj.answer ? String(questionObj.answer).trim() : "";
-
-    if (userChoice === cleanAnswer) {
-        clickedBtn.classList.add("correct");
-        feedbackOutput.textContent = "Correct! 🎉";
-        feedbackOutput.style.color = "#2ecc71";
-        correctCount++;
-        correctCounter.textContent = correctCount;
-    } else {
-        clickedBtn.classList.add("incorrect");
-        feedbackOutput.textContent = `Incorrect. Correct answer: ${cleanAnswer}`;
-        feedbackOutput.style.color = "#e74c3c";
-        incorrectCount++;
-        incorrectCounter.textContent = incorrectCount;
-
-        allOptionButtons.forEach(b => {
-            if (b.textContent === cleanAnswer) b.classList.add("correct");
-        });
-    }
-    showExplanationPanel(questionObj);
-}
-
-function showExplanationPanel(questionObj) {
-    if (!explanationOutput) return;
-    if (questionObj && questionObj.explanation) {
-        explanationOutput.innerHTML = `<strong>Step-by-Step Explanation:</strong><br>${questionObj.explanation}`;
-        explanationOutput.style.display = "block";
-    } else {
-        explanationOutput.innerHTML = "<em>No explicit explanation found for this problem entry.</em>";
-        explanationOutput.style.display = "block";
-    }
-}
-
-leftButton.addEventListener("click", () => {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        displayActiveQuestion();
-    }
-});
-
-rightButton.addEventListener("click", () => {
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
-        currentQuestionIndex++;
-        displayActiveQuestion();
-    }
-});
-
-submitButton.addEventListener("click", startStudyingSession);
-document.addEventListener("DOMContentLoaded", loadInitializationData);
+    const cleanAnswer = activeQuestion.
