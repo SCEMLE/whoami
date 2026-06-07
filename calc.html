@@ -75,7 +75,6 @@
         }
         #questionOutput { font-size: 17px; line-height: 1.6; font-weight: 500; margin-bottom: 15px; }
         
-        /* Multiple Choice Button Styles */
         .options-container {
             display: flex;
             flex-direction: column;
@@ -90,6 +89,11 @@
             padding: 12px 15px;
             font-weight: normal;
             transition: all 0.15s ease;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 6px;
+            font-size: 15px;
         }
         .option-btn:hover:not(:disabled) {
             background-color: #f1f2f6;
@@ -115,6 +119,7 @@
             font-size: 14px;
             line-height: 1.5;
             display: none;
+            border-radius: 0 6px 6px 0;
         }
         .nav-buttons {
             display: flex;
@@ -146,7 +151,7 @@
 
     <div class="card">
         <div id="typeOutput">Problem Type</div>
-        <div id="questionOutput">Pick an AP unit above, then click Start Studying!</div>
+        <div id="questionOutput">Pick an AP course, select a specific unit (or "All Units"), then click Start Studying!</div>
         
         <div class="options-container" id="optionsContainer"></div>
 
@@ -156,7 +161,7 @@
 
     <div class="nav-buttons">
         <button id="leftButton" class="secondary-btn">◀ Prev</button>
-        <span id="progressLabel"></span>
+        <span id="progressLabel">0 / 0</span>
         <button id="rightButton" class="secondary-btn">Next ▶</button>
     </div>
 </div>
