@@ -2,7 +2,6 @@ let masterQuestionsList = {};
 let filteredQuestions = [];
 let index = 0;
 
-// Tracker state
 let correctCount = 0;
 let incorrectCount = 0;
 
@@ -80,13 +79,42 @@ function filterQuestions() {
         }
     }
 
-    // Initialize tracking variables for the current session run
+    // Prepare each question with generated choices
     filteredQuestions.forEach(q => {
         q.userAttempted = false;
         q.userCorrect = null;
+        q.chosenAnswer = null;
+        q.generatedChoices = generateMultipleChoiceOptions(q, selectedSubject);
     });
 
     displayQuestion();
+}
+
+// Pulls 3 fake answers from alternative questions within the matching dataset to build choices
+function generateMultipleChoiceOptions(currentQuestion, subject) {
+    let pool = [];
+    const units = Object.keys(masterQuestionsList[subject]);
+    
+    units.forEach(u => {
+        masterQuestionsList[subject][u].forEach(q => {
+            if (q.answer !== currentQuestion.answer) {
+                pool.push(q.answer);
+            }
+        });
+    });
+
+    // Deduplicate pool values
+    pool = [...new Set(pool)];
+    
+    // Shuffle the unique fakes and pick up to 3
+    pool.sort(() => Math.random() - 0.5);
+    let distractors = pool.slice(0, 3);
+    
+    // Combine with correct option, and shuffle entirely
+    let choices = [currentQuestion.answer, ...distractors];
+    choices.sort(() => Math.random() - 0.5);
+    
+    return choices;
 }
 
 function displayQuestion() {
@@ -95,32 +123,46 @@ function displayQuestion() {
     const feedbackLabel = document.getElementById("feedbackOutput");
     const explanationLabel = document.getElementById("explanationOutput");
     const progressLabel = document.getElementById("progressLabel");
-    const inputSection = document.getElementById("inputSection");
-    const userInput = document.getElementById("userAnswer");
+    const optionsContainer = document.getElementById("optionsContainer");
 
     feedbackLabel.textContent = "";
     explanationLabel.textContent = "";
     explanationLabel.style.display = "none";
-    userInput.value = "";
+    optionsContainer.innerHTML = "";
 
     if (filteredQuestions.length === 0) {
         typeLabel.textContent = "Empty";
         questionLabel.textContent = "No math problems found matching this selection.";
         progressLabel.textContent = "";
-        inputSection.style.display = "none";
         return;
     }
 
-    inputSection.style.display = "flex";
     const currentQ = filteredQuestions[index];
-    
     typeLabel.textContent = currentQ.type;
     questionLabel.textContent = currentQ.question;
     progressLabel.textContent = `${index + 1} / ${filteredQuestions.length}`;
 
-    // If already answered previously in the session, lock it down and show explanation
+    // Render option buttons
+    currentQ.generatedChoices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = choice;
+        
+        if (currentQ.userAttempted) {
+            btn.disabled = true;
+            // Style colors based on what happened
+            if (choice === currentQ.answer) {
+                btn.classList.add("correct");
+            } else if (choice === currentQ.chosenAnswer) {
+                btn.classList.add("incorrect");
+            }
+        } else {
+            btn.addEventListener("click", () => handleOptionSelection(choice, btn));
+        }
+        optionsContainer.appendChild(btn);
+    });
+
     if (currentQ.userAttempted) {
-        userInput.value = currentQ.savedInput || "";
         if (currentQ.userCorrect) {
             feedbackLabel.textContent = "✅ Correct";
             feedbackLabel.style.color = "#2ecc71";
@@ -132,31 +174,40 @@ function displayQuestion() {
     }
 }
 
-function checkAnswer() {
-    if (filteredQuestions.length === 0) return;
+function handleOptionSelection(selectedChoice, clickedButton) {
     const currentQ = filteredQuestions[index];
-    
-    if (currentQ.userAttempted) return; // Prevent double checking/score stuffing
+    if (currentQ.userAttempted) return;
 
-    const userInput = document.getElementById("userAnswer").value.trim().toLowerCase().replace(/\s+/g, '');
-    const cleanAnswer = currentQ.answer.trim().toLowerCase().replace(/\s+/g, '');
-    
     currentQ.userAttempted = true;
-    currentQ.savedInput = document.getElementById("userAnswer").value;
+    currentQ.chosenAnswer = selectedChoice;
 
     const feedbackLabel = document.getElementById("feedbackOutput");
 
-    if (userInput === cleanAnswer) {
+    // Disable all choice selections instantly
+    const buttons = document.querySelectorAll(".option-btn");
+    buttons.forEach(btn => btn.disabled = true);
+
+    if (selectedChoice === currentQ.answer) {
         currentQ.userCorrect = true;
         correctCount++;
         document.getElementById("correctCounter").textContent = correctCount;
+        clickedButton.classList.add("correct");
         feedbackLabel.textContent = "✅ Correct!";
         feedbackLabel.style.color = "#2ecc71";
     } else {
         currentQ.userCorrect = false;
         incorrectCount++;
         document.getElementById("incorrectCounter").textContent = incorrectCount;
-        feedbackLabel.textContent = `❌ Incorrect. Expected: ${currentQ.answer}`;
+        clickedButton.classList.add("incorrect");
+        
+        // Find and highlight correct selection choice option
+        buttons.forEach(btn => {
+            if (btn.textContent === currentQ.answer) {
+                btn.classList.add("correct");
+            }
+        });
+
+        feedbackLabel.textContent = `❌ Incorrect.`;
         feedbackLabel.style.color = "#e74c3c";
     }
 
@@ -170,7 +221,6 @@ function showExplanation(questionObj) {
 }
 
 document.getElementById("submitButton").addEventListener("click", filterQuestions);
-document.getElementById("checkAnswerButton").addEventListener("click", checkAnswer);
 
 document.getElementById("rightButton").addEventListener("click", function() {
     if (index < filteredQuestions.length - 1) {
@@ -183,12 +233,5 @@ document.getElementById("leftButton").addEventListener("click", function() {
     if (index > 0) {
         index--;
         displayQuestion();
-    }
-});
-
-// Allow hitting entry key inside text box to process submission
-document.getElementById("userAnswer").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-        checkAnswer();
     }
 });
