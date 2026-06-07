@@ -20,12 +20,8 @@ const rightButton = document.getElementById("rightButton");
 const progressLabel = document.getElementById("progressLabel");
 const correctCounter = document.getElementById("correctCounter");
 const incorrectCounter = document.getElementById("incorrectCounter");
-const progressLabel = document.getElementById("progressLabel");
-const correctCounter = document.getElementById("correctCounter");
-const incorrectCounter = document.getElementById("incorrectCounter");
+const bgMusic = document.getElementById("bgMusic"); // Music element link
 
-// ADD THIS LINE RIGHT HERE:
-const bgMusic = document.getElementById("bgMusic");
 /**
  * Loads the database JSON file on page load
  */
@@ -40,7 +36,7 @@ async function loadInitializationData() {
         // Populate the setup UI drop-downs
         populateSubjectDropdown();
 
-        // FIX: Start the session automatically so the quiz doesn't load up completely blank!
+        // Start the session automatically so the quiz doesn't load up blank
         startStudyingSession();
         
     } catch (err) {
@@ -122,7 +118,6 @@ function generateDynamicChoices(currentQuestion, currentSubject) {
                 currentUnitArray.forEach(q => {
                     if (q && q.answer) {
                         const cleanAns = String(q.answer).trim();
-                        // Gather answer alternatives that are not the target answer
                         if (cleanAns !== realAnswer) {
                             globalAnswerPool.push(cleanAns);
                         }
@@ -132,11 +127,9 @@ function generateDynamicChoices(currentQuestion, currentSubject) {
         });
     }
 
-    // De-duplicate alternatives array and shuffle random distribution
     globalAnswerPool = [...new Set(globalAnswerPool)].sort(() => Math.random() - 0.5);
     let choices = globalAnswerPool.slice(0, 3);
     
-    // Fallback bank to inject standard math defaults if data pool is too shallow
     const fallbacks = ["0", "DNE", "1", "e^x", "C"];
     while (choices.length < 3) {
         const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
@@ -145,7 +138,6 @@ function generateDynamicChoices(currentQuestion, currentSubject) {
         }
     }
     
-    // Merge real answer into choice set and perform final random shuffle
     choices.push(realAnswer);
     choices = [...new Set(choices)].slice(0, 4).sort(() => Math.random() - 0.5);
     return choices;
@@ -157,29 +149,30 @@ function generateDynamicChoices(currentQuestion, currentSubject) {
 function startStudyingSession() {
     if (!subjectDropdown || !unitDropdown) return;
 
+    // Softly play background music when study session starts
+    if (bgMusic && bgMusic.paused) {
+        bgMusic.volume = 0.20; // 20% volume so it's a calm background layer
+        bgMusic.play().catch(err => console.log("Audio waiting for explicit click context: ", err));
+    }
+
     const selectedSubject = subjectDropdown.value;
     const selectedUnit = unitDropdown.value;
     filteredQuestions = [];
 
     if (masterQuestionsList[selectedSubject]) {
         if (selectedUnit === "ALL") {
-            // Aggregate all units for the chosen subject
             Object.keys(masterQuestionsList[selectedSubject]).forEach(u => {
                 if (Array.isArray(masterQuestionsList[selectedSubject][u])) {
                     filteredQuestions = filteredQuestions.concat(masterQuestionsList[selectedSubject][u]);
                 }
             });
-            // Shuffle full cross-unit combination deck
             filteredQuestions.sort(() => Math.random() - 0.5);
         } else if (masterQuestionsList[selectedSubject][selectedUnit]) {
-            // Clone isolated single unit data track
             filteredQuestions = [...masterQuestionsList[selectedSubject][selectedUnit]];
-            // Shuffle the single unit to make it unique each run
             filteredQuestions.sort(() => Math.random() - 0.5);
         }
     }
 
-    // Verify session deck contains payload elements
     if (filteredQuestions.length > 0) {
         currentQuestionIndex = 0;
         filteredQuestions.forEach(q => {
@@ -191,7 +184,6 @@ function startStudyingSession() {
         });
         displayActiveQuestion();
     } else {
-        // Fallback display if database array is empty
         if (typeOutput) typeOutput.textContent = "Empty";
         if (questionOutput) questionOutput.textContent = "No questions found for this selection.";
         if (optionsContainer) optionsContainer.innerHTML = "";
@@ -200,23 +192,6 @@ function startStudyingSession() {
         if (progressLabel) progressLabel.textContent = "0 / 0";
     }
 }
-
-/**
- * Initializes or resets a study deck session based on user menu selections
- */
-function startStudyingSession() {
-    if (!subjectDropdown || !unitDropdown) return;
-
-    // ADD THESE LINES RIGHT HERE:
-    if (bgMusic && bgMusic.paused) {
-        bgMusic.volume = 0.25; 
-        bgMusic.play().catch(err => console.log("Audio waiting for click: ", err));
-    }
-
-    const selectedSubject = subjectDropdown.value;
-    const selectedUnit = unitDropdown.value;
-    filteredQuestions = [];
-    // ... rest of the function continues normally
 
 /**
  * Handles rendering the current question state and historical inputs to the DOM
@@ -237,7 +212,6 @@ function displayActiveQuestion() {
     questionOutput.textContent = activeQuestion.question || "";
     progressLabel.textContent = `${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
 
-    // Render interactive dynamic choice button stack
     if (Array.isArray(activeQuestion.generatedOptionsList)) {
         activeQuestion.generatedOptionsList.forEach(choice => {
             const btn = document.createElement("button");
@@ -245,7 +219,6 @@ function displayActiveQuestion() {
             btn.textContent = choice;
             
             if (activeQuestion.userAttempted) {
-                // Freeze buttons and visually match saved selections if already answered
                 btn.disabled = true;
                 if (choice === cleanAnswer) {
                     btn.classList.add("correct");
@@ -253,14 +226,12 @@ function displayActiveQuestion() {
                     btn.classList.add("incorrect");
                 }
             } else {
-                // Bind real-time click processing
                 btn.addEventListener("click", () => handleAnswerValidation(btn, choice, activeQuestion));
             }
             optionsContainer.appendChild(btn);
         });
     }
 
-    // Restore contextual text flags if item already has historical submission data
     if (activeQuestion.userAttempted) {
         if (activeQuestion.chosenAnswer === cleanAnswer) {
             feedbackOutput.textContent = "Correct! 🎉";
@@ -299,7 +270,6 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
         incorrectCount++;
         incorrectCounter.textContent = incorrectCount;
 
-        // Auto-highlight correct answer option path to user
         allOptionButtons.forEach(b => {
             if (b.textContent === cleanAnswer) b.classList.add("correct");
         });
@@ -321,7 +291,7 @@ function showExplanationPanel(questionObj) {
     explanationOutput.style.display = "block";
 }
 
-// Left/Previous Navigation Controller Action Hook
+// Navigation Controls
 if (leftButton) {
     leftButton.addEventListener("click", () => {
         if (currentQuestionIndex > 0) {
@@ -331,7 +301,6 @@ if (leftButton) {
     });
 }
 
-// Right/Next Navigation Controller Action Hook
 if (rightButton) {
     rightButton.addEventListener("click", () => {
         if (currentQuestionIndex < filteredQuestions.length - 1) {
@@ -341,7 +310,6 @@ if (rightButton) {
     });
 }
 
-// Form/Submit Filter Trigger Action Hook
 if (submitButton) {
     submitButton.addEventListener("click", startStudyingSession);
 }
