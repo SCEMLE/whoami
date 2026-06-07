@@ -6,9 +6,8 @@
     <title>AP Study Hub Portal</title>
     <style>
         body {
-            /* Modern, punchy geometric font stack */
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0F4C5C; 
+            background-color: #DDF8E8; /* Honeydew Background */
             color: #333;
             margin: 0;
             padding: 40px 20px;
@@ -18,18 +17,17 @@
             -webkit-font-smoothing: antialiased;
         }
         h1 { 
-            color: #FB8B24; 
+            color: #615055; /* Main Title in Taupe Grey */
             font-size: 38px;
-            font-weight: 900; /* Ultra-bold header text */
+            font-weight: 900; 
             letter-spacing: -0.5px;
             margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         p { 
-            color: #FAF3DD; 
+            color: #615055; /* Subtitle in Taupe Grey with slight opacity */
             font-size: 18px; 
             margin-bottom: 40px;
-            opacity: 0.9;
+            opacity: 0.8;
             font-weight: 500;
         }
         .grid {
@@ -43,28 +41,28 @@
             background: white;
             padding: 35px 25px;
             border-radius: 16px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(97, 80, 85, 0.06);
             text-decoration: none;
             color: inherit;
             text-align: center;
-            border: 4px solid #E36414; 
+            border: 4px solid #946E83; /* Thick Dusty Mauve Outline */
             transition: all 0.2s ease-in-out;
         }
         .subject-card:hover {
             transform: translateY(-6px);
-            border-color: #FB8B24; 
-            box-shadow: 0 10px 20px rgba(251, 139, 36, 0.3);
+            border-color: #615055; /* Shifts to Taupe Grey on hover */
+            box-shadow: 0 8px 20px rgba(97, 80, 85, 0.12);
         }
         .subject-card h2 { 
-            color: #5F0F40; 
+            color: #615055; /* Card Header in Taupe Grey */
             margin: 0 0 15px 0; 
             font-size: 26px; 
-            font-weight: 800; /* Crisp, clean card title font weight */
+            font-weight: 800; 
             letter-spacing: -0.5px;
         }
         .subject-card span { 
             color: white; 
-            background-color: #E36414; 
+            background-color: #946E83; /* Pill Background in Dusty Mauve */
             font-weight: 700; 
             font-size: 14px;
             padding: 8px 18px;
@@ -74,20 +72,20 @@
             letter-spacing: 0.3px;
         }
         .subject-card:hover span {
-            background-color: #FB8B24; 
+            background-color: #615055; /* Pill turns Taupe Grey on hover */
         }
         .disabled-card {
-            background: rgba(255, 255, 255, 0.15);
-            border: 4px dashed rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.4);
+            border: 4px dashed #CDD5D1; /* Dust Grey for disabled states */
             box-shadow: none;
             cursor: not-allowed;
         }
         .disabled-card h2 {
-            color: rgba(255, 255, 255, 0.4);
+            color: #B4A6AB; /* Lilac Ash text for disabled content */
         }
         .disabled-card span {
-            color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            background: #CDD5D1;
         }
     </style>
 </head>
