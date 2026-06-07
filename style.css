@@ -1,0 +1,47 @@
+/* Base styling for options before they are clicked */
+.option-btn {
+    background-color: #f0f2f5;    /* Default button color */
+    color: #333333;               /* Default text color */
+    border: 1px solid #cccccc;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+/* Hover effect for unselected choices */
+.option-btn:hover:not(:disabled) {
+    background-color: #e2e4e7;
+}
+
+/* Disabled styling once answered */
+.option-btn:disabled {
+    cursor: default;
+}
+
+/* Color Palette: Correct Answer */
+.option-btn.correct {
+    background-color: #2ecc71 !important; /* Smooth emerald green */
+    color: #ffffff !important;
+    border-color: #2ecc71 !important;
+}
+
+/* Color Palette: Wrong Answer */
+.option-btn.wrong {
+    background-color: #e74c3c !important; /* Muted crimson red */
+    color: #ffffff !important;
+    border-color: #e74c3c !important;
+}
+
+/* Feedback message color states */
+.feedback-msg {
+    font-weight: bold;
+    margin: 10px 0;
+}
+.feedback-correct {
+    color: #2ecc71;
+}
+.feedback-wrong {
+    color: #e74c3c;
+}
