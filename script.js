@@ -160,4 +160,72 @@ function displayActiveQuestion() {
             feedbackOutput.textContent = "Correct! 🎉";
             feedbackOutput.style.color = "#2ecc71";
         } else {
-            feedbackOutput.textContent = `Incorrect
+            feedbackOutput.textContent = `Incorrect. Correct answer: ${cleanAnswer}`;
+            feedbackOutput.style.color = "#e74c3c";
+        }
+        showExplanationPanel(activeQuestion);
+    }
+}
+
+function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
+    const allOptionButtons = optionsContainer.querySelectorAll(".option-btn");
+    allOptionButtons.forEach(b => b.disabled = true);
+
+    questionObj.userAttempted = true;
+    questionObj.chosenAnswer = userChoice;
+    const cleanAnswer = questionObj.answer ? String(questionObj.answer).trim() : "";
+
+    if (userChoice === cleanAnswer) {
+        clickedBtn.classList.add("correct");
+        feedbackOutput.textContent = "Correct! 🎉";
+        feedbackOutput.style.color = "#2ecc71";
+        correctCount++;
+        correctCounter.textContent = correctCount;
+    } else {
+        clickedBtn.classList.add("incorrect");
+        feedbackOutput.textContent = `Incorrect. Correct answer: ${cleanAnswer}`;
+        feedbackOutput.style.color = "#e74c3c";
+        incorrectCount++;
+        incorrectCounter.textContent = incorrectCount;
+
+        allOptionButtons.forEach(b => {
+            if (b.textContent === cleanAnswer) b.classList.add("correct");
+        });
+    }
+    showExplanationPanel(questionObj);
+}
+
+function showExplanationPanel(questionObj) {
+    if (!explanationOutput) return;
+    if (questionObj && questionObj.explanation) {
+        explanationOutput.innerHTML = `<strong>Step-by-Step Explanation:</strong><br>${questionObj.explanation}`;
+        explanationOutput.style.display = "block";
+    } else {
+        explanationOutput.innerHTML = "<em>No explicit explanation found for this problem entry.</em>";
+        explanationOutput.style.display = "block";
+    }
+}
+
+if (leftButton) {
+    leftButton.addEventListener("click", () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            displayActiveQuestion();
+        }
+    });
+}
+
+if (rightButton) {
+    rightButton.addEventListener("click", () => {
+        if (currentQuestionIndex < filteredQuestions.length - 1) {
+            currentQuestionIndex++;
+            displayActiveQuestion();
+        }
+    });
+}
+
+if (submitButton) {
+    submitButton.addEventListener("click", startStudyingSession);
+}
+
+document.addEventListener("DOMContentLoaded", loadInitializationData);
