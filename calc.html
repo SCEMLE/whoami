@@ -41,7 +41,7 @@
             gap: 12px;
             margin-bottom: 25px;
         }
-        select, button, input[type="text"] {
+        select, button {
             padding: 12px;
             font-size: 16px;
             border-radius: 6px;
@@ -74,9 +74,38 @@
             font-weight: bold;
         }
         #questionOutput { font-size: 17px; line-height: 1.6; font-weight: 500; margin-bottom: 15px; }
-        .input-area { display: flex; gap: 10px; margin-top: 15px; }
-        #checkAnswerButton { background-color: #e67e22; width: auto; white-space: nowrap; }
-        #checkAnswerButton:hover { background-color: #d35400; }
+        
+        /* Multiple Choice Button Styles */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .option-btn {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #dcdde1;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: normal;
+            transition: all 0.15s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #f1f2f6;
+            border-color: #3498db;
+        }
+        .option-btn.correct {
+            background-color: #2ecc71 !important;
+            color: white !important;
+            border-color: #2ecc71;
+        }
+        .option-btn.incorrect {
+            background-color: #e74c3c !important;
+            color: white !important;
+            border-color: #e74c3c;
+        }
+
         #feedbackOutput { margin-top: 15px; font-weight: bold; font-size: 16px; }
         #explanationOutput {
             margin-top: 15px;
@@ -119,10 +148,7 @@
         <div id="typeOutput">Problem Type</div>
         <div id="questionOutput">Pick an AP unit above, then click Start Studying!</div>
         
-        <div class="input-area" id="inputSection" style="display: none;">
-            <input type="text" id="userAnswer" placeholder="Type your numeric or simplified answer here...">
-            <button id="checkAnswerButton">Submit</button>
-        </div>
+        <div class="options-container" id="optionsContainer"></div>
 
         <div id="feedbackOutput"></div>
         <div id="explanationOutput"></div>
