@@ -91,7 +91,7 @@ function startStudyingSession() {
     const selectedUnit = unitDropdown.value;
     filteredQuestions = [];
 
-    if (masterQuestionsList[selectedSubject]) {
+  if (masterQuestionsList[selectedSubject]) {
         if (selectedUnit === "ALL") {
             Object.keys(masterQuestionsList[selectedSubject]).forEach(u => {
                 if (Array.isArray(masterQuestionsList[selectedSubject][u])) {
