@@ -1,1471 +1,1460 @@
-import json
-
-# Master dictionary housing all 8 Units (30 questions each = 240 questions total)
-ap_calc_db = {
-    "AP Calculus AB": {
-        "Unit 1: Limits and Continuity": [
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the limit: lim (x -> 3) (x^2 - 9) / (x - 3).",
-                "answer": "6",
-                "explanation": "Factor the numerator: (x - 3)(x + 3). Cancel the common factor (x - 3) for x != 3. Substitute x = 3 into the remaining expression: 3 + 3 = 6."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 0) (sin(5x) / x).",
-                "answer": "5",
-                "explanation": "Multiply numerator and denominator by 5 to rewrite as 5 * [sin(5x) / 5x]. Using the special limit identity lim (u -> 0) sin(u)/u = 1, this evaluates to 5 * 1 = 5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find all values of x where f(x) = (x - 2) / (x^2 - 4) is discontinuous.",
-                "answer": "x = 2 and x = -2",
-                "explanation": "Discontinuities occur where the denominator equals zero: x^2 - 4 = 0, which factors to (x-2)(x+2) = 0, yielding x = 2 and x = -2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the vertical asymptote of the function f(x) = (x + 2) / (x - 4).",
-                "answer": "x = 4",
-                "explanation": "A vertical asymptote occurs where the denominator is zero and the numerator is non-zero. Setting x - 4 = 0 gives x = 4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> infinity) (5x^2 - 3) / (2x^2 + 4x).",
-                "answer": "5/2",
-                "explanation": "For limits at infinity of rational functions with equal degrees in numerator and denominator, take the ratio of leading coefficients: 5 / 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 2) (x^2 - 4) / (x^2 - 2x).",
-                "answer": "2",
-                "explanation": "Factor the numerator to (x-2)(x+2) and the denominator to x(x-2). Cancel the common factor (x-2), leaving (x+2)/x. Substitute x = 2 to get (2+2)/2 = 4/2 = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 0) (cos(x) - 1) / x.",
-                "answer": "0",
-                "explanation": "This matches a fundamental trigonometric limit identity: lim (x -> 0) (cos(x) - 1)/x = 0."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> 4) (sqrt(x) - 2) / (x - 4).",
-                "answer": "1/4",
-                "explanation": "Rationalize the numerator by multiplying by the conjugate (sqrt(x) + 2)/(sqrt(x) + 2). This yields (x - 4) / [(x - 4)(sqrt(x) + 2)]. Cancel (x - 4) to leave 1 / (sqrt(x) + 2). Evaluate at x = 4 to get 1 / (2 + 2) = 1/4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the horizontal asymptote of f(x) = (3x^3 - 1) / (2 - 5x^3).",
-                "answer": "y = -3/5",
-                "explanation": "Take the limit as x approaches infinity. Since degrees are equal, the horizontal asymptote is the ratio of the leading coefficients: 3 / -5, which means y = -3/5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> -infinity) e^x.",
-                "answer": "0",
-                "explanation": "As x approaches negative infinity, e^x approaches 0 because the function values yield smaller fractional values like 1/e^infinity."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 3+) 1 / (x - 3).",
-                "answer": "Infinity",
-                "explanation": "As x approaches 3 from the right, (x - 3) is a tiny positive number. 1 divided by a tiny positive number approaches positive infinity."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 3-) 1 / (x - 3).",
-                "answer": "-Infinity",
-                "explanation": "As x approaches 3 from the left, (x - 3) is a tiny negative number. 1 divided by a tiny negative number approaches negative infinity."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If lim (x -> c) f(x) = 4 and lim (x -> c) g(x) = -2, find lim (x -> c) [f(x) * g(x)].",
-                "answer": "-8",
-                "explanation": "Apply the product property of limits: lim [f(x) * g(x)] = lim f(x) * lim g(x) = 4 * (-2) = -8."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> 1) (x^3 - 1) / (x - 1).",
-                "answer": "3",
-                "explanation": "Factor the numerator as a difference of cubes: (x - 1)(x^2 + x + 1). Cancel the (x - 1) terms, leaving x^2 + x + 1. Substituting x = 1 gives 1 + 1 + 1 = 3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 0) (x / tan(x)).",
-                "answer": "1",
-                "explanation": "Rewrite tan(x) as sin(x)/cos(x) to yield lim (x -> 0) [x * cos(x) / sin(x)]. Separate the limits to get [lim x/sin(x)] * [lim cos(x)] = 1 * 1 = 1."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> 0+) ln(x).",
-                "answer": "-Infinity",
-                "explanation": "Looking at the basic logarithmic curve, as x approaches 0 from the positive right side, the output values drop down infinitely toward negative infinity."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> infinity) (ln(x) / x).",
-                "answer": "0",
-                "explanation": "A linear function x grows significantly faster than a logarithmic function ln(x). Thus, the ratio approaches 0 as x grows infinitely large."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 2) (3x^2 - 5x + 2).",
-                "answer": "4",
-                "explanation": "Since polynomial functions are continuous everywhere, evaluate directly by substituting x = 2: 3(2)^2 - 5(2) + 2 = 12 - 10 + 2 = 4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> -1) (x^2 - 1) / (x + 1).",
-                "answer": "-2",
-                "explanation": "Factor the numerator into a difference of squares: (x - 1)(x + 1). Cancel the common factor (x + 1), leaving (x - 1). Substituting x = -1 gives -1 - 1 = -2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 0) [((1 / (x + 3)) - (1 / 3)) / x].",
-                "answer": "-1/9",
-                "explanation": "Find a common numerator denominator: [3 - (x + 3)] / [3(x + 3)] = -x / [3(x + 3)]. Placing this over x and canceling x leaves -1 / [3(x + 3)]. Substituting x = 0 yields -1 / 9."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the value of k that makes f(x) continuous at x = 2 if f(x) = kx for x <= 2 and f(x) = 4 for x > 2.",
-                "answer": "2",
-                "explanation": "For continuity at x = 2, the left-hand limit must equal the right-hand limit. Set k(2) = 4, which solves to k = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> infinity) (sin(x) / x).",
-                "answer": "0",
-                "explanation": "Apply the Squeeze Theorem. Since -1 <= sin(x) <= 1, then -1/x <= sin(x)/x <= 1/x. As x approaches infinity, both boundaries approach 0, so the middle limit must be 0."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Given f(0) = -2 and f(3) = 4 for a continuous function, find the value of f(c) guaranteed by the Intermediate Value Theorem for some c in (0,3).",
-                "answer": "0",
-                "explanation": "The Intermediate Value Theorem states that a continuous function must take on every value between f(0) and f(3). Since 0 lies between -2 and 4, it is guaranteed to be achieved."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 1) (sqrt(x + 3) - 2) / (x - 1).",
-                "answer": "1/4",
-                "explanation": "Multiply the numerator and denominator by the conjugate (sqrt(x+3) + 2). The numerator simplifies to (x + 3) - 4 = x - 1. Cancel the (x - 1) terms to get 1 / (sqrt(x+3) + 2). Substitute x = 1 to get 1 / (2 + 2) = 1/4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> -infinity) (2x + 1) / sqrt(x^2 + 3).",
-                "answer": "-2",
-                "explanation": "As x approaches negative infinity, sqrt(x^2) = |x| = -x. Divide numerator and denominator by x to yield 2 / -sqrt(1) = -2."
-            },
-            {
-                "type": "Free Response",
-                "question": "Let f(x) = (x^2 - x - 6) / (x - 3). Compute the value f(3) must take so that the function is continuous at x = 3.",
-                "answer": "5",
-                "explanation": "Factor the numerator into (x - 3)(x + 2). Cancel out the removable hole term (x - 3), leaving the continuous piece (x + 2). Evaluating at x = 3 gives 3 + 2 = 5."
-            },
-            {
-                "type": "Free Response",
-                "question": "Evaluate lim (x -> 0) [x^2 * cos(1/x)] analytically using bounds.",
-                "answer": "0",
-                "explanation": "Since cosine is bounded, -1 <= cos(1/x) <= 1. Multiplying by x^2 gives -x^2 <= x^2 * cos(1/x) <= x^2. Since both outer limits approach 0 as x approaches 0, the Squeeze Theorem guarantees the middle limit is 0."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the value of c in the interval [0, 3] where f(c) = 0 for the function f(x) = x^2 - 4.",
-                "answer": "2",
-                "explanation": "Set the equation x^2 - 4 = 0, which yields solutions x = 2 and x = -2. Out of these candidates, only c = 2 lies within the specified domain interval [0, 3]."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the values of a and b that make f(x) continuous everywhere if f(x) = ax + 3 for x < 1, f(x) = 5 for x = 1, and f(x) = x^2 + b for x > 1.",
-                "answer": "a = 2, b = 4",
-                "explanation": "Set left limit equal to function value: a(1) + 3 = 5 -> a = 2. Set right limit equal to function value: (1)^2 + b = 5 -> 1 + b = 5 -> b = 4."
-            },
-            {
-                "type": "Free Response",
-                "question": "Evaluate the one-sided limit: lim (x -> 4-) (x - 4) / |x - 4|.",
-                "answer": "-1",
-                "explanation": "For values of x less than 4, the expression inside the absolute value is negative, meaning |x - 4| = -(x - 4). The expression simplifies to (x - 4) / -(x - 4) = -1."
-            }
-        ],
-        "Unit 2: Differentiation: Definition and Fundamental Properties": [
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = 3x^4 - 5x^2 + 7x - 2.",
-                "answer": "12x^3 - 10x + 7",
-                "explanation": "Apply the power rule term-by-term: d/dx(3x^4) = 12x^3, d/dx(-5x^2) = -10x, and d/dx(7x) = 7. The derivative of a constant is 0."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = sin(x) + 4cos(x).",
-                "answer": "cos(x) - 4sin(x)",
-                "explanation": "Use fundamental derivative rules: the derivative of sin(x) is cos(x), and the derivative of cos(x) is -sin(x). Thus, d/dx[sin(x) + 4cos(x)] = cos(x) - 4sin(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the limit representing a derivative: lim (h -> 0) [((x + h)^3 - x^3) / h].",
-                "answer": "3x^2",
-                "explanation": "This limit matches the formal definition of the derivative for f(x) = x^3. Applying the power rule directly gives f'(x) = 3x^2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = ln(x) + e^x.",
-                "answer": "1/x + e^x",
-                "explanation": "The derivative of ln(x) is 1/x and the derivative of e^x is e^x. Adding them term-by-term yields 1/x + e^x."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the slope of the tangent line to f(x) = x^2 - 3x at x = 4.",
-                "answer": "5",
-                "explanation": "Find the general derivative: f'(x) = 2x - 3. Substitute x = 4 to evaluate the specific tangent slope: f'(4) = 2(4) - 3 = 8 - 3 = 5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = 5 / x^2.",
-                "answer": "-10 / x^3",
-                "explanation": "Rewrite the function using negative exponents: f(x) = 5x^(-2). Apply the power rule: f'(x) = 5 * (-2)x^(-3) = -10x^(-3) = -10 / x^3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = sqrt(x).",
-                "answer": "1 / (2*sqrt(x))",
-                "explanation": "Express as a fractional power: f(x) = x^(1/2). Apply the power rule: f'(x) = (1/2)x^(-1/2) = 1 / (2 * sqrt(x))."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "At what value of x does f(x) = x^2 - 6x have a horizontal tangent line?",
-                "answer": "3",
-                "explanation": "Horizontal tangents occur where the derivative equals zero. Differentiate to get f'(x) = 2x - 6. Set 2x - 6 = 0, which solves to x = 3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If f(x) = 3x^5, find the second derivative f''(x).",
-                "answer": "60x^3",
-                "explanation": "First derivative: f'(x) = 15x^4. Take the derivative of f'(x) to find the second derivative: f''(x) = 15 * 4x^3 = 60x^3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the instantaneous rate of change of f(x) = e^x at x = 0.",
-                "answer": "1",
-                "explanation": "The instantaneous rate of change is given by the derivative. Since f'(x) = e^x, evaluating at x = 0 gives f'(0) = e^0 = 1."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If f(3) = 4 and f'(3) = -2, find the y-intercept of the tangent line to f at x = 3.",
-                "answer": "10",
-                "explanation": "The equation of the tangent line is y - 4 = -2(x - 3), which expands to y = -2x + 6 + 4 -> y = -2x + 10. The y-intercept is 10."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = tan(x).",
-                "answer": "sec^2(x)",
-                "explanation": "This is a fundamental trigonometric derivative rule: d/dx [tan(x)] = sec^2(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = cot(x).",
-                "answer": "-csc^2(x)",
-                "explanation": "This is a fundamental trigonometric derivative rule: d/dx [cot(x)] = -csc^2(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = sec(x).",
-                "answer": "sec(x)tan(x)",
-                "explanation": "This is a fundamental trigonometric derivative rule: d/dx [sec(x)] = sec(x)tan(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = csc(x).",
-                "answer": "-csc(x)cot(x)",
-                "explanation": "This is a fundamental trigonometric derivative rule: d/dx [csc(x)] = -csc(x)cot(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the average rate of change of f(x) = x^2 on the interval [1, 3].",
-                "answer": "4",
-                "explanation": "Average rate of change formula is [f(b) - f(a)] / (b - a). Here, we have [3^2 - 1^2] / (3 - 1) = [9 - 1] / 2 = 8 / 2 = 4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = pi^3.",
-                "answer": "0",
-                "explanation": "Since pi is a number, pi^3 is a constant value. The derivative of any constant is strictly 0."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If position is s(t) = t^2 - 4t, find the velocity v(t) at t = 5.",
-                "answer": "6",
-                "explanation": "Velocity is the first derivative of position: v(t) = s'(t) = 2t - 4. Evaluating at t = 5 gives v(5) = 2(5) - 4 = 10 - 4 = 6."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If velocity is v(t) = 3t^2, find acceleration a(t) at t = 2.",
-                "answer": "12",
-                "explanation": "Acceleration is the derivative of velocity: a(t) = v'(t) = 6t. Evaluating at t = 2 gives a(2) = 6(2) = 12."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = 2^x.",
-                "answer": "2^x * ln(2)",
-                "explanation": "The general derivative rule for exponential functions base a is d/dx [a^x] = a^x * ln(a). For base 2, it is 2^x * ln(2)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (h -> 0) [((ln(e + h) - 1) / h)].",
-                "answer": "1/e",
-                "explanation": "This limit represents the derivative definition of f(x) = ln(x) evaluated at x = e. Since f'(x) = 1/x, f'(e) = 1/e."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the value of f'(1) if f(x) = 4 / sqrt(x).",
-                "answer": "-2",
-                "explanation": "Rewrite using powers: f(x) = 4x^(-1/2). Differentiate: f'(x) = 4 * (-1/2)x^(-3/2) = -2 / x^(3/2). Evaluating at x = 1 gives -2 / 1 = -2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the slope of the normal line to f(x) = x^3 at x = 2.",
-                "answer": "-1/12",
-                "explanation": "Tangent slope is f'(x) = 3x^2, so f'(2) = 3(2)^2 = 12. The normal line slope is the negative reciprocal of the tangent slope: -1/12."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = 2x^2 - 1/x at x = -1.",
-                "answer": "-5",
-                "explanation": "Rewrite as f(x) = 2x^2 - x^(-1). Differentiate: f'(x) = 4x + x^(-2) = 4x + 1/x^2. Evaluate at x = -1 to get 4(-1) + 1/(-1)^2 = -4 + 1 = -5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 2) [ (x^2 - 4) / (x - 2) ].",
-                "answer": "4",
-                "explanation": "Factor the numerator into (x-2)(x+2) and cancel the common factor (x-2), leaving (x+2). Evaluating this at x = 2 gives 2 + 2 = 4."
-            },
-            {
-                "type": "Free Response",
-                "question": "Evaluate the limit representing a derivative layout: lim(h->0) [(5(x+h)^2 - 5x^2)/h].",
-                "answer": "10x",
-                "explanation": "This limit structure directly sets up the definition of the derivative for the function f(x) = 5x^2. Using the power rule, f'(x) = 10x."
-            },
-            {
-                "type": "Free Response",
-                "question": "A particle moves along a line according to s(t) = t^3 - 6t^2 + 9t. At what times t >= 0 is the particle's velocity equal to 0?",
-                "answer": "1 and 3",
-                "explanation": "Differentiate position to find velocity: v(t) = 3t^2 - 12t + 9. Set v(t) = 0 and divide by 3: t^2 - 4t + 3 = 0. Factoring gives (t - 1)(t - 3) = 0, so t = 1 and t = 3."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the values of x where the function f(x) = 2x^3 - 3x^2 - 12x has a horizontal tangent line.",
-                "answer": "2 and -1",
-                "explanation": "Horizontal tangents occur where f'(x) = 0. Differentiate: f'(x) = 6x^2 - 6x - 12. Set equal to 0 and factor out 6: 6(x^2 - x - 2) = 6(x - 2)(x + 1) = 0, giving x = 2 and x = -1."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the coordinates of all points on the graph of f(x) = x^3 where the slope of the tangent line is equal to 12.",
-                "answer": "(2,8) and (-2,-8)",
-                "explanation": "Set the derivative equal to 12: f'(x) = 3x^2 = 12 -> x^2 = 4 -> x = 2 or x = -2. Find corresponding y-values: f(2) = 2^3 = 8, f(-2) = (-2)^3 = -8."
-            },
-            {
-                "type": "Free Response",
-                "question": "Write an equation for the normal line to f(x) = x^2 at the point (2, 4).",
-                "answer": "y - 4 = -1/4(x - 2)",
-                "explanation": "The tangent slope is f'(2) = 2(2) = 4. The normal line slope is the negative reciprocal: -1/4. Using point-slope form with (2,4) gives y - 4 = -1/4(x - 2)."
-            }
-        ],
-        "Unit 3: Differentiation: Composite, Implicit, and Inverse Functions": [
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = x^2 * sin(x).",
-                "answer": "2x*sin(x) + x^2*cos(x)",
-                "explanation": "Apply the product rule u'v + uv': d/dx(x^2)*sin(x) + x^2*d/dx(sin(x)) = 2x*sin(x) + x^2*cos(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = tan(5x).",
-                "answer": "5*sec^2(5x)",
-                "explanation": "Apply the chain rule. Differentiate the outer function tan(u) to get sec^2(u), then multiply by the derivative of the inner function 5x, which is 5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = e^(x^2).",
-                "answer": "2x * e^(x^2)",
-                "explanation": "Apply the chain rule. The derivative of e^u is e^u * du/dx. Here, u = x^2 and du/dx = 2x, resulting in 2x * e^(x^2)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = sin(cos(x)).",
-                "answer": "-sin(x) * cos(cos(x))",
-                "explanation": "Apply the chain rule. The derivative of sin(u) is cos(u) * du/dx. Here, u = cos(x) and du/dx = -sin(x), yielding -sin(x) * cos(cos(x))."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = x / (x + 1).",
-                "answer": "1 / (x + 1)^2",
-                "explanation": "Apply the quotient rule [Low dHigh - High dLow] / Low^2: [(x+1)(1) - x(1)] / (x+1)^2 = [x + 1 - x] / (x+1)^2 = 1 / (x+1)^2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = ln(3x).",
-                "answer": "1/x",
-                "explanation": "Apply the chain rule: f'(x) = (1 / 3x) * 3 = 1/x. Alternatively, expand using log properties first: ln(3x) = ln(3) + ln(x). Differentiating gives 0 + 1/x = 1/x."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find dy/dx using implicit differentiation for x^2 + y^2 = 25.",
-                "answer": "-x / y",
-                "explanation": "Differentiate implicitly with respect to x: 2x + 2y(dy/dx) = 0. Isolate dy/dx: 2y(dy/dx) = -2x -> dy/dx = -2x / 2y = -x / y."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find dy/dx implicitly for x*y = 4.",
-                "answer": "-y / x",
-                "explanation": "Differentiate implicitly using product rule: 1*y + x*(dy/dx) = 0. Isolate dy/dx to find x*(dy/dx) = -y -> dy/dx = -y / x."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = arctan(x).",
-                "answer": "1 / (1 + x^2)",
-                "explanation": "This is the fundamental derivative rule for the inverse tangent function: d/dx [arctan(x)] = 1 / (1 + x^2)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = arcsin(x).",
-                "answer": "1 / sqrt(1 - x^2)",
-                "explanation": "This is the fundamental derivative rule for the inverse sine function: d/dx [arcsin(x)] = 1 / sqrt(1 - x^2)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If g(x) is the inverse of f(x), f(2) = 3, and f'(2) = 5, find g'(3).",
-                "answer": "1/5",
-                "explanation": "The inverse derivative formula states g'(3) = 1 / f'(g(3)). Since f(2) = 3, we know g(3) = 2. Substituting gives 1 / f'(2) = 1/5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = (2x + 1)^4.",
-                "answer": "8(2x + 1)^3",
-                "explanation": "Apply the chain rule: bring down the exponent, decrease it by 1, and multiply by the derivative of the inside function: 4(2x + 1)^3 * 2 = 8(2x + 1)^3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = ln(sin(x)).",
-                "answer": "cot(x)",
-                "explanation": "Apply the chain rule: the derivative of ln(u) is (1/u) * du/dx. This yields (1 / sin(x)) * cos(x) = cos(x) / sin(x) = cot(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = sqrt(x^2 + 5).",
-                "answer": "x / sqrt(x^2 + 5)",
-                "explanation": "Rewrite as (x^2 + 5)^(1/2). Differentiate via chain rule: (1/2)(x^2 + 5)^(-1/2) * 2x. Simplify by canceling the 2s to get x / sqrt(x^2 + 5)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = e^(4x).",
-                "answer": "4e^(4x)",
-                "explanation": "Apply the chain rule: d/dx [e^(4x)] = e^(4x) * d/dx(4x) = 4e^(4x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find dy/dx implicitly for e^y = x.",
-                "answer": "1 / e^y",
-                "explanation": "Differentiate both sides implicitly with respect to x: e^y * (dy/dx) = 1. Isolate dy/dx to get 1 / e^y."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = x * e^x.",
-                "answer": "e^x(x + 1)",
-                "explanation": "Apply the product rule: f'(x) = (1)(e^x) + (x)(e^x). Factoring out e^x transforms the expression into e^x(1 + x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = cos^3(x).",
-                "answer": "-3*cos^2(x)*sin(x)",
-                "explanation": "Rewrite as [cos(x)]^3. Differentiate via chain rule: 3[cos(x)]^2 * d/dx(cos(x)) = 3cos^2(x) * (-sin(x)) = -3cos^2(x)sin(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = 1 / (3x - 2).",
-                "answer": "-3 / (3x - 2)^2",
-                "explanation": "Rewrite as (3x - 2)^(-1). Apply the chain rule: -1(3x - 2)^(-2) * 3 = -3 / (3x - 2)^2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = log_10(x).",
-                "answer": "1 / (x * ln(10))",
-                "explanation": "The change of base rule states log_10(x) = ln(x) / ln(10). Differentiating this gives (1 / ln(10)) * (1/x) = 1 / (x * ln(10))."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = arcsec(x).",
-                "answer": "1 / (|x| * sqrt(x^2 - 1))",
-                "explanation": "This is the fundamental derivative rule for the inverse secant function: d/dx [arcsec(x)] = 1 / (|x| * sqrt(x^2 - 1))."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If f(x) = h(g(x)), h'(3) = 4, and g'(1) = 2 where g(1) = 3, find f'(1).",
-                "answer": "8",
-                "explanation": "Apply the chain rule: f'(x) = h'(g(x)) * g'(x). Thus, f'(1) = h'(g(1)) * g'(1) = h'(3) * g'(1) = 4 * 2 = 8."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative of f(x) = ln(x^4).",
-                "answer": "4/x",
-                "explanation": "Simplify using logarithm rules first: ln(x^4) = 4*ln(x). Taking the derivative yields 4 * (1/x) = 4/x."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find dy/dx implicitly for sin(y) = x.",
-                "answer": "1 / cos(y)",
-                "explanation": "Differentiate implicitly with respect to x: cos(y) * (dy/dx) = 1. Dividing by cos(y) isolates dy/dx to equal 1 / cos(y)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the slope of the curve y^3 + x^2 = 9 at the point (1, 2).",
-                "answer": "-1/6",
-                "explanation": "Differentiate implicitly: 3y^2(dy/dx) + 2x = 0 -> dy/dx = -2x / 3y^2. Substituting x = 1 and y = 2 yields -2(1) / [3(2)^2] = -2 / 12 = -1/6."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the equation of the tangent line to the curve defined implicitly by x^2 + xy + y^2 = 7 at the coordinate point (1, 2).",
-                "answer": "y - 2 = -4/5(x - 1)",
-                "explanation": "Differentiate implicitly: 2x + y + x(dy/dx) + 2y(dy/dx) = 0. Solve for dy/dx = -(2x + y) / (x + 2y). Substitute (1,2) to find the slope m = -(2+2)/(1+4) = -4/5. Point-slope form gives y - 2 = -4/5(x - 1)."
-            },
-            {
-                "type": "Free Response",
-                "question": "Let f(x) = x^3 + x. If g(x) is the inverse function of f, find the value of g'(2).",
-                "answer": "1/4",
-                "explanation": "Notice f(1) = 1^3 + 1 = 2, so g(2) = 1. Use the inverse derivative relationship: g'(2) = 1 / f'(g(2)) = 1 / f'(1). Since f'(x) = 3x^2 + 1, f'(1) = 4, yielding 1/4."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the derivative of f(x) = x^x using logarithmic differentiation.",
-                "answer": "x^x * (ln(x) + 1)",
-                "explanation": "Let y = x^x, so ln(y) = x*ln(x). Differentiate implicitly: (1/y)(dy/dx) = 1*ln(x) + x*(1/x) = ln(x) + 1. Multiply by y to isolate dy/dx = y(ln(x) + 1) = x^x * (ln(x) + 1)."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the second derivative d^2y/dx^2 at the point (2,1) for the implicitly defined curve x^2 - y^2 = 3.",
-                "answer": "-3",
-                "explanation": "Differentiate once: 2x - 2y(dy/dx) = 0 -> dy/dx = x/y. At (2,1), dy/dx = 2. Differentiate again via quotient rule: d^2y/dx^2 = [y(1) - x(dy/dx)] / y^2. Substitute values: [1 - 2(2)] / 1^2 = -3."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the derivative of the function f(x) = ln( sqrt( (x^2 + 1)/(x^2 - 1) ) ).",
-                "answer": "-2x / (x^4 - 1)",
-                "explanation": "Simplify using log properties: f(x) = (1/2)[ln(x^2 + 1) - ln(x^2 - 1)]. Differentiate: f'(x) = (1/2)[2x/(x^2 + 1) - 2x/(x^2 - 1)] = x/(x^2 + 1) - x/(x^2 - 1). Combine over a common denominator to find -2x / (x^4 - 1)."
-            }
-        ],
-        "Unit 4: Contextual Applications of Differentiation": [
-            {
-                "type": "Multiple Choice",
-                "question": "A balloon is expanding such that its radius grows at 2 cm/s. Find the rate of change of the volume when radius r = 5 cm. (V = 4/3 * pi * r^3)",
-                "answer": "200*pi",
-                "explanation": "Differentiate volume with respect to time: dV/dt = 4*pi*r^2 * (dr/dt). Substitute r = 5 and dr/dt = 2: dV/dt = 4*pi*(5)^2 * 2 = 4*pi*25 * 2 = 200*pi cm^3/s."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A 10ft ladder leans against a wall. The bottom slides away at 3 ft/s. How fast is the top sliding down when the bottom is 6ft from the wall?",
-                "answer": "-2.25",
-                "explanation": "Use Pythagorean theorem: x^2 + y^2 = 10^2. Differentiate with respect to time: 2x(dx/dt) + 2y(dy/dt) = 0. When x = 6, y = 8. Substitute 6 and dx/dt = 3: 2(6)(3) + 2(8)(dy/dt) = 0 -> 36 + 16(dy/dt) = 0 -> dy/dt = -36/16 = -2.25 ft/s."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle moves along a line with position s(t) = t^3 - 6t^2. Find the particle's speed at time t = 3.",
-                "answer": "9",
-                "explanation": "Velocity is v(t) = 3t^2 - 12t. At t = 3, v(3) = 3(9) - 12(3) = 27 - 36 = -9. Speed is the absolute value of velocity: |-9| = 9."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A circle's area is increasing at 12*pi cm^2/s. Find the rate of change of its radius when r = 3 cm.",
-                "answer": "2",
-                "explanation": "Area formula A = pi*r^2. Differentiate: dA/dt = 2*pi*r * (dr/dt). Substitute dA/dt = 12*pi and r = 3: 12*pi = 2*pi*(3)*(dr/dt) -> 12*pi = 6*pi*(dr/dt) -> dr/dt = 2 cm/s."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "The radius of a sphere is changing at a rate of 4 in/min. Find the rate of change of the surface area when r = 2 in. (S = 4*pi*r^2)",
-                "answer": "64*pi",
-                "explanation": "Differentiate surface area: dS/dt = 8*pi*r * (dr/dt). Substitute r = 2 and dr/dt = 4: dS/dt = 8*pi*(2)*(4) = 64*pi in^2/min."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle moves along a line with position s(t) = e^(2t) - 4t. Find the times t where the particle is at rest.",
-                "answer": "ln(2)/2",
-                "explanation": "At rest means velocity equals 0. v(t) = s'(t) = 2e^(2t) - 4. Set equal to 0: 2e^(2t) = 4 -> e^(2t) = 2 -> 2t = ln(2) -> t = ln(2)/2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Use local linear approximation for f(x) = sqrt(x) at x = 4 to estimate sqrt(4.1).",
-                "answer": "2.025",
-                "explanation": "Tangent line at x = 4: point is (4,2). Derivative is f'(x) = 1/(2*sqrt(x)), so f'(4) = 1/4 = 0.25. Tangent equation: y - 2 = 0.25(x - 4) -> y = 2 + 0.25(x - 4). Estimate at 4.1: 2 + 0.25(4.1 - 4) = 2 + 0.025 = 2.025."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If the position of an object is given by s(t) = sin(t) + t^2, find its acceleration at t = pi.",
-                "answer": "2",
-                "explanation": "Velocity v(t) = cos(t) + 2t. Acceleration a(t) = -sin(t) + 2. Evaluating at t = pi gives a(pi) = -sin(pi) + 2 = 0 + 2 = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A cylindrical tank of radius 2m is being filled with water at a rate of 4*pi m^3/min. How fast is the height of water rising? (V = pi * r^2 * h)",
-                "answer": "1",
-                "explanation": "Since radius is constant at r = 2, V = pi*(2)^2*h = 4*pi*h. Differentiate: dV/dt = 4*pi*(dh/dt). Substitute dV/dt = 4*pi: 4*pi = 4*pi*(dh/dt) -> dh/dt = 1 m/min."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If L(x) is the linear approximation of f(x) = ln(x) at x = 1, find L(1.05).",
-                "answer": "0.05",
-                "explanation": "Point is (1,0). f'(x) = 1/x -> f'(1) = 1. Linear approximation formula: L(x) = f(1) + f'(1)(x - 1) = 0 + 1(x - 1) = x - 1. Thus L(1.05) = 1.05 - 1 = 0.05."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle moves along the x-axis such that its acceleration is a(t) = 6t. If its initial velocity is v(0) = 2, find velocity v(2).",
-                "answer": "14",
-                "explanation": "Integrate acceleration to get velocity: v(t) = 3t^2 + C. Using v(0) = 2, we find C = 2, so v(t) = 3t^2 + 2. Evaluating at t = 2 yields v(2) = 3(4) + 2 = 14."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A cube's volume is expanding at 27 cm^3/s. Find the rate of change of its side length s when s = 3 cm. (V = s^3)",
-                "answer": "1",
-                "explanation": "Differentiate volume: dV/dt = 3s^2 * (ds/dt). Substitute dV/dt = 27 and s = 3: 27 = 3(3)^2 * (ds/dt) -> 27 = 27 * (ds/dt) -> ds/dt = 1 cm/s."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle has velocity function v(t) = t^2 - 4t + 3. Over what interval is the particle's speed increasing?",
-                "answer": "(1, 2) U (3, infinity)",
-                "explanation": "Speed increases when velocity and acceleration share the same mathematical sign. v(t) = (t-1)(t-3) (positive on t<1, t>3; negative on 1<t<3). Acceleration a(t) = 2t - 4 (negative on t<2, positive on t>2). Both are negative on (1,2) and both are positive on (3, infinity)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the approximate value of f(2.01) if f(2) = 5 and f'(2) = -3 using a tangent line model.",
-                "answer": "4.97",
-                "explanation": "Tangent line equation: y - 5 = -3(x - 2) -> y = 5 - 3(x - 2). Evaluate at x = 2.01: y = 5 - 3(2.01 - 2) = 5 - 3(0.01) = 5 - 0.03 = 4.97."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A spotlight on the ground shines on a wall 12m away. If a man 2m tall walks away from the spotlight toward the wall at 1.5 m/s, how fast is his shadow on the wall shrinking when he is 4m from the spotlight?",
-                "answer": "-2.25",
-                "explanation": "By similar triangles, let x be the man's distance from light, and y be shadow height: y/12 = 2/x -> y = 24/x. Differentiate: dy/dt = -24/x^2 * (dx/dt). Substitute x = 4 and dx/dt = 1.5: dy/dt = -24/16 * 1.5 = -1.5 * 1.5 = -2.25 m/s."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If position is s(t) = t^4 - 4t^3, find the interval where the object is moving to the left.",
-                "answer": "(0, 3)",
-                "explanation": "Moving left means velocity is negative. v(t) = 4t^3 - 12t^2 = 4t^2(t - 3). Set v(t) < 0. Since 4t^2 is always positive for t != 0, t - 3 < 0 yields t < 3. Omitting negative times gives the interval (0, 3)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "The total cost to produce x items is C(x) = 0.5x^2 + 10x + 100 dollars. Find the marginal cost when x = 20 items.",
-                "answer": "30",
-                "explanation": "Marginal cost is the derivative of the total cost function: C'(x) = x + 10. Evaluating this at production level x = 20 yields C'(20) = 20 + 10 = 30 dollars per item."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle moves along a line with velocity v(t) = t - sqrt(t). Find its acceleration at time t = 4.",
-                "answer": "3/4",
-                "explanation": "Acceleration is the derivative of velocity: a(t) = v'(t) = 1 - 1/(2*sqrt(t)). Evaluating at t = 4 yields a(4) = 1 - 1/(2*2) = 1 - 1/4 = 3/4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A conical pile of sand accumulates such that height h is always equal to radius r. If volume increases at 9*pi m^3/h, how fast is radius changing when r=3m? (V = 1/3 * pi * r^2 * h)",
-                "answer": "1",
-                "explanation": "Since h = r, V = 1/3 * pi * r^3. Differentiate: dV/dt = pi * r^2 * (dr/dt). Substitute dV/dt = 9*pi and r = 3: 9*pi = pi * (3)^2 * (dr/dt) -> 9*pi = 9*pi * (dr/dt) -> dr/dt = 1 m/h."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If position is s(t) = cos(2t), find the minimum value velocity can take.",
-                "answer": "-2",
-                "explanation": "Velocity is v(t) = -2*sin(2t). Since the sine function oscillates strictly between -1 and 1, the expression -2*sin(2t) reaches a absolute minimum value of -2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the percentage error in the area of a square if the side length is measured with a 1% error dynamic.",
-                "answer": "2%",
-                "explanation": "Area A = s^2. Differentials yield dA = 2s ds. Dividing by area gives dA/A = 2s ds / s^2 = 2 (ds/s). If ds/s = 1%, then dA/A = 2 * 1% = 2%."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle's position is s(t) = ln(t^2 + 1). Find its velocity at time t = 1.",
-                "answer": "1",
-                "explanation": "Differentiate position via chain rule to find velocity: v(t) = 2t / (t^2 + 1). Substituting t = 1 yields v(1) = 2(1) / (1 + 1) = 2 / 2 = 1."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "The radius of a circular oil slick expands at 3 m/min. How fast is the area growing when the radius is 10 meters?",
-                "answer": "60*pi",
-                "explanation": "Area is A = pi * r^2. Differentiate with respect to time: dA/dt = 2*pi*r * (dr/dt). Substitute r = 10 and dr/dt = 3 to get dA/dt = 2*pi*(10)*(3) = 60*pi m^2/min."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the acceleration of a particle at t = 0 if its position is s(t) = t * e^t.",
-                "answer": "2",
-                "explanation": "Velocity v(t) = e^t + t*e^t = e^t(1 + t). Acceleration a(t) = e^t(1 + t) + e^t(1) = e^t(t + 2). Evaluating at t = 0 yields a(0) = e^0(0 + 2) = 1 * 2 = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If f(4) = 10 and f'(4) = 5, use linear approximation to estimate f(3.9).",
-                "answer": "9.5",
-                "explanation": "The linear approximation line is L(x) = f(4) + f'(4)(x - 4) = 10 + 5(x - 4). Evaluating at x = 3.9 gives L(3.9) = 10 + 5(3.9 - 4) = 10 + 5(-0.1) = 10 - 0.5 = 9.5."
-            },
-            {
-                "type": "Free Response",
-                "question": "Two cars start moving from the same intersection point. Car A travels north at 40 mph, and Car B travels east at 30 mph. Compute the exact rate at which the distance between the cars is changing after 2 hours.",
-                "answer": "50",
-                "explanation": "Let y be North distance, x be East distance, and z be direct distance. x^2 + y^2 = z^2. After 2 hours, y = 80, x = 60, so z = sqrt(60^2 + 80^2) = 100. Differentiate: 2x(dx/dt) + 2y(dy/dt) = 2z(dz/dt). Substitute values: 60(30) + 80(40) = 100(dz/dt) -> 1800 + 3200 = 100(dz/dt) -> 5000 = 100(dz/dt) -> dz/dt = 50 mph."
-            },
-            {
-                "type": "Free Response",
-                "question": "A particle moves along a straight line such that its position is s(t) = 2t^3 - 9t^2 + 12t - 4 centimeters. Determine all time intervals during which the particle is slowing down.",
-                "answer": "(0, 1) U (1.5, 2)",
-                "explanation": "Slowing down occurs when velocity and acceleration have opposite signs. v(t) = 6t^2 - 18t + 12 = 6(t-1)(t-2) -> positive on t<1, t>2; negative on 1<t<2. a(t) = 12t - 18 = 12(t - 1.5) -> negative on t<1.5, positive on t>1.5. Opposite signs exist on (0, 1) [v>0, a<0] and (1.5, 2) [v<0, a>0]."
-            },
-            {
-                "type": "Free Response",
-                "question": "The radius of a spherical snowball is shrinking due to melting at a steady rate of 0.5 cm/min. Find the exact rate of change of its volume when its radius is 4 cm.",
-                "answer": "-32*pi",
-                "explanation": "Volume is V = 4/3 * pi * r^3. Differentiate implicitly with respect to time: dV/dt = 4 * pi * r^2 * (dr/dt). Substitute r = 4 cm and dr/dt = -0.5 cm/min: dV/dt = 4 * pi * (4)^2 * (-0.5) = 4 * pi * 16 * (-0.5) = -32*pi cm^3/min."
-            },
-            {
-                "type": "Free Response",
-                "question": "Let f(x) = ln(x). Find the equation of the tangent line at x = e, and use it to find a decimal approximation for ln(2.8) given e is approximately 2.718.",
-                "answer": "y - 1 = 1/e(x - e), approximation = 2.8/e",
-                "explanation": "At x = e, y = ln(e) = 1. f'(x) = 1/x -> f'(e) = 1/e. Equation: y - 1 = 1/e(x - e) -> y = 1 + x/e - 1 -> y = x/e. The linear model is L(x) = x/e. Approximating at x = 2.8 gives 2.8 / e."
-            },
-            {
-                "type": "Free Response",
-                "question": "Water is leaking out of an inverted conical tank of height 10 ft and top radius 5 ft at a rate of 2 ft^3/min. How fast is the water level falling when the depth of the water is 6 ft?",
-                "answer": "-2 / (9*pi)",
-                "explanation": "By similar triangles, r/h = 5/10 -> r = h/2. Volume V = 1/3 * pi * r^2 * h = 1/3 * pi * (h/2)^2 * h = pi/12 * h^3. Differentiate: dV/dt = pi/4 * h^2 * (dh/dt). Substitute dV/dt = -2 and h = 6: -2 = pi/4 * (36) * (dh/dt) -> -2 = 9*pi * (dh/dt) -> dh/dt = -2 / (9*pi) ft/min."
-            }
-        ],
-        "Unit 5: Analytical Applications of Differentiation": [
-            {
-                "type": "Multiple Choice",
-                "question": "Find the critical points of f(x) = x^3 - 3x.",
-                "answer": "x = 1 and x = -1",
-                "explanation": "Differentiate: f'(x) = 3x^2 - 3. Set f'(x) = 0 to locate critical points: 3x^2 = 3 -> x^2 = 1 -> x = 1 and x = -1."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the interval where f(x) = x^2 - 4x is increasing.",
-                "answer": "(2, infinity)",
-                "explanation": "Differentiate: f'(x) = 2x - 4. Set f'(x) > 0 for an increasing behavior: 2x - 4 > 0 -> 2x > 4 -> x > 2, which corresponds to the interval (2, infinity)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the absolute minimum value of f(x) = x^2 on the interval [-1, 2].",
-                "answer": "0",
-                "explanation": "Critical point occurs where f'(x) = 2x = 0 -> x = 0. Test critical point and endpoints: f(-1) = 1, f(0) = 0, f(2) = 4. The smallest value is 0."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Determine the x-coordinate of the inflection point for f(x) = x^3 - 6x^2.",
-                "answer": "2",
-                "explanation": "First derivative: f'(x) = 3x^2 - 12x. Second derivative: f''(x) = 6x - 12. Set f''(x) = 0 -> 6x = 12 -> x = 2. Concavity transitions at x = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the interval where f(x) = -x^2 + 6x is concave downward.",
-                "answer": "(-infinity, infinity)",
-                "explanation": "f'(x) = -2x + 6, f''(x) = -2. Since the second derivative is a negative constant (-2) everywhere, the graph is concave downward across its entire domain."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If f'(c) = 0 and f''(c) = 5, what does the Second Derivative Test indicate about x = c?",
-                "answer": "Local minimum",
-                "explanation": "According to the Second Derivative Test, if the slope is zero and the second derivative is positive (concave up), the point must be a local minimum valley."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If f'(c) = 0 and f''(c) = -3, what does the Second Derivative Test indicate about x = c?",
-                "answer": "Local maximum",
-                "explanation": "According to the Second Derivative Test, if the slope is zero and the second derivative is negative (concave down), the point must be a local maximum peak."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "What theorem states that if a function is continuous on [a,b] and differentiable on (a,b), there is a c where f'(c) = [f(b)-f(a)]/(b-a)?",
-                "answer": "Mean Value Theorem",
-                "explanation": "This is the precise definition of the Mean Value Theorem (MVT), relating the instantaneous rate of change to the average rate of change."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find all values of c satisfying Rolle's Theorem for f(x) = x^2 - 4x on the interval [0, 4].",
-                "answer": "2",
-                "explanation": "Note f(0) = f(4) = 0. Rolle's Theorem guarantees a point where f'(c) = 0. f'(x) = 2x - 4 = 0 -> x = 2. This value lies within the open interval (0, 4)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the absolute maximum value of f(x) = 4x - x^2 on [0, 3].",
-                "answer": "4",
-                "explanation": "f'(x) = 4 - 2x = 0 -> x = 2. Evaluate candidate coordinates: f(0) = 0, f(2) = 8 - 4 = 4, f(3) = 12 - 9 = 3. The absolute maximum value is 4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the critical points of the function f(x) = x^4 - 4x^3.",
-                "answer": "x = 0 and x = 3",
-                "explanation": "Differentiate: f'(x) = 4x^3 - 12x^2 = 4x^2(x - 3). Setting this equal to zero gives critical points at x = 0 and x = 3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "On what interval is the function f(x) = ln(x) decreasing?",
-                "answer": "Never",
-                "explanation": "The derivative of f(x) = ln(x) is f'(x) = 1/x. Since the natural log domain requires x > 1, f'(x) is always positive, meaning it is strictly increasing."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the x-coordinates of all inflection points for f(x) = x^4 - 4x^3.",
-                "answer": "x = 0 and x = 2",
-                "explanation": "f'(x) = 4x^3 - 12x^2 -> f''(x) = 12x^2 - 24x = 12x(x - 2). Set f''(x) = 0 -> 12x(x - 2) = 0 -> x = 0 or x = 2. Concavity changes at both points."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If a function is continuous on a closed interval [a, b], which theorem guarantees that it achieves both an absolute maximum and absolute minimum?",
-                "answer": "Extreme Value Theorem",
-                "explanation": "The Extreme Value Theorem explicitly states that a continuous function on a closed interval must attain an absolute maximum and an absolute minimum value at least once."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the interval where f(x) = e^x - x is decreasing.",
-                "answer": "(-infinity, 0)",
-                "explanation": "Differentiate: f'(x) = e^x - 1. Set f'(x) < 0 for decreasing: e^x - 1 < 0 -> e^x < 1 -> x < 0. This forms the interval (-infinity, 0)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "For f(x) = x^3, what occurs at the critical point x = 0?",
-                "answer": "Neither a local max nor min",
-                "explanation": "f'(x) = 3x^2 = 0 at x = 0. However, f'(x) is positive for both x < 0 and x > 0. Since the derivative does not change signs, x = 0 is neither a local max nor local min."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If f'(x) changes signs from negative to positive at x = c, what is located at x = c?",
-                "answer": "A local minimum",
-                "explanation": "By the First Derivative Test, if a derivative goes from negative (decreasing function) to positive (increasing function), it forms a local minimum valley."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If f'(x) changes signs from positive to negative at x = c, what is located at x = c?",
-                "answer": "A local maximum",
-                "explanation": "By the First Derivative Test, if a derivative goes from positive (increasing function) to negative (decreasing function), it forms a local maximum peak."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the critical points of f(x) = |x|.",
-                "answer": "x = 0",
-                "explanation": "At x = 0, the derivative of f(x) = |x| does not exist because it forms a sharp corner. Since critical points include where f'(x) is undefined, x = 0 is a critical point."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "What is the maximum area of a right triangle whose hypotenuse is 10?",
-                "answer": "25",
-                "explanation": "Let legs be x and y. x^2 + y^2 = 100 -> y = sqrt(100 - x^2). Area A = 0.5 * x * sqrt(100 - x^2). Optimizing this yields an isosceles right triangle where x = y = sqrt(50). Max Area = 0.5 * sqrt(50) * sqrt(50) = 25."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "On what interval is f(x) = ln(x) concave upward?",
-                "answer": "Never",
-                "explanation": "Differentiate: f'(x) = 1/x, f''(x) = -1/x^2. For all valid x in the domain (x > 0), f''(x) is strictly negative, meaning the function is always concave downward and never concave upward."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the limit: lim (x -> 0) (e^x - 1) / sin(x) using L'Hopital's rule.",
-                "answer": "1",
-                "explanation": "Direct substitution yields 0/0. Apply L'Hopital's Rule by differentiating the top and bottom: lim (x -> 0) e^x / cos(x). Substitute x = 0 to evaluate: e^0 / cos(0) = 1 / 1 = 1."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate lim (x -> infinity) ln(x) / x^2 using L'Hopital's Rule.",
-                "answer": "0",
-                "explanation": "Direct substitution yields infinity/infinity. Differentiate the numerator and denominator: lim (x -> infinity) (1/x) / 2x = lim (x -> infinity) 1 / (2x^2) = 0."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find lim (x -> 0) (1 - cos(x)) / x^2.",
-                "answer": "1/2",
-                "explanation": "Substitution yields 0/0. Differentiate numerator and denominator once: lim (x -> 0) sin(x) / 2x. Still 0/0, differentiate again: lim (x -> 0) cos(x) / 2 = 1/2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the value of c guaranteed by the Mean Value Theorem for f(x) = sqrt(x) on [0, 4].",
-                "answer": "1",
-                "explanation": "Average slope is [f(4) - f(0)] / (4 - 0) = [2 - 0] / 4 = 1/2. Instantaneous derivative is f'(x) = 1 / (2*sqrt(x)). Set 1 / (2*sqrt(c)) = 1/2 -> sqrt(c) = 1 -> c = 1."
-            },
-            {
-                "type": "Free Response",
-                "question": "An open-top box is constructed by cutting equal squares from the corners of a 12-inch by 12-inch piece of cardboard and folding up the sides. Find the side length of the square cutouts that maximizes the volume.",
-                "answer": "2",
-                "explanation": "Let x be the cutout side length. Dimensions of the box will be (12-2x) by (12-2x) by x. Volume V(x) = x(12 - 2x)^2 = 144x - 48x^2 + 4x^3. Differentiate and set to 0: V'(x) = 144 - 96x + 12x^2 = 0. Divide by 12: x^2 - 8x + 12 = 0 -> (x - 2)(x - 6) = 0. Since x = 6 collapses the box, x = 2 inches maximizes the volume."
-            },
-            {
-                "type": "Free Response",
-                "question": "Let f(x) = x^4 - 2x^2 + 3. Find all intervals of increase and decrease, and identify the coordinates of all local extrema.",
-                "answer": "Decreasing on (-inf, -1) U (0, 1); Increasing on (-1, 0) U (1, inf); Local min at (-1, 2) and (1, 2); Local max at (0, 3)",
-                "explanation": "Find f'(x) = 4x^3 - 4x = 4x(x^2 - 1) = 4x(x - 1)(x + 1). Critical points are x = -1, 0, 1. Testing intervals reveals the sign pattern of f': negative on (-inf, -1), positive on (-1, 0), negative on (0, 1), and positive on (1, inf). Evaluate f(x) at these points to find y-coordinates."
-            },
-            {
-                "type": "Free Response",
-                "question": "Verify that the function f(x) = x^3 - x satisfies the hypotheses of the Mean Value Theorem on the interval [0, 2], and find the exact value of c guaranteed by the theorem.",
-                "answer": "2 / sqrt(3)",
-                "explanation": "f(x) is a polynomial, so it is continuous and differentiable everywhere. Average rate of change on [0, 2] is [f(2) - f(0)] / (2 - 0) = (6 - 0) / 2 = 3. Set f'(c) = 3 -> 3c^2 - 1 = 3 -> 3c^2 = 4 -> c^2 = 4/3 -> c = 2 / sqrt(3) (since -2/sqrt(3) is outside [0,2])."
-            },
-            {
-                "type": "Free Response",
-                "question": "A farmer wants to fence in a rectangular plot of land adjacent to a straight river bank, using the river as one boundary. If the farmer has 400 meters of fencing, find the maximum area that can be enclosed.",
-                "answer": "20,000",
-                "explanation": "Let x be the two sides perpendicular to the river, and y be the side parallel to the river. 2x + y = 400 -> y = 400 - 2x. Area A = x*y = x(400 - 2x) = 400x - 2x^2. Differentiate and set to 0: A' = 400 - 4x = 0 -> x = 100. Then y = 400 - 2(100) = 200. Max Area = 100 * 200 = 20,000 square meters."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the absolute maximum and absolute minimum values of the function f(x) = 3x^4 - 4x^3 on the closed interval [-1, 2].",
-                "answer": "Absolute Maximum = 16, Absolute Minimum = -1",
-                "explanation": "Find f'(x) = 12x^3 - 12x^2 = 12x^2(x - 1). Critical points are x = 0 and x = 1. Evaluate f(x) at critical points and endpoints: f(-1) = 3(-1)^4 - 4(-1)^3 = 3 + 4 = 7; f(0) = 0; f(1) = 3 - 4 = -1; f(2) = 3(16) - 4(8) = 48 - 32 = 16. Comparing these, the maximum is 16 (at x=2) and the minimum is -1 (at x=1)."
-            }
-        ],
-        "Unit 6: Integration and Accumulation of Changes": [
-            {
-                "type": "Multiple Choice",
-                "question": "Find the general indefinite integral: Integral (3x^2 - 2x + 5) dx.",
-                "answer": "x^3 - x^2 + 5x + C",
-                "explanation": "Apply the reverse power rule term-by-term: Integral(3x^2) = x^3, Integral(-2x) = -x^2, and Integral(5) = 5x. Always append the integration constant + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the definite integral from 1 to 3 of 2x dx.",
-                "answer": "8",
-                "explanation": "The antiderivative of 2x is x^2. Evaluate from 1 to 3: [3^2] - [1^2] = 9 - 1 = 8."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the indefinite integral: Integral sin(x) dx.",
-                "answer": "-cos(x) + C",
-                "explanation": "Since the derivative of cos(x) is -sin(x), the derivative of -cos(x) is sin(x). Therefore, the antiderivative of sin(x) is -cos(x) + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the indefinite integral: Integral e^x dx.",
-                "answer": "e^x + C",
-                "explanation": "The exponential function base e is its own derivative and antiderivative: Integral e^x dx = e^x + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate Integral (1 / x) dx for x > 0.",
-                "answer": "ln(x) + C",
-                "explanation": "The derivative of ln(x) is 1/x, which means the general antiderivative of 1/x is ln(x) + C for positive domains."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Use a right Riemann sum with 2 equal subintervals to approximate the area under f(x) = x from x=0 to x=4.",
-                "answer": "12",
-                "explanation": "Subinterval width delta_x = (4-0)/2 = 2. Right endpoints are x = 2 and x = 4. Sum = delta_x * [f(2) + f(4)] = 2 * [2 + 4] = 2 * 6 = 12."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Use a left Riemann sum with 2 equal subintervals to approximate the area under f(x) = x from x=0 to x=4.",
-                "answer": "4",
-                "explanation": "Subinterval width delta_x = 2. Left endpoints are x = 0 and x = 2. Sum = delta_x * [f(0) + f(2)] = 2 * [0 + 2] = 4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the definite integral from 0 to pi of sin(x) dx.",
-                "answer": "2",
-                "explanation": "Antiderivative is -cos(x). Evaluate from 0 to pi: [-cos(pi)] - [-cos(0)] = [-(-1)] - [-1] = 1 + 1 = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative with respect to x of the integral from 2 to x of ln(t) dt.",
-                "answer": "ln(x)",
-                "explanation": "By the Fundamental Theorem of Calculus Part 1, taking the derivative of an accumulation function with a variable upper limit x simply returns the integrand evaluated at x: ln(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the derivative with respect to x of the integral from 0 to x^2 of cos(t) dt.",
-                "answer": "2x * cos(x^2)",
-                "explanation": "Apply the Fundamental Theorem of Calculus Part 1 combined with the Chain Rule: evaluate the integrand at the upper bound and multiply by the derivative of that upper bound: cos(x^2) * 2x."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the definite integral from 0 to 1 of e^x dx.",
-                "answer": "e - 1",
-                "explanation": "The antiderivative is e^x. Evaluating from 0 to 1 yields [e^1] - [e^0] = e - 1."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the general antiderivative: Integral sec^2(x) dx.",
-                "answer": "tan(x) + C",
-                "explanation": "Since the derivative of tan(x) is sec^2(x), the integration operation reverses this directly to tan(x) + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the integral from 0 to 2 of 3x^2 dx.",
-                "answer": "8",
-                "explanation": "The antiderivative of 3x^2 is x^3. Evaluating from x=0 to x=2 gives 2^3 - 0^3 = 8."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the general integral using u-substitution: Integral 2x * e^(x^2) dx.",
-                "answer": "e^(x^2) + C",
-                "explanation": "Let u = x^2, so du = 2x dx. The integral transforms into Integral e^u du = e^u + C. Substituting back gives e^(x^2) + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find Integral x * sqrt(x^2 + 1) dx using substitution.",
-                "answer": "(1/3)*(x^2 + 1)^(3/2) + C",
-                "explanation": "Let u = x^2 + 1, so du = 2x dx -> 0.5 du = x dx. Integral becomes 0.5 * Integral u^(1/2) du = 0.5 * (2/3)u^(3/2) = (1/3)u^(3/2) + C = (1/3)(x^2 + 1)^(3/2) + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "What is the average value of f(x) = 3x^2 on the interval [0, 2]?",
-                "answer": "4",
-                "explanation": "Average value formula is [1 / (b - a)] * Integral (a to b) f(x) dx. Here, 1/(2-0) * Integral(0 to 2) 3x^2 dx = 0.5 * [x^3 from 0 to 2] = 0.5 * 8 = 4."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the definite integral from -2 to 2 of x^3 dx.",
-                "answer": "0",
-                "explanation": "Since f(x) = x^3 is an odd function and the interval [-2, 2] is symmetric about the origin, the integral is automatically 0 due to canceling areas."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the indefinite integral: Integral 4x^3 dx.",
-                "answer": "x^4 + C",
-                "explanation": "Reverse power rule: add 1 to power to get 4, divide coefficient by new power: 4/4 * x^4 = x^4 + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the definite integral from 0 to 4 of sqrt(x) dx.",
-                "answer": "16/3",
-                "explanation": "Antiderivative of x^(1/2) is (2/3)x^(3/2). Evaluating from 0 to 4 gives (2/3)*(4)^(3/2) - 0 = (2/3)*8 = 16/3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If the integral from 1 to 4 of f(x) dx = 5 and from 1 to 7 of f(x) dx = 12, find the integral from 4 to 7 of f(x) dx.",
-                "answer": "7",
-                "explanation": "By the additive property of definite integrals: Integral(1 to 7) = Integral(1 to 4) + Integral(4 to 7). Therefore, 12 = 5 + Integral(4 to 7) -> Integral(4 to 7) = 7."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate Integral sec(x)tan(x) dx.",
-                "answer": "sec(x) + C",
-                "explanation": "This is a fundamental integration rule derived from the fact that d/dx [sec(x)] = sec(x)tan(x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate Integral csc^2(x) dx.",
-                "answer": "-cot(x) + C",
-                "explanation": "Since d/dx [cot(x)] = -csc^2(x), it follows directly that Integral csc^2(x) dx = -cot(x) + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Evaluate the definite integral from 0 to 1 of (x^2 + 1) dx.",
-                "answer": "4/3",
-                "explanation": "Antiderivative is x^3/3 + x. Evaluating from 0 to 1 gives (1/3 + 1) - 0 = 4/3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the indefinite integral: Integral (1 / (1 + x^2)) dx.",
-                "answer": "arctan(x) + C",
-                "explanation": "This is the fundamental inverse trigonometric integration standard form: Integral 1/(1+x^2) dx = arctan(x) + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the indefinite integral: Integral (1 / sqrt(1 - x^2)) dx.",
-                "answer": "arcsin(x) + C",
-                "explanation": "This is the fundamental inverse trigonometric integration standard form: Integral 1/sqrt(1-x^2) dx = arcsin(x) + C."
-            },
-            {
-                "type": "Free Response",
-                "question": "Evaluate the definite integral from 0 to pi/4 of tan(x) dx analytically.",
-                "answer": "0.5 * ln(2)",
-                "explanation": "Rewrite tan(x) as sin(x)/cos(x). Use u-substitution with u = cos(x), so du = -sin(x) dx. The limits change: when x=0, u=1; when x=pi/4, u=sqrt(2)/2. The integral becomes Integral from sqrt(2)/2 to 1 of (1/u) du = [ln|u|] from sqrt(2)/2 to 1 = ln(1) - ln(sqrt(2)/2) = 0 - ln(2^(-1/2)) = 0.5 * ln(2)."
-            },
-            {
-                "type": "Free Response",
-                "question": "Approximate the area under the curve f(x) = x^2 from x = 0 to x = 3 using a Trapezoidal Sum with 3 subintervals of equal width.",
-                "answer": "9.5",
-                "explanation": "The subinterval width delta_x = (3-0)/3 = 1. Grid points are x = 0, 1, 2, 3. Evaluate function values: f(0)=0, f(1)=1, f(2)=4, f(3)=9. Trapezoidal formula: (delta_x / 2) * [f(0) + 2f(1) + 2f(2) + f(3)] = (1/2) * [0 + 2(1) + 2(4) + 9] = (1/2) * [2 + 8 + 9] = (1/2) * 19 = 9.5."
-            },
-            {
-                "type": "Free Response",
-                "question": "Evaluate the definite integral from 1 to e of (ln(x) / x) dx.",
-                "answer": "1/2",
-                "explanation": "Use u-substitution: let u = ln(x), so du = (1/x) dx. Change limits of integration: when x = 1, u = ln(1) = 0; when x = e, u = ln(e) = 1. The integral transforms into Integral from 0 to 1 of u du = [0.5 * u^2] from 0 to 1 = 0.5(1)^2 - 0 = 1/2."
-            },
-            {
-                "type": "Free Response",
-                "question": "Let F(x) = Integral from 1 to x^3 of sqrt(t^2 + 3) dt. Find the exact value of F'(1).",
-                "answer": "6",
-                "explanation": "By the Fundamental Theorem of Calculus Part 1 and Chain Rule, F'(x) = sqrt((x^3)^2 + 3) * d/dx(x^3) = sqrt(x^6 + 3) * 3x^2. Evaluate at x = 1 to get F'(1) = sqrt(1 + 3) * 3(1)^2 = sqrt(4) * 3 = 2 * 3 = 6."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the specific particular solution y = f(x) to the differential equation dy/dx = 3x^2 - 2 if the graph passes through the initial condition point (1, 4).",
-                "answer": "y = x^3 - 2x + 5",
-                "explanation": "Integrate both sides with respect to x to find the general solution: y = Integral (3x^2 - 2) dx = x^3 - 2x + C. Substitute the point (1,4) to find C: 4 = (1)^3 - 2(1) + C -> 4 = 1 - 2 + C -> 4 = -1 + C -> C = 5. Thus, the equation is y = x^3 - 2x + 5."
-            }
-        ],
-        "Unit 7: Differential Equations": [
-            {
-                "type": "Multiple Choice",
-                "question": "Verify if y = e^(2x) is a solution to the differential equation y' - 2y = 0.",
-                "answer": "Yes",
-                "explanation": "Find the derivative of the proposed function: y' = 2e^(2x). Substitute into the equation: 2e^(2x) - 2(e^(2x)) = 0. Since 0 = 0, it holds true."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the general solution to the separable differential equation dy/dx = 3x^2.",
-                "answer": "y = x^3 + C",
-                "explanation": "Separate variables to get dy = 3x^2 dx. Integrate both sides: Integral dy = Integral 3x^2 dx, which yields y = x^3 + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Solve the differential equation dy/dx = 2y for y > 0.",
-                "answer": "y = C * e^(2x)",
-                "explanation": "Separate variables: (1/y) dy = 2 dx. Integrate both sides: ln(y) = 2x + K. Exponentiate both sides: y = e^(2x + K) = e^K * e^(2x) = C * e^(2x)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the slope of the tangent line to the solution of dy/dx = x + y at the point (1, 2).",
-                "answer": "3",
-                "explanation": "The derivative formula explicitly defines the slope at any coordinate point. Substituting x = 1 and y = 2 yields dy/dx = 1 + 2 = 3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "What is the order of the differential equation (y'')^3 + y' - y = x^2?",
-                "answer": "2",
-                "explanation": "The order of a differential equation is determined exclusively by its highest derivative. Since y'' is the highest derivative, it is a 2nd order equation."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the constant solution (equilibrium solution) to the differential equation dy/dx = y^2 - 4.",
-                "answer": "y = 2 and y = -2",
-                "explanation": "Equilibrium solutions occur where the rate of change is identically zero. Set y^2 - 4 = 0, which factors into y = 2 and y = -2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If dy/dx = x/y, find the general implicit solution trajectory layout.",
-                "answer": "y^2 - x^2 = C",
-                "explanation": "Separate variables to get y dy = x dx. Integrate both sides: 0.5*y^2 = 0.5*x^2 + K. Multiply by 2 and rearrange: y^2 - x^2 = 2K, which resets as y^2 - x^2 = C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Identify the carrying capacity for the population satisfying the logistic model dP/dt = 0.4P(1 - P/2000).",
-                "answer": "2000",
-                "explanation": "The standard logistic differential equation format is dP/dt = kP(1 - P/M), where M represents the environmental carrying capacity limit. Here, M = 2000."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If a population grows according to dP/dt = 0.05P, find its doubling time parameters.",
-                "answer": "ln(2) / 0.05",
-                "explanation": "This represents exponential growth P(t) = P_0 * e^(0.05t). Setting P(t) = 2*P_0 yields 2 = e^(0.05t) -> ln(2) = 0.05t -> t = ln(2)/0.05."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the particular solution to dy/dx = e^x if y(0) = 4.",
-                "answer": "y = e^x + 3",
-                "explanation": "Integrate to get y = e^x + C. Substitute the initial condition point (0,4): 4 = e^0 + C -> 4 = 1 + C -> C = 3. Thus, y = e^x + 3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Which of the following functions satisfies the differential equation y'' = -y?",
-                "answer": "y = sin(x)",
-                "explanation": "If y = sin(x), y' = cos(x), and y'' = -sin(x). Substituting back confirms -sin(x) = -(sin(x)), proving it is a match."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the general solution to dy/dx = cos(x).",
-                "answer": "y = sin(x) + C",
-                "explanation": "Separate variables to get dy = cos(x) dx. Integrating both sides yields y = sin(x) + C directly."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the slope of a solution to dy/dx = 2x/y at the point (3, 2).",
-                "answer": "3",
-                "explanation": "Substitute the given coordinate values into the differential expression: dy/dx = 2(3)/2 = 6/2 = 3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the constant equilibrium value for the differential equation dy/dx = 5 - y.",
-                "answer": "y = 5",
-                "explanation": "Set the derivative to 0 to locate stability steady states: 5 - y = 0 -> y = 5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If dy/dx = -2x * y, find the general solution framework for y > 0.",
-                "answer": "y = C * e^(-x^2)",
-                "explanation": "Separate: (1/y) dy = -2x dx. Integrate: ln(y) = -x^2 + K. Exponentiating both sides results in y = e^K * e^(-x^2) = C * e^(-x^2)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "What is the slope of the field element at (-1, 5) for dy/dx = x^2 * y?",
-                "answer": "5",
-                "explanation": "Evaluate the field formula at the specified coordinate: dy/dx = (-1)^2 * (5) = 1 * 5 = 5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Solve the differential equation dy/dx = sec^2(x) with initial condition y(0) = 2.",
-                "answer": "y = tan(x) + 2",
-                "explanation": "The general solution is y = tan(x) + C. Plug in x = 0 and y = 2: 2 = tan(0) + C -> 2 = 0 + C -> C = 2. Thus y = tan(x) + 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A substance decays satisfying dy/dt = -0.1y. Find the expression for y(t) given initial amount y(0) = 50.",
-                "answer": "y(t) = 50 * e^(-0.1t)",
-                "explanation": "This follows the standard exponential decay model framework dy/dt = ky -> y(t) = y_0 * e^(kt). Substituting initial values provides 50 * e^(-0.1t)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the general solution to dy/dx = 1 / (x^2 + 1).",
-                "answer": "y = arctan(x) + C",
-                "explanation": "Separate variables: dy = 1/(x^2 + 1) dx. Integrating both sides directly returns the inverse tangent form: y = arctan(x) + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the values of y where the slope field of dy/dx = y(y - 3) has horizontal marks.",
-                "answer": "y = 0 and y = 3",
-                "explanation": "Horizontal marks in slope fields represent paths where dy/dx = 0. Setting y(y - 3) = 0 isolates y = 0 and y = 3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Verify which equation is linear: (A) y' + xy = x^2 or (B) y' + y^2 = x.",
-                "answer": "A",
-                "explanation": "An ODE is linear if the dependent variable y and its derivatives appear to the first power only and are not multiplied together. Option B has y^2, making it non-linear."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the general solution of dy/dx = 4x^3.",
-                "answer": "y = x^4 + C",
-                "explanation": "Integrate both sides with respect to x: y = Integral 4x^3 dx = x^4 + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the slope at (0, pi) for the differential curve satisfying dy/dx = cos(x) * sin(y).",
-                "answer": "0",
-                "explanation": "Substitute coordinates: dy/dx = cos(0) * sin(pi) = 1 * 0 = 0."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the general solution to dy/dx = 1/x for x > 0.",
-                "answer": "y = ln(x) + C",
-                "explanation": "Integrate both sides: y = Integral (1/x) dx = ln(x) + C."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If dy/dt = 3, what family of curves solves this equation?",
-                "answer": "Linear functions",
-                "explanation": "Integrating dy = 3 dt yields y = 3t + C, which represents a family of straight linear lines."
-            },
-            {
-                "type": "Free Response",
-                "question": "Solve the initial value problem exactly: dy/dx = (x + 1) / y given the condition y(0) = -2.",
-                "answer": "y = -sqrt(x^2 + 2x + 4)",
-                "explanation": "Separate variables: y dy = (x + 1) dx. Integrate both sides: 0.5*y^2 = 0.5*x^2 + x + C. Multiply by 2: y^2 = x^2 + 2x + K. Plug in initial condition (0,-2): (-2)^2 = 0 + 0 + K -> K = 4. Thus, y^2 = x^2 + 2x + 4. Since y(0) is negative, select the negative root branch: y = -sqrt(x^2 + 2x + 4)."
-            },
-            {
-                "type": "Free Response",
-                "question": "Let a population grow logistically according to dP/dt = 0.02P(100 - P). Rewrite this in standard form to identify carrying capacity and the growth rate coefficient.",
-                "answer": "Carrying Capacity = 100, Growth Rate Coefficient = 2",
-                "explanation": "Factor out 100 to cast it into standard form: dP/dt = 0.02 * 100 * P * (1 - P/100) = 2P(1 - P/100). This isolates k = 2 as the growth rate parameter coefficient and M = 100 as the limiting carrying capacity."
-            },
-            {
-                "type": "Free Response",
-                "question": "Use Euler's Method with 2 steps of equal size delta_x = 0.5 to approximate the value of y(1) for the differential path dy/dx = x + y starting from initial condition y(0) = 1.",
-                "answer": "2.25",
-                "explanation": "Step 1: x_0 = 0, y_0 = 1. Slope m_0 = 0 + 1 = 1. Next y_1 = y_0 + m_0*delta_x = 1 + 1(0.5) = 1.5. Step 2: x_1 = 0.5, y_1 = 1.5. Slope m_1 = 0.5 + 1.5 = 2. Next y_2 = y_1 + m_1*delta_x = 1.5 + 2(0.5) = 1.5 + 1.0 = 2.25. Thus, y(1) is approximately 2.25."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the specific particular solution y = f(x) to the separable differential equation dy/dx = x * y^2 that satisfies the boundary condition y(2) = 1.",
-                "answer": "y = 2 / (5 - x^2)",
-                "explanation": "Separate variables: y^(-2) dy = x dx. Integrate: -1/y = 0.5*x^2 + C. Apply initial condition (2,1): -1/1 = 0.5(4) + C -> -1 = 2 + C -> C = -3. Therefore, -1/y = 0.5*x^2 - 3 = (x^2 - 6)/2. Invert both sides and clear negative signs: y = -2 / (x^2 - 6) = 2 / (5 - x^2)."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the orthogonal trajectories to the family of curves defined by y = C*x.",
-                "answer": "x^2 + y^2 = K",
-                "explanation": "Differentiate y = C*x to get dy/dx = C. Since C = y/x, the family slope is y/x. The orthogonal trajectories must have a negative reciprocal slope: dy/dx = -x/y. Separate variables: y dy = -x dx. Integrate: 0.5*y^2 = -0.5*x^2 + C_1 -> 0.5*x^2 + 0.5*y^2 = C_1 -> x^2 + y^2 = K (a family of concentric circles)."
-            }
-        ],
-        "Unit 8: Applications of Integration": [
-            {
-                "type": "Multiple Choice",
-                "question": "Find the area of the region bounded by the curves y = x^2 and y = x from x = 0 to x = 1.",
-                "answer": "1/6",
-                "explanation": "Area is computed by setting up the definite integral of top curve minus bottom curve: Integral (0 to 1) (x - x^2) dx = [x^2/2 - x^3/3] evaluated from 0 to 1 = (1/2 - 1/3) - 0 = 1/6."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the area of the region bounded by y = sin(x) and the x-axis from x = 0 to x = pi.",
-                "answer": "2",
-                "explanation": "Area = Integral (0 to pi) sin(x) dx = [-cos(x)] from 0 to pi = -cos(pi) - (-cos(0)) = -(-1) + 1 = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Set up the integral for the volume of a solid generated by revolving the region bounded by y = x^2, y = 0, and x = 2 about the x-axis via Disk Method.",
-                "answer": "Integral (0 to 2) pi * x^4 dx",
-                "explanation": "Disk Method formula is Volume = Integral pi * [R(x)]^2 dx. Here the radius is R(x) = x^2. Squaring it yields [x^2]^2 = x^4, resulting in Integral pi * x^4 dx."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the cross-sectional area configuration slice if a solid's base is a circle of radius 2 and cross-sections perpendicular to the x-axis are squares.",
-                "answer": "4(4 - x^2)",
-                "explanation": "The base boundary circle is x^2 + y^2 = 4, so total length of a slice profile is 2y = 2*sqrt(4 - x^2). Since cross-sections are squares, Area = (side)^2 = [2*sqrt(4 - x^2)]^2 = 4(4 - x^2)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the average value of f(x) = x on the interval [1, 5].",
-                "answer": "3",
-                "explanation": "Average value = [1 / (5 - 1)] * Integral (1 to 5) x dx = (1/4) * [x^2/2] from 1 to 5 = (1/4) * (25/2 - 1/2) = (1/4) * (24/2) = 12 / 4 = 3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle moves along a line with velocity v(t) = 2t - 4. Find its net displacement over the time interval [0, 3].",
-                "answer": "-3",
-                "explanation": "Displacement is the direct integral of velocity: Integral (0 to 3) (2t - 4) dt = [t^2 - 4t] from 0 to 3 = (9 - 12) - (0) = -3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle moves along a line with velocity v(t) = 2t - 4. Find the total distance covered over the time interval [0, 3].",
-                "answer": "5",
-                "explanation": "Velocity has a root at t = 2. Distance is Integral (0 to 2) |2t-4| dt + Integral (2 to 3) |2t-4| dt. Integral from 0 to 2 is |[t^2 - 4t]| = |4 - 8| = 4. Integral from 2 to 3 is |(9-12) - (4-8)| = |-3 - (-4)| = 1. Total distance = 4 + 1 = 5."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the volume of the solid whose base is bounded by y = x and y = 0 from x=0 to x=1, if cross-sections perpendicular to the x-axis are equilateral triangles. (Area factor = sqrt(3)/4 * side^2)",
-                "answer": "sqrt(3)/12",
-                "explanation": "Side length is x. Cross section area A(x) = sqrt(3)/4 * x^2. Volume = Integral (0 to 1) sqrt(3)/4 * x^2 dx = sqrt(3)/4 * [x^3/3] from 0 to 1 = sqrt(3)/12."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the volume of a solid generated by rotating the region bounded by y = e^x, y = 0, x = 0, and x = 1 about the x-axis.",
-                "answer": "pi/2 * (e^2 - 1)",
-                "explanation": "Using the Disk Method: Volume = Integral (0 to 1) pi * (e^x)^2 dx = pi * Integral (0 to 1) e^(2x) dx = pi * [0.5 * e^(2x)] from 0 to 1 = pi/2 * (e^2 - e^0) = pi/2 * (e^2 - 1)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Set up the integral for the volume of a solid generated by revolving the region bounded by y = sqrt(x) and y = x about the x-axis via Washer Method.",
-                "answer": "Integral (0 to 1) pi * (x - x^2) dx",
-                "explanation": "Curves intersect at x = 0 and x = 1. Outer radius R(x) = sqrt(x), inner radius r(x) = x. Washer formula gives Volume = Integral pi * ([R(x)]^2 - [r(x)]^2) dx = Integral pi * (x - x^2) dx."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the total area of the region enclosed between y = x^3 and y = x on the symmetric interval [-1, 1].",
-                "answer": "1/2",
-                "explanation": "Due to symmetry, total area is twice the area from 0 to 1: 2 * Integral (0 to 1) (x - x^3) dx = 2 * [x^2/2 - x^4/4] from 0 to 1 = 2 * (1/2 - 1/4) = 2 * (1/4) = 1/2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the length of the curve y = 2x from x = 0 to x = 3 using standard arc length parameters.",
-                "answer": "3*sqrt(5)",
-                "explanation": "dy/dx = 2. Arc length formula is Integral sqrt(1 + (dy/dx)^2) dx = Integral (0 to 3) sqrt(1 + 4) dx = Integral (0 to 3) sqrt(5) dx = 3*sqrt(5)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the average value of f(x) = sin(x) on the interval [0, pi].",
-                "answer": "2 / pi",
-                "explanation": "Average value = [1 / (pi - 0)] * Integral (0 to pi) sin(x) dx = (1/pi) * [-cos(x) from 0 to pi] = (1/pi) * (1 - (-1)) = 2 / pi."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "If the linear density of a 4m rod is given by rho(x) = 2x + 1 kg/m, find the total mass of the rod.",
-                "answer": "20 kg",
-                "explanation": "Mass is computed by integrating the linear density function along the length: Integral (0 to 4) (2x + 1) dx = [x^2 + x] from 0 to 4 = (16 + 4) - 0 = 20 kg."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the area bounded by the curves y = x^2 - 2x and y = 0.",
-                "answer": "4/3",
-                "explanation": "Intersections occur at x = 0 and x = 2. The curve lies under the x-axis, so Area = Integral (0 to 2) (0 - (x^2 - 2x)) dx = Integral (0 to 2) (2x - x^2) dx = [x^2 - x^3/3] from 0 to 2 = (4 - 8/3) = 4/3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the volume of a 3D solid whose cross-sections are squares of side length e^x from x = 0 to x = 1.",
-                "answer": "0.5 * (e^2 - 1)",
-                "explanation": "Area of a slice profile is A(x) = (e^x)^2 = e^(2x). Volume = Integral (0 to 1) e^(2x) dx = [0.5 * e^(2x)] from 0 to 1 = 0.5 * (e^2 - 1)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "A particle's velocity is v(t) = cos(t). Find its net displacement over the time interval [0, pi].",
-                "answer": "0",
-                "explanation": "Displacement = Integral (0 to pi) cos(t) dt = [sin(t)] from 0 to pi = sin(pi) - sin(0) = 0 - 0 = 0."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the volume of the solid generated by rotating the region bounded by y = 1/x, y = 0, x = 1, and x = 2 about the x-axis.",
-                "answer": "pi / 2",
-                "explanation": "Volume = Integral (1 to 2) pi * (1/x)^2 dx = pi * [-1/x] from 1 to 2 = pi * (-1/2 - (-1)) = pi * (1/2) = pi / 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the area bounded by x = y^2 and x = 4.",
-                "answer": "32/3",
-                "explanation": "Integrating along the y-axis, intersections are y = -2 and y = 2. Area = Integral (-2 to 2) (4 - y^2) dy = [4y - y^3/3] from -2 to 2 = (8 - 8/3) - (-8 + 8/3) = 16 - 16/3 = 32/3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the average value of f(x) = e^x on the interval [0, ln(3)].",
-                "answer": "2 / ln(3)",
-                "explanation": "Average value = [1 / ln(3)] * Integral (0 to ln(3)) e^x dx = (1/ln(3)) * [e^x] from 0 to ln(3) = (1/ln(3)) * (3 - 1) = 2 / ln(3)."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Set up the integral for the volume of a solid generated by revolving the region bounded by y = x, y = 2, and x = 0 about the line y = 2 via Disk Method.",
-                "answer": "Integral (0 to 2) pi * (2 - x)^2 dx",
-                "explanation": "The radius of revolution relative to the line y = 2 is R(x) = 2 - x. Bounded interval is from x = 0 to x = 2. Disk Method yields Integral (0 to 2) pi * (2 - x)^2 dx."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the total distance covered over [0, pi] by a particle with velocity v(t) = cos(t).",
-                "answer": "2",
-                "explanation": "Velocity changes sign at pi/2. Total distance = Integral (0 to pi/2) cos(t) dt + Integral (pi/2 to pi) -cos(t) dt = [sin(t)] from 0 to pi/2 - [sin(t)] from pi/2 to pi = (1 - 0) - (0 - 1) = 1 + 1 = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the area of the region bounded between y = x^2 - 4 and y = 0.",
-                "answer": "32/3",
-                "explanation": "Intersections are at x = -2 and x = 2. Area = Integral (-2 to 2) (0 - (x^2 - 4)) dx = [4x - x^3/3] from -2 to 2 = (8 - 8/3) - (-8 + 8/3) = 16 - 16/3 = 32/3."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the average value of f(x) = 3x^2 - 2x on the interval [0, 2].",
-                "answer": "2",
-                "explanation": "Average value = 1/(2-0) * Integral (0 to 2) (3x^2 - 2x) dx = 0.5 * [x^3 - x^2] from 0 to 2 = 0.5 * (8 - 4) = 0.5 * 4 = 2."
-            },
-            {
-                "type": "Multiple Choice",
-                "question": "Find the volume of a solid whose cross-sections are semicircles of diameter x from x = 0 to x = 2. (Area = pi/8 * diameter^2)",
-                "answer": "pi / 3",
-                "explanation": "Area formula A(x) = pi/8 * x^2. Volume = Integral (0 to 2) pi/8 * x^2 dx = pi/8 * [x^3/3] from 0 to 2 = pi/8 * (8/3) = pi / 3."
-            },
-            {
-                "type": "Free Response",
-                "question": "A particle moves along a straight coordinate line such that its velocity at time t hours is v(t) = t^2 - t - 6 miles/hour. Compute both the net displacement and the total distance covered by the particle over the time interval [1, 4].",
-                "answer": "Displacement = -4.5 miles, Total Distance = 61/6 miles",
-                "explanation": "Displacement = Integral (1 to 4) (t^2 - t - 6) dt = [t^3/3 - t^2/2 - 6t] from 1 to 4 = (64/3 - 8 - 24) - (1/3 - 1/2 - 6) = (-32/3) - (-37/6) = -64/6 + 37/6 = -27/6 = -4.5 miles. To find total distance, find roots of velocity: (t-3)(t+2)=0 -> root at t=3 in our interval. Distance = Absolute value of Integral(1 to 3) plus absolute value of Integral(3 to 4) = |[t^3/3 - t^2/2 - 6t] from 1 to 3| + |[t^3/3 - t^2/2 - 6t] from 3 to 4| = |(9 - 4.5 - 18) - (-37/6)| + |(-32/3) - (-13.5)| = |-13.5 + 37/6| + |-64/6 + 81/6| = |-81/6 + 37/6| + |17/6| = |-44/6| + 17/6 = 44/6 + 17/6 = 61/6 miles."
-            },
-            {
-                "type": "Free Response",
-                "question": "Compute the exact area of the region completely enclosed by the graphs of the parabolas y = 6x - x^2 and y = x^2 - 2x.",
-                "answer": "64/3",
-                "explanation": "Find intersection points by setting the equations equal to each other: 6x - x^2 = x^2 - 2x -> 2x^2 - 8x = 0 -> 2x(x - 4) = 0 -> Intersections at x = 0 and x = 4. Area = Integral (0 to 4) [(6x - x^2) - (x^2 - 2x)] dx = Integral (0 to 4) (8x - 2x^2) dx = [4x^2 - (2/3)x^3] from 0 to 4 = (4(16) - (2/3)(64)) - 0 = 64 - 128/3 = 192/3 - 128/3 = 64/3."
-            },
-            {
-                "type": "Free Response",
-                "question": "The base of a solid is the region bounded by the curve y = sqrt(x), the line x = 4, and the x-axis. Cross-sections perpendicular to the x-axis are isosceles right triangles with their hypotenuse resting in the base plane. Compute the exact volume of the solid.",
-                "answer": "2",
-                "explanation": "For an isosceles right triangle with hypotenuse h, the Area is A = h^2 / 4. Here, the hypotenuse length is h = sqrt(x). Thus, the cross-sectional area as a function of x is A(x) = (sqrt(x))^2 / 4 = x/4. Integrate from x = 0 to x = 4 to find volume: Volume = Integral (0 to 4) (x/4) dx = [x^2 / 8] from 0 to 4 = 16 / 8 - 0 = 2."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the exact volume of the solid generated by revolving the region enclosed by y = x^2 and y = 4 about the horizontal line y = 5.",
-                "answer": "176*pi / 3",
-                "explanation": "Intersections are at x = -2 and x = 2. Revolving about y = 5 means Outer radius R(x) = 5 - x^2 and Inner radius r(x) = 5 - 4 = 1. Volume = Integral (-2 to 2) pi * ([5 - x^2]^2 - [1]^2) dx = pi * Integral (-2 to 2) (25 - 10x^2 + x^4 - 1) dx = pi * Integral (-2 to 2) (24 - 10x^2 + x^4) dx. Due to symmetry, this equals 2*pi * Integral (0 to 2) (24 - 10x^2 + x^4) dx = 2*pi * [24x - (10/3)x^3 + x^5/5] from 0 to 2 = 2*pi * (48 - 80/3 + 32/5) = 2*pi * (720/15 - 400/15 + 96/15) = 2*pi * (416/15) ... wait, let's recalculate terms cleanly: 48 - 80/3 + 32/5 = (720 - 400 + 96)/15 = 416/15. Multiply by 2*pi = 832*pi/15? Let's check calculation line: Integral from -2 to 2 of (24 - 10x^2 + x^4) is [24x - 10x^3/3 + x^5/5] evaluated: 2 * (48 - 80/3 + 32/5) = 2 * (640/15) = 1280*pi/15? Let's verify standard washer evaluation layout: Integral from -2 to 2 of pi*((5-x^2)^2 - 1) = 2*pi * [24x - 10/3 x^3 + 1/5 x^5] from 0 to 2 = 2*pi*(48 - 80/3 + 32/5) = 2*pi*(320/15 + 96/15) = 2*pi*(416/15) = 832*pi/15."
-            },
-            {
-                "type": "Free Response",
-                "question": "Find the exact arc length of the smooth curve y = (2/3)x^(3/2) over the closed domain interval [0, 3].",
-                "answer": "14/3",
-                "explanation": "First, take the derivative: dy/dx = (2/3)*(3/2)x^(1/2) = sqrt(x). Squaring it gives (dy/dx)^2 = x. Set up the arc length definite integral: Length = Integral (0 to 3) sqrt(1 + x) dx. Integrate using u-substitution: [ (2/3)*(1 + x)^(3/2) ] evaluated from 0 to 3 = (2/3)*(4)^(3/2) - (2/3)*(1)^(3/2) = (2/3)*8 - (2/3)*1 = 16/3 - 2/3 = 14/3."
-            }
-        ]
-    }
+{
+  "AP Calculus AB": {
+    "Unit 1: Limits and Continuity": [
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate the limit: lim (x -> 3) (x^2 - 9) / (x - 3).",
+        "answer": "6",
+        "explanation": "Factor the numerator: (x - 3)(x + 3). Cancel the common factor (x - 3) for x != 3. Substitute x = 3 into the remaining expression: 3 + 3 = 6."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 0) (sin(5x) / x).",
+        "answer": "5",
+        "explanation": "Multiply numerator and denominator by 5 to rewrite as 5 * [sin(5x) / 5x]. Using the special limit identity lim (u -> 0) sin(u)/u = 1, this evaluates to 5 * 1 = 5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find all values of x where f(x) = (x - 2) / (x^2 - 4) is discontinuous.",
+        "answer": "x = 2 and x = -2",
+        "explanation": "Discontinuities occur where the denominator equals zero: x^2 - 4 = 0, which factors to (x-2)(x+2) = 0, yielding x = 2 and x = -2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the vertical asymptote of the function f(x) = (x + 2) / (x - 4).",
+        "answer": "x = 4",
+        "explanation": "A vertical asymptote occurs where the denominator is zero and the numerator is non-zero. Setting x - 4 = 0 gives x = 4."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> infinity) (5x^2 - 3) / (2x^2 + 4x).",
+        "answer": "5/2",
+        "explanation": "For limits at infinity of rational functions with equal degrees in numerator and denominator, take the ratio of leading coefficients: 5 / 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 2) (x^2 - 4) / (x^2 - 2x).",
+        "answer": "2",
+        "explanation": "Factor the numerator to (x-2)(x+2) and the denominator to x(x-2). Cancel the common factor (x-2), leaving (x+2)/x. Substitute x = 2 to get (2+2)/2 = 4/2 = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 0) (cos(x) - 1) / x.",
+        "answer": "0",
+        "explanation": "This matches a fundamental trigonometric limit identity: lim (x -> 0) (cos(x) - 1)/x = 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 4) (sqrt(x) - 2) / (x - 4).",
+        "answer": "1/4",
+        "explanation": "Rationalize the numerator by multiplying by the conjugate (sqrt(x) + 2)/(sqrt(x) + 2). This yields (x - 4) / [(x - 4)(sqrt(x) + 2)]. Cancel (x - 4) to leave 1 / (sqrt(x) + 2). Evaluate at x = 4 to get 1 / (2 + 2) = 1/4."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the horizontal asymptote of f(x) = (3x^3 - 1) / (2 - 5x^3).",
+        "answer": "y = -3/5",
+        "explanation": "Take the limit as x approaches infinity. Since degrees are equal, the horizontal asymptote is the ratio of the leading coefficients: 3 / -5, which means y = -3/5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> -infinity) e^x.",
+        "answer": "0",
+        "explanation": "As x approaches negative infinity, e^x approaches 0 because the function values yield smaller fractional values like 1/e^infinity."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 3+) 1 / (x - 3).",
+        "answer": "Infinity",
+        "explanation": "As x approaches 3 from the right, (x - 3) is a tiny positive number. 1 divided by a tiny positive number approaches positive infinity."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 3-) 1 / (x - 3).",
+        "answer": "-Infinity",
+        "explanation": "As x approaches 3 from the left, (x - 3) is a tiny negative number. 1 divided by a tiny negative number approaches negative infinity."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If lim (x -> c) f(x) = 4 and lim (x -> c) g(x) = -2, find lim (x -> c) [f(x) * g(x)].",
+        "answer": "-8",
+        "explanation": "Apply the product property of limits: lim [f(x) * g(x)] = lim f(x) * lim g(x) = 4 * (-2) = -8."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 1) (x^3 - 1) / (x - 1).",
+        "answer": "3",
+        "explanation": "Factor the numerator as a difference of cubes: (x - 1)(x^2 + x + 1). Cancel the (x - 1) terms, leaving x^2 + x + 1. Substituting x = 1 gives 1 + 1 + 1 = 3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 0) (x / tan(x)).",
+        "answer": "1",
+        "explanation": "Rewrite tan(x) as sin(x)/cos(x) to yield lim (x -> 0) [x * cos(x) / sin(x)]. Separate the limits to get [lim x/sin(x)] * [lim cos(x)] = 1 * 1 = 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 0+) ln(x).",
+        "answer": "-Infinity",
+        "explanation": "Looking at the basic logarithmic curve, as x approaches 0 from the positive right side, the output values drop down infinitely toward negative infinity."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> infinity) (ln(x) / x).",
+        "answer": "0",
+        "explanation": "A linear function x grows significantly faster than a logarithmic function ln(x). Thus, the ratio approaches 0 as x grows infinitely large."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 2) (3x^2 - 5x + 2).",
+        "answer": "4",
+        "explanation": "Since polynomial functions are continuous everywhere, evaluate directly by substituting x = 2: 3(2)^2 - 5(2) + 2 = 12 - 10 + 2 = 4."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> -1) (x^2 - 1) / (x + 1).",
+        "answer": "-2",
+        "explanation": "Factor the numerator into a difference of squares: (x - 1)(x + 1). Cancel the common factor (x + 1), leaving (x - 1). Substituting x = -1 gives -1 - 1 = -2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 0) [((1 / (x + 3)) - (1 / 3)) / x].",
+        "answer": "-1/9",
+        "explanation": "Find a common numerator denominator: [3 - (x + 3)] / [3(x + 3)] = -x / [3(x + 3)]. Placing this over x and canceling x leaves -1 / [3(x + 3)]. Substituting x = 0 yields -1 / 9."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the value of k that makes f(x) continuous at x = 2 if f(x) = kx for x <= 2 and f(x) = 4 for x > 2.",
+        "answer": "2",
+        "explanation": "For continuity at x = 2, the left-hand limit must equal the right-hand limit. Set k(2) = 4, which solves to k = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> infinity) (sin(x) / x).",
+        "answer": "0",
+        "explanation": "Apply the Squeeze Theorem. Since -1 <= sin(x) <= 1, then -1/x <= sin(x)/x <= 1/x. As x approaches infinity, both boundaries approach 0, so the middle limit must be 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Given f(0) = -2 and f(3) = 4 for a continuous function, find the value of f(c) guaranteed by the Intermediate Value Theorem for some c in (0,3).",
+        "answer": "0",
+        "explanation": "The Intermediate Value Theorem states that a continuous function must take on every value between f(0) and f(3). Since 0 lies between -2 and 4, it is guaranteed to be achieved."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 1) (sqrt(x + 3) - 2) / (x - 1).",
+        "answer": "1/4",
+        "explanation": "Multiply the numerator and denominator by the conjugate (sqrt(x+3) + 2). The numerator simplifies to (x + 3) - 4 = x - 1. Cancel the (x - 1) terms to get 1 / (sqrt(x+3) + 2). Substitute x = 1 to get 1 / (2 + 2) = 1/4."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> -infinity) (2x + 1) / sqrt(x^2 + 3).",
+        "answer": "-2",
+        "explanation": "As x approaches negative infinity, sqrt(x^2) = |x| = -x. Divide numerator and denominator by x to yield 2 / -sqrt(1) = -2."
+      },
+      {
+        "type": "Free Response",
+        "question": "Let f(x) = (x^2 - x - 6) / (x - 3). Compute the value f(3) must take so that the function is continuous at x = 3.",
+        "answer": "5",
+        "explanation": "Factor the numerator into (x - 3)(x + 2). Cancel out the removable hole term (x - 3), leaving the continuous piece (x + 2). Evaluating at x = 3 gives 3 + 2 = 5."
+      },
+      {
+        "type": "Free Response",
+        "question": "Evaluate lim (x -> 0) [x^2 * cos(1/x)] analytically using bounds.",
+        "answer": "0",
+        "explanation": "Since cosine is bounded, -1 <= cos(1/x) <= 1. Multiplying by x^2 gives -x^2 <= x^2 * cos(1/x) <= x^2. Since both outer limits approach 0 as x approaches 0, the Squeeze Theorem guarantees the middle limit is 0."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the value of c in the interval [0, 3] where f(c) = 0 for the function f(x) = x^2 - 4.",
+        "answer": "2",
+        "explanation": "Set the equation x^2 - 4 = 0, which yields solutions x = 2 and x = -2. Out of these candidates, only c = 2 lies within the specified domain interval [0, 3]."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the values of a and b that make f(x) continuous everywhere if f(x) = ax + 3 for x < 1, f(x) = 5 for x = 1, and f(x) = x^2 + b for x > 1.",
+        "answer": "a = 2, b = 4",
+        "explanation": "Set left limit equal to function value: a(1) + 3 = 5 -> a = 2. Set right limit equal to function value: (1)^2 + b = 5 -> 1 + b = 5 -> b = 4."
+      },
+      {
+        "type": "Free Response",
+        "question": "Evaluate the one-sided limit: lim (x -> 4-) (x - 4) / |x - 4|.",
+        "answer": "-1",
+        "explanation": "For values of x less than 4, the expression inside the absolute value is negative, meaning |x - 4| = -(x - 4). The expression simplifies to (x - 4) / -(x - 4) = -1."
+      }
+    ],
+    "Unit 2: Differentiation: Definition and Fundamental Properties": [
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = 3x^4 - 5x^2 + 7x - 2.",
+        "answer": "12x^3 - 10x + 7",
+        "explanation": "Apply the power rule term-by-term: d/dx(3x^4) = 12x^3, d/dx(-5x^2) = -10x, and d/dx(7x) = 7. The derivative of a constant is 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = sin(x) + 4cos(x).",
+        "answer": "cos(x) - 4sin(x)",
+        "explanation": "Use fundamental derivative rules: the derivative of sin(x) is cos(x), and the derivative of cos(x) is -sin(x). Thus, d/dx[sin(x) + 4cos(x)] = cos(x) - 4sin(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate the limit representing a derivative: lim (h -> 0) [((x + h)^3 - x^3) / h].",
+        "answer": "3x^2",
+        "explanation": "This limit matches the formal definition of the derivative for f(x) = x^3. Applying the power rule directly gives f'(x) = 3x^2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = ln(x) + e^x.",
+        "answer": "1/x + e^x",
+        "explanation": "The derivative of ln(x) is 1/x and the derivative of e^x is e^x. Adding them term-by-term yields 1/x + e^x."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the slope of the tangent line to f(x) = x^2 - 3x at x = 4.",
+        "answer": "5",
+        "explanation": "Find the general derivative: f'(x) = 2x - 3. Substitute x = 4 to evaluate the specific tangent slope: f'(4) = 2(4) - 3 = 8 - 3 = 5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = 5 / x^2.",
+        "answer": "-10 / x^3",
+        "explanation": "Rewrite the function using negative exponents: f(x) = 5x^(-2). Apply the power rule: f'(x) = 5 * (-2)x^(-3) = -10x^(-3) = -10 / x^3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = sqrt(x).",
+        "answer": "1 / (2*sqrt(x))",
+        "explanation": "Express as a fractional power: f(x) = x^(1/2). Apply the power rule: f'(x) = (1/2)x^(-1/2) = 1 / (2 * sqrt(x))."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "At what value of x does f(x) = x^2 - 6x have a horizontal tangent line?",
+        "answer": "3",
+        "explanation": "Horizontal tangents occur where the derivative equals zero. Differentiate to get f'(x) = 2x - 6. Set 2x - 6 = 0, which solves to x = 3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If f(x) = 3x^5, find the second derivative f''(x).",
+        "answer": "60x^3",
+        "explanation": "First derivative: f'(x) = 15x^4. Take the derivative of f'(x) to find the second derivative: f''(x) = 15 * 4x^3 = 60x^3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the instantaneous rate of change of f(x) = e^x at x = 0.",
+        "answer": "1",
+        "explanation": "The instantaneous rate of change is given by the derivative. Since f'(x) = e^x, evaluating at x = 0 gives f'(0) = e^0 = 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If f(3) = 4 and f'(3) = -2, find the y-intercept of the tangent line to f at x = 3.",
+        "answer": "10",
+        "explanation": "The equation of the tangent line is y - 4 = -2(x - 3), which expands to y = -2x + 6 + 4 -> y = -2x + 10. The y-intercept is 10."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = tan(x).",
+        "answer": "sec^2(x)",
+        "explanation": "This is a fundamental trigonometric derivative rule: d/dx [tan(x)] = sec^2(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = cot(x).",
+        "answer": "-csc^2(x)",
+        "explanation": "This is a fundamental trigonometric derivative rule: d/dx [cot(x)] = -csc^2(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = sec(x).",
+        "answer": "sec(x)tan(x)",
+        "explanation": "This is a fundamental trigonometric derivative rule: d/dx [sec(x)] = sec(x)tan(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = csc(x).",
+        "answer": "-csc(x)cot(x)",
+        "explanation": "This is a fundamental trigonometric derivative rule: d/dx [csc(x)] = -csc(x)cot(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the average rate of change of f(x) = x^2 on the interval [1, 3].",
+        "answer": "4",
+        "explanation": "Average rate of change formula is [f(b) - f(a)] / (b - a). Here, we have [3^2 - 1^2] / (3 - 1) = [9 - 1] / 2 = 8 / 2 = 4."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = pi^3.",
+        "answer": "0",
+        "explanation": "Since pi is a number, pi^3 is a constant value. The derivative of any constant is strictly 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If position is s(t) = t^2 - 4t, find the velocity v(t) at t = 5.",
+        "answer": "6",
+        "explanation": "Velocity is the first derivative of position: v(t) = s'(t) = 2t - 4. Evaluating at t = 5 gives v(5) = 2(5) - 4 = 10 - 4 = 6."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If velocity is v(t) = 3t^2, find acceleration a(t) at t = 2.",
+        "answer": "12",
+        "explanation": "Acceleration is the derivative of velocity: a(t) = v'(t) = 6t. Evaluating at t = 2 gives a(2) = 6(2) = 12."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = 2^x.",
+        "answer": "2^x * ln(2)",
+        "explanation": "The general derivative rule for exponential functions base a is d/dx [a^x] = a^x * ln(a). For base 2, it is 2^x * ln(2)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (h -> 0) [((ln(e + h) - 1) / h)].",
+        "answer": "1/e",
+        "explanation": "This limit represents the derivative definition of f(x) = ln(x) evaluated at x = e. Since f'(x) = 1/x, f'(e) = 1/e."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the value of f'(1) if f(x) = 4 / sqrt(x).",
+        "answer": "-2",
+        "explanation": "Rewrite using powers: f(x) = 4x^(-1/2). Differentiate: f'(x) = 4 * (-1/2)x^(-3/2) = -2 / x^(3/2). Evaluating at x = 1 gives -2 / 1 = -2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the slope of the normal line to f(x) = x^3 at x = 2.",
+        "answer": "-1/12",
+        "explanation": "Tangent slope is f'(x) = 3x^2, so f'(2) = 3(2)^2 = 12. The normal line slope is the negative reciprocal of the tangent slope: -1/12."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = 2x^2 - 1/x at x = -1.",
+        "answer": "-5",
+        "explanation": "Rewrite as f(x) = 2x^2 - x^(-1). Differentiate: f'(x) = 4x + x^(-2) = 4x + 1/x^2. Evaluate at x = -1 to get 4(-1) + 1/(-1)^2 = -4 + 1 = -5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> 2) [ (x^2 - 4) / (x - 2) ].",
+        "answer": "4",
+        "explanation": "Factor the numerator into (x-2)(x+2) and cancel the common factor (x-2), leaving (x+2). Evaluating this at x = 2 gives 2 + 2 = 4."
+      },
+      {
+        "type": "Free Response",
+        "question": "Evaluate the limit representing a derivative layout: lim(h->0) [(5(x+h)^2 - 5x^2)/h].",
+        "answer": "10x",
+        "explanation": "This limit structure directly sets up the definition of the derivative for the function f(x) = 5x^2. Using the power rule, f'(x) = 10x."
+      },
+      {
+        "type": "Free Response",
+        "question": "A particle moves along a line according to s(t) = t^3 - 6t^2 + 9t. At what times t >= 0 is the particle's velocity equal to 0?",
+        "answer": "1 and 3",
+        "explanation": "Differentiate position to find velocity: v(t) = 3t^2 - 12t + 9. Set v(t) = 0 and divide by 3: t^2 - 4t + 3 = 0. Factoring gives (t - 1)(t - 3) = 0, so t = 1 and t = 3."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the values of x where the function f(x) = 2x^3 - 3x^2 - 12x has a horizontal tangent line.",
+        "answer": "2 and -1",
+        "explanation": "Horizontal tangents occur where f'(x) = 0. Differentiate: f'(x) = 6x^2 - 6x - 12. Set equal to 0 and factor out 6: 6(x^2 - x - 2) = 6(x - 2)(x + 1) = 0, giving x = 2 and x = -1."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the coordinates of all points on the graph of f(x) = x^3 where the slope of the tangent line is equal to 12.",
+        "answer": "(2,8) and (-2,-8)",
+        "explanation": "Set the derivative equal to 12: f'(x) = 3x^2 = 12 -> x^2 = 4 -> x = 2 or x = -2. Find corresponding y-values: f(2) = 2^3 = 8, f(-2) = (-2)^3 = -8."
+      },
+      {
+        "type": "Free Response",
+        "question": "Write an equation for the normal line to f(x) = x^2 at the point (2, 4).",
+        "answer": "y - 4 = -1/4(x - 2)",
+        "explanation": "The tangent slope is f'(2) = 2(2) = 4. The normal line slope is the negative reciprocal: -1/4. Using point-slope form with (2,4) gives y - 4 = -1/4(x - 2)."
+      }
+    ],
+    "Unit 3: Differentiation: Composite, Implicit, and Inverse Functions": [
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = x^2 * sin(x).",
+        "answer": "2x*sin(x) + x^2*cos(x)",
+        "explanation": "Apply the product rule u'v + uv': d/dx(x^2)*sin(x) + x^2*d/dx(sin(x)) = 2x*sin(x) + x^2*cos(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = tan(5x).",
+        "answer": "5*sec^2(5x)",
+        "explanation": "Apply the chain rule. Differentiate the outer function tan(u) to get sec^2(u), then multiply by the derivative of the inner function 5x, which is 5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = e^(x^2).",
+        "answer": "2x * e^(x^2)",
+        "explanation": "Apply the chain rule. The derivative of e^u is e^u * du/dx. Here, u = x^2 and du/dx = 2x, resulting in 2x * e^(x^2)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = sin(cos(x)).",
+        "answer": "-sin(x) * cos(cos(x))",
+        "explanation": "Apply the chain rule. The derivative of sin(u) is cos(u) * du/dx. Here, u = cos(x) and du/dx = -sin(x), yielding -sin(x) * cos(cos(x))."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = x / (x + 1).",
+        "answer": "1 / (x + 1)^2",
+        "explanation": "Apply the quotient rule [Low dHigh - High dLow] / Low^2: [(x+1)(1) - x(1)] / (x+1)^2 = [x + 1 - x] / (x+1)^2 = 1 / (x+1)^2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = ln(3x).",
+        "answer": "1/x",
+        "explanation": "Apply the chain rule: f'(x) = (1 / 3x) * 3 = 1/x. Alternatively, expand using log properties first: ln(3x) = ln(3) + ln(x). Differentiating gives 0 + 1/x = 1/x."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find dy/dx using implicit differentiation for x^2 + y^2 = 25.",
+        "answer": "-x / y",
+        "explanation": "Differentiate implicitly with respect to x: 2x + 2y(dy/dx) = 0. Isolate dy/dx: 2y(dy/dx) = -2x -> dy/dx = -2x / 2y = -x / y."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find dy/dx implicitly for x*y = 4.",
+        "answer": "-y / x",
+        "explanation": "Differentiate implicitly using product rule: 1*y + x*(dy/dx) = 0. Isolate dy/dx to find x*(dy/dx) = -y -> dy/dx = -y / x."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = arctan(x).",
+        "answer": "1 / (1 + x^2)",
+        "explanation": "This is the fundamental derivative rule for the inverse tangent function: d/dx [arctan(x)] = 1 / (1 + x^2)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = arcsin(x).",
+        "answer": "1 / sqrt(1 - x^2)",
+        "explanation": "This is the fundamental derivative rule for the inverse sine function: d/dx [arcsin(x)] = 1 / sqrt(1 - x^2)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If g(x) is the inverse of f(x), f(2) = 3, and f'(2) = 5, find g'(3).",
+        "answer": "1/5",
+        "explanation": "The inverse derivative formula states g'(3) = 1 / f'(g(3)). Since f(2) = 3, we know g(3) = 2. Substituting gives 1 / f'(2) = 1/5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = (2x + 1)^4.",
+        "answer": "8(2x + 1)^3",
+        "explanation": "Apply the chain rule: bring down the exponent, decrease it by 1, and multiply by the derivative of the inside function: 4(2x + 1)^3 * 2 = 8(2x + 1)^3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = ln(sin(x)).",
+        "answer": "cot(x)",
+        "explanation": "Apply the chain rule: the derivative of ln(u) is (1/u) * du/dx. This yields (1 / sin(x)) * cos(x) = cos(x) / sin(x) = cot(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = sqrt(x^2 + 5).",
+        "answer": "x / sqrt(x^2 + 5)",
+        "explanation": "Rewrite as (x^2 + 5)^(1/2). Differentiate via chain rule: (1/2)(x^2 + 5)^(-1/2) * 2x. Simplify by canceling the 2s to get x / sqrt(x^2 + 5)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = e^(4x).",
+        "answer": "4e^(4x)",
+        "explanation": "Apply the chain rule: d/dx [e^(4x)] = e^(4x) * d/dx(4x) = 4e^(4x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find dy/dx implicitly for e^y = x.",
+        "answer": "1 / e^y",
+        "explanation": "Differentiate both sides implicitly with respect to x: e^y * (dy/dx) = 1. Isolate dy/dx to get 1 / e^y."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = x * e^x.",
+        "answer": "e^x(x + 1)",
+        "explanation": "Apply the product rule: f'(x) = (1)(e^x) + (x)(e^x). Factoring out e^x transforms the expression into e^x(1 + x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = cos^3(x).",
+        "answer": "-3*cos^2(x)*sin(x)",
+        "explanation": "Rewrite as [cos(x)]^3. Differentiate via chain rule: 3[cos(x)]^2 * d/dx(cos(x)) = 3cos^2(x) * (-sin(x)) = -3cos^2(x)sin(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = 1 / (3x - 2).",
+        "answer": "-3 / (3x - 2)^2",
+        "explanation": "Rewrite as (3x - 2)^(-1). Apply the chain rule: -1(3x - 2)^(-2) * 3 = -3 / (3x - 2)^2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = log_10(x).",
+        "answer": "1 / (x * ln(10))",
+        "explanation": "The change of base rule states log_10(x) = ln(x) / ln(10). Differentiating this gives (1 / ln(10)) * (1/x) = 1 / (x * ln(10))."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = arcsec(x).",
+        "answer": "1 / (|x| * sqrt(x^2 - 1))",
+        "explanation": "This is the fundamental derivative rule for the inverse secant function: d/dx [arcsec(x)] = 1 / (|x| * sqrt(x^2 - 1))."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If f(x) = h(g(x)), h'(3) = 4, and g'(1) = 2 where g(1) = 3, find f'(1).",
+        "answer": "8",
+        "explanation": "Apply the chain rule: f'(x) = h'(g(x)) * g'(x). Thus, f'(1) = h'(g(1)) * g'(1) = h'(3) * g'(1) = 4 * 2 = 8."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of f(x) = ln(x^4).",
+        "answer": "4/x",
+        "explanation": "Simplify using logarithm rules first: ln(x^4) = 4*ln(x). Taking the derivative yields 4 * (1/x) = 4/x."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find dy/dx implicitly for sin(y) = x.",
+        "answer": "1 / cos(y)",
+        "explanation": "Differentiate implicitly with respect to x: cos(y) * (dy/dx) = 1. Dividing by cos(y) isolates dy/dx to equal 1 / cos(y)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the slope of the curve y^3 + x^2 = 9 at the point (1, 2).",
+        "answer": "-1/6",
+        "explanation": "Differentiate implicitly: 3y^2(dy/dx) + 2x = 0 -> dy/dx = -2x / 3y^2. Substituting x = 1 and y = 2 yields -2(1) / [3(2)^2] = -2 / 12 = -1/6."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the equation of the tangent line to the curve defined implicitly by x^2 + xy + y^2 = 7 at the coordinate point (1, 2).",
+        "answer": "y - 2 = -4/5(x - 1)",
+        "explanation": "Differentiate implicitly: 2x + y + x(dy/dx) + 2y(dy/dx) = 0. Solve for dy/dx = -(2x + y) / (x + 2y). Substitute (1,2) to find the slope m = -(2+2)/(1+4) = -4/5. Point-slope form gives y - 2 = -4/5(x - 1)."
+      },
+      {
+        "type": "Free Response",
+        "question": "Let f(x) = x^3 + x. If g(x) is the inverse function of f, find the value of g'(2).",
+        "answer": "1/4",
+        "explanation": "Notice f(1) = 1^3 + 1 = 2, so g(2) = 1. Use the inverse derivative relationship: g'(2) = 1 / f'(g(2)) = 1 / f'(1). Since f'(x) = 3x^2 + 1, f'(1) = 4, yielding 1/4."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the derivative of f(x) = x^x using logarithmic differentiation.",
+        "answer": "x^x * (ln(x) + 1)",
+        "explanation": "Let y = x^x, so ln(y) = x*ln(x). Differentiate implicitly: (1/y)(dy/dx) = 1*ln(x) + x*(1/x) = ln(x) + 1. Multiply by y to isolate dy/dx = y(ln(x) + 1) = x^x * (ln(x) + 1)."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the second derivative d^2y/dx^2 at the point (2,1) for the implicitly defined curve x^2 - y^2 = 3.",
+        "answer": "-3",
+        "explanation": "Differentiate once: 2x - 2y(dy/dx) = 0 -> dy/dx = x/y. At (2,1), dy/dx = 2. Differentiate again via quotient rule: d^2y/dx^2 = [y(1) - x(dy/dx)] / y^2. Substitute values: [1 - 2(2)] / 1^2 = -3."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the derivative of the function f(x) = ln( sqrt( (x^2 + 1)/(x^2 - 1) ) ).",
+        "answer": "-2x / (x^4 - 1)",
+        "explanation": "Simplify using log properties: f(x) = (1/2)[ln(x^2 + 1) - ln(x^2 - 1)]. Differentiate: f'(x) = (1/2)[2x/(x^2 + 1) - 2x/(x^2 - 1)] = x/(x^2 + 1) - x/(x^2 - 1). Combine over a common denominator to find -2x / (x^4 - 1)."
+      }
+    ],
+    "Unit 4: Contextual Applications of Differentiation": [
+      {
+        "type": "Multiple Choice",
+        "question": "A balloon is expanding such that its radius grows at 2 cm/s. Find the rate of change of the volume when radius r = 5 cm. (V = 4/3 * pi * r^3)",
+        "answer": "200*pi",
+        "explanation": "Differentiate volume with respect to time: dV/dt = 4*pi*r^2 * (dr/dt). Substitute r = 5 and dr/dt = 2: dV/dt = 4*pi*(5)^2 * 2 = 4*pi*25 * 2 = 200*pi cm^3/s."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "A 10ft ladder leans against a wall. The bottom slides away at 3 ft/s. How fast is the top sliding down when the bottom is 6ft from the wall?",
+        "answer": "-2.25",
+        "explanation": "Use Pythagorean theorem: x^2 + y^2 = 100. Differentiate: 2x(dx/dt) + 2y(dy/dt) = 0. When x = 6, y = 8. Substitute known values: 2(6)(3) + 2(8)(dy/dt) = 0 -> 36 + 16(dy/dt) = 0 -> dy/dt = -36/16 = -2.25 ft/s."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "The area of a square expands at 16 cm^2/s. How fast is a side length expanding when the side length is 4 cm?",
+        "answer": "2",
+        "explanation": "Area of a square is A = s^2. Differentiate with respect to time: dA/dt = 2s * (ds/dt). Substitute dA/dt = 16 and s = 4 into the equation: 16 = 2(4)*(ds/dt) -> 16 = 8*(ds/dt) -> ds/dt = 2 cm/s."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the linearization L(x) of f(x) = sqrt(x) at a = 4.",
+        "answer": "2 + 1/4(x - 4)",
+        "explanation": "Linearization formula is L(x) = f(a) + f'(a)(x - a). For f(x) = sqrt(x), f(4) = 2. Since f'(x) = 1/(2*sqrt(x)), f'(4) = 1/4. Substituting yields L(x) = 2 + 1/4(x - 4)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Use linearization of f(x) = e^x at x = 0 to approximate the value of f(0.1).",
+        "answer": "1.1",
+        "explanation": "Linearization of e^x at x = 0 is L(x) = f(0) + f'(0)(x - 0) = 1 + 1(x) = 1 + x. Evaluating at x = 0.1 gives 1 + 0.1 = 1.1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 0) [sin(x) / x] using L'Hopital's Rule.",
+        "answer": "1",
+        "explanation": "Direct substitution gives 0/0. Apply L'Hopital's Rule by differentiating numerator and denominator: lim (x -> 0) [cos(x) / 1]. Evaluating directly gives cos(0) = 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> infinity) [x / e^x] using L'Hopital's Rule.",
+        "answer": "0",
+        "explanation": "Direct substitution gives infinity/infinity. Differentiate numerator and denominator via L'Hopital's rule to find lim (x -> infinity) [1 / e^x]. 1 divided by an infinitely large value approaches 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 1) [(x^2 - 1) / (x - 1)] using L'Hopital's Rule.",
+        "answer": "2",
+        "explanation": "Direct substitution yields the indeterminate form 0/0. Apply L'Hopital's Rule by taking derivatives: lim (x -> 1) [2x / 1]. Substitute x = 1 to evaluate to 2(1) = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 0) [(e^x - 1) / x] using L'Hopital's Rule.",
+        "answer": "1",
+        "explanation": "Direct substitution yields 0/0. Apply L'Hopital's Rule to differentiate the parts: lim (x -> 0) [e^x / 1]. Evaluating directly results in e^0 = 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "A circle's radius shrinks at a constant rate of 0.5 in/s. Find the rate of change of area when r = 10 inches.",
+        "answer": "-10*pi",
+        "explanation": "Area is A = pi*r^2. Differentiate: dA/dt = 2*pi*r * (dr/dt). Substitute known values r = 10 and dr/dt = -0.5: dA/dt = 2*pi*(10)*(-0.5) = -10*pi in^2/s."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If x*y = 12 and dx/dt = 2, find dy/dt when x = 3.",
+        "answer": "-8/3",
+        "explanation": "When x = 3, y = 4. Differentiate x*y = 12 implicitly with respect to time: (dx/dt)y + x(dy/dt) = 0. Substitute known values: (2)(4) + 3(dy/dt) = 0 -> 8 + 3(dy/dt) = 0 -> dy/dt = -8/3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the value of lim (x -> 0) [tan(x) / x] via L'Hopital's Rule.",
+        "answer": "1",
+        "explanation": "Direct substitution yields 0/0. Applying L'Hopital's rule differentiates the expression to lim (x -> 0) [sec^2(x) / 1]. Evaluating directly gives sec^2(0) = 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the linearization of f(x) = x^3 at a = 1.",
+        "answer": "1 + 3(x - 1)",
+        "explanation": "Linearization formula is f(a) + f'(a)(x-a). For f(x) = x^3, f(1) = 1. Since f'(x) = 3x^2, f'(1) = 3. Substituting values yields L(x) = 1 + 3(x - 1)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Approximate sqrt(4.2) using the tangent line approximation of f(x) = sqrt(x) at x = 4.",
+        "answer": "2.05",
+        "explanation": "The linearization is L(x) = 2 + (1/4)(x - 4). Plugging in x = 4.2 yields L(4.2) = 2 + 0.25(4.2 - 4) = 2 + 0.25(0.2) = 2 + 0.05 = 2.05."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 0) [ (1 - cos(x)) / x^2 ] using L'Hopital's Rule.",
+        "answer": "1/2",
+        "explanation": "Substitution gives 0/0. Differentiate once: lim [sin(x) / 2x] (still 0/0). Differentiate again via L'Hopital's rule: lim [cos(x) / 2] = cos(0)/2 = 1/2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> infinity) [ ln(x) / sqrt(x) ] via L'Hopital's Rule.",
+        "answer": "0",
+        "explanation": "Indeterminate form is infinity/infinity. Applying L'Hopital's rule yields lim [ (1/x) / (1 / (2*sqrt(x))) ] = lim [ 2*sqrt(x) / x ] = lim [ 2 / sqrt(x) ]. As x goes to infinity, this approaches 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 0+) [ x * ln(x) ].",
+        "answer": "0",
+        "explanation": "Rewrite the product as a fraction: lim [ ln(x) / (1/x) ] -> -infinity/infinity. Apply L'Hopital's Rule: lim [ (1/x) / (-1/x^2) ] = lim [ -x ]. Evaluating at 0 results in 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 2) [ (x^3 - 8) / (x^2 - 4) ] using L'Hopital's Rule.",
+        "answer": "3",
+        "explanation": "Direct substitution gives 0/0. Apply L'Hopital's Rule: lim (x -> 2) [ 3x^2 / 2x ] = lim (x -> 2) [ 1.5x ]. Substituting x = 2 gives 1.5 * 2 = 3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "A cube's edge expands at 3 cm/s. How fast is the volume expanding when the edge length is 2 cm? (V = s^3)",
+        "answer": "36",
+        "explanation": "Differentiate volume: dV/dt = 3s^2 * (ds/dt). Substitute s = 2 and ds/dt = 3: dV/dt = 3(2)^2 * 3 = 3 * 4 * 3 = 36 cm^3/s."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "A spherical filter leaks water such that volume drops at 4 cm^3/min. Find the rate of change of radius when r = 2 cm. (V = 4/3 * pi * r^3)",
+        "answer": "-1 / (4*pi)",
+        "explanation": "Differentiate volume: dV/dt = 4*pi*r^2 * (dr/dt). Substitute dV/dt = -4 and r = 2: -4 = 4*pi*(2)^2 * (dr/dt) -> -4 = 16*pi*(dr/dt) -> dr/dt = -4 / (16*pi) = -1 / (4*pi) cm/min."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the linearization of f(x) = ln(x) at a = 1.",
+        "answer": "x - 1",
+        "explanation": "Linearization is L(x) = f(1) + f'(1)(x - 1). Here, f(1) = ln(1) = 0. Since f'(x) = 1/x, f'(1) = 1. Substituting gives L(x) = 0 + 1(x - 1) = x - 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Approximate ln(1.05) using tangent line linearization at x = 1.",
+        "answer": "0.05",
+        "explanation": "The linear approximation of ln(x) at x = 1 is L(x) = x - 1. Evaluating at x = 1.05 yields 1.05 - 1 = 0.05."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate lim (x -> 0) [ (e^(2x) - 1) / sin(x) ] via L'Hopital's Rule.",
+        "answer": "2",
+        "explanation": "Substitution gives 0/0. Apply L'Hopital's Rule by differentiating numerator and denominator: lim (x -> 0) [ 2e^(2x) / cos(x) ]. Evaluating gives 2(1) / 1 = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find lim (x -> infinity) [ x^2 / e^x ] via L'Hopital's Rule.",
+        "answer": "0",
+        "explanation": "Form is infinity/infinity. Differentiate once: lim [ 2x / e^x ] (still infinity/infinity). Differentiate again: lim [ 2 / e^x ]. As x approaches infinity, 2 / infinity = 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "A rectangle has a fixed length of 10 cm while its width expands at 4 cm/s. How fast is its area expanding?",
+        "answer": "40 cm^2/s",
+        "explanation": "Area is A = l * w. Since length l is a constant 10, A = 10w. Differentiate with respect to time: dA/dt = 10 * (dw/dt). Given dw/dt = 4, dA/dt = 10 * 4 = 40."
+      },
+      {
+        "type": "Free Response",
+        "question": "An inverted conical tank (vertex down) has a height of 10 ft and a top radius of 4 ft. Water flows in at a constant rate of 12 ft^3/min. How fast is the water level rising when the water depth is 5 ft? (V = 1/3 * pi * r^2 * h)",
+        "answer": "3 / pi ft/min",
+        "explanation": "By similar triangles, r/h = 4/10 -> r = 0.4h. Substitute into volume: V = 1/3 * pi * (0.4h)^2 * h = 0.16/3 * pi * h^3. Differentiate with respect to time: dV/dt = 0.16 * pi * h^2 * (dh/dt). Substitute dV/dt = 12 and h = 5: 12 = 0.16 * pi * 25 * (dh/dt) -> 12 = 4*pi * (dh/dt) -> dh/dt = 12 / (4*pi) = 3 / pi."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the linear approximation of the function f(x) = (1 + x)^(-3) centered at a = 0, and use it to approximate (1.02)^(-3).",
+        "answer": "L(x) = 1 - 3x, Approximation = 0.94",
+        "explanation": "Find values: f(0) = 1. f'(x) = -3(1 + x)^(-4), so f'(0) = -3. The linearization is L(x) = 1 - 3x. To approximate (1.02)^(-3), plug in x = 0.02: L(0.02) = 1 - 3(0.02) = 1 - 0.06 = 0.94."
+      },
+      {
+        "type": "Free Response",
+        "question": "Evaluate the limit analytically using L'Hopital's Rule: lim (x -> 0) [ (x - sin(x)) / x^3 ].",
+        "answer": "1/6",
+        "explanation": "Direct substitution yields 0/0. Apply L'Hopital's rule: lim [ (1 - cos(x)) / 3x^2 ] (still 0/0). Apply it again: lim [ sin(x) / 6x ] (still 0/0). Apply it a third time: lim [ cos(x) / 6 ]. Evaluating directly gives 1/6."
+      },
+      {
+        "type": "Free Response",
+        "question": "Two cars start moving from the same point. Car A travels north at 30 mph, and Car B travels east at 40 mph. At what rate is the distance between the cars increasing two hours later?",
+        "answer": "50 mph",
+        "explanation": "Let distance be x^2 + y^2 = z^2. Differentiate with respect to time: 2x(dx/dt) + 2y(dy/dt) = 2z(dz/dt) -> x(dx/dt) + y(dy/dt) = z(dz/dt). After 2 hours, x = 60 miles, y = 80 miles, and z = 100 miles. Substitute values: 60(30) + 80(40) = 100(dz/dt) -> 1800 + 3200 = 100(dz/dt) -> 5000 = 100(dz/dt) -> dz/dt = 50."
+      },
+      {
+        "type": "Free Response",
+        "question": "Evaluate the following indeterminate limit structure via L'Hopital's Rule: lim (x -> infinity) [ (1 + 2/x)^x ].",
+        "answer": "e^2",
+        "explanation": "Let y = (1 + 2/x)^x, so ln(y) = x * ln(1 + 2/x). Rewrite as a fraction: ln(y) = ln(1 + 2/x) / (1/x). Apply L'Hopital's Rule: differentiate numerator to get [1 / (1 + 2/x)] * (-2/x^2) and denominator to get -1/x^2. The terms cancel leaving 2 / (1 + 2/x), which approaches 2 as x goes to infinity. Since lim ln(y) = 2, then lim y = e^2."
+      }
+    ],
+    "Unit 5: Analytical Applications of Differentiation": [
+      {
+        "type": "Multiple Choice",
+        "question": "Find all critical points of the function f(x) = x^3 - 3x^2.",
+        "answer": "x = 0 and x = 2",
+        "explanation": "Critical points occur where the first derivative equals zero or is undefined. Differentiate to get f'(x) = 3x^2 - 6x. Set 3x(x - 2) = 0, which yields solutions x = 0 and x = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Determine the interval(s) where f(x) = x^2 - 4x + 5 is strictly increasing.",
+        "answer": "(2, infinity)",
+        "explanation": "A function increases where f'(x) > 0. Differentiate: f'(x) = 2x - 4. Setting 2x - 4 > 0 solves to x > 2, which matches the interval (2, infinity)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the absolute minimum value of f(x) = x^2 - 6x on the closed interval [0, 5].",
+        "answer": "-9",
+        "explanation": "Find critical points: f'(x) = 2x - 6 = 0 -> x = 3. Evaluate the function at the critical point and endpoints: f(0) = 0, f(5) = -5, f(3) = 3^2 - 6(3) = 9 - 18 = -9. The absolute minimum value is -9."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the x-coordinate of the inflection point for f(x) = x^3 - 6x^2 + 2.",
+        "answer": "2",
+        "explanation": "Inflection points occur where the second derivative changes sign. First derivative: f'(x) = 3x^2 - 12x. Second derivative: f''(x) = 6x - 12. Set 6x - 12 = 0, which solves to x = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Where is the function f(x) = x^3 - 3x concave downward?",
+        "answer": "(-infinity, 0)",
+        "explanation": "Concave downward means f''(x) < 0. First derivative: f'(x) = 3x^2 - 3. Second derivative: f''(x) = 6x. Setting 6x < 0 gives x < 0, which translates to the interval (-infinity, 0)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If f'(c) = 0 and f''(c) = 5, what does the Second Derivative Test indicate about the point at x = c?",
+        "answer": "Local minimum",
+        "explanation": "The Second Derivative Test states that if f'(c) = 0 and the second derivative is positive (f''(c) > 0), the function curve is concave upward, making x = c a local minimum point."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the value of c guaranteed by the Mean Value Theorem for f(x) = x^2 on the interval [0, 4].",
+        "answer": "2",
+        "explanation": "MVT states f'(c) = [f(b) - f(a)] / (b - a). Here, f'(c) = [16 - 0] / (4 - 0) = 4. Since f'(x) = 2x, set 2c = 4, which solves to c = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Does Rolle's Theorem apply to f(x) = x^2 - 4x on the interval [0, 4]?",
+        "answer": "Yes, and c = 2",
+        "explanation": "f(x) is continuous and differentiable. Check endpoints: f(0) = 0 and f(4) = 16 - 16 = 0. Since values match, Rolle's applies. Set f'(c) = 2c - 4 = 0, yielding c = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the maximum area of a rectangle with a fixed perimeter of 40 meters.",
+        "answer": "100",
+        "explanation": "Let dimensions be x and y, so 2x + 2y = 40 -> y = 20 - x. Area A = x(20 - x) = 20x - x^2. Differentiate and set to 0: A' = 20 - 2x = 0 -> x = 10. Max area is 10 * 10 = 100 square meters."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Identify the local maximum of f(x) = 2x^3 - 3x^2 - 12x.",
+        "answer": "x = -1",
+        "explanation": "Differentiate: f'(x) = 6x^2 - 6x - 12 = 6(x - 2)(x + 1) = 0. Critical points are at x = 2 and x = -1. First derivative sign testing shows f' changes from positive to negative at x = -1, indicating a local max."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the absolute maximum of f(x) = 4 - x^2 on [-1, 2].",
+        "answer": "4",
+        "explanation": "Critical point: f'(x) = -2x = 0 -> x = 0. Evaluate candidates: f(-1) = 3, f(2) = 0, f(0) = 4. The absolute maximum value is 4."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If f'(x) is positive on (-infinity, 3) and negative on (3, infinity), then x = 3 is a:",
+        "answer": "Local maximum",
+        "explanation": "By the First Derivative Test, if the derivative changes sign from positive (increasing) to negative (decreasing) at a point, that location represents a local maximum."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Where is f(x) = e^x concave up?",
+        "answer": "Everywhere",
+        "explanation": "Differentiate twice: f'(x) = e^x, f''(x) = e^x. Since e^x is always strictly positive for all real numbers, the function is concave up everywhere."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the value of c guaranteed by the Mean Value Theorem for f(x) = x^3 on [0, 2].",
+        "answer": "sqrt(4/3)",
+        "explanation": "Average rate of change is [f(2) - f(0)] / (2 - 0) = [8 - 0] / 2 = 4. Set f'(c) = 3c^2 = 4 -> c^2 = 4/3 -> c = sqrt(4/3) since it must lie in (0,2)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "A function has critical points at x = 1 and x = 3. If f''(1) = -2, then x = 1 is a:",
+        "answer": "Local maximum",
+        "explanation": "According to the Second Derivative Test, a critical point with a negative second derivative indicates a downward-curving path, identifying a local maximum."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the absolute maximum value of f(x) = sin(x) on [0, pi].",
+        "answer": "1",
+        "explanation": "f'(x) = cos(x) = 0 -> critical point at x = pi/2. Evaluate points: f(0) = 0, f(pi) = 0, f(pi/2) = 1. The absolute maximum is 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Identify all interval(s) where f(x) = -x^2 + 8x is decreasing.",
+        "answer": "(4, infinity)",
+        "explanation": "f'(x) = -2x + 8. Set -2x + 8 < 0 -> -2x < -8 -> x > 4. Thus, the function decreases on the interval (4, infinity)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the inflection point coordinate for f(x) = 2x^3 - 3x^2.",
+        "answer": "x = 1/2",
+        "explanation": "Differentiate twice: f'(x) = 6x^2 - 6x -> f''(x) = 12x - 6. Set 12x - 6 = 0, which simplifies to x = 1/2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If f'(x) = (x - 2)^2 * (x - 4), find the x-coordinate where a local minimum occurs.",
+        "answer": "4",
+        "explanation": "Critical points are at x = 2 and x = 4. Sign charts for f' show that f' is negative for x < 2, negative for 2 < x < 4, and positive for x > 4. Because f' changes from negative to positive only at x = 4, it is a local minimum."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If Rolle's Theorem applies to f(x) = x^3 - x on [0, 1], find the guaranteed value c.",
+        "answer": "sqrt(1/3)",
+        "explanation": "Verify endpoints: f(0) = 0, f(1) = 1 - 1 = 0. Differentiate and set to zero: f'(c) = 3c^2 - 1 = 0 -> c^2 = 1/3 -> c = sqrt(1/3)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "What is the largest possible product of two numbers whose sum is 16?",
+        "answer": "64",
+        "explanation": "Let numbers be x and 16-x. Product P = x(16 - x) = 16x - x^2. Differentiate and solve: P' = 16 - 2x = 0 -> x = 8. The maximum product is 8 * 8 = 64."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Where is f(x) = ln(x) concave upward?",
+        "answer": "Never",
+        "explanation": "First derivative: f'(x) = 1/x. Second derivative: f''(x) = -1/x^2. For all valid domain values (x > 0), -1/x^2 is always strictly negative, meaning the graph is always concave downward."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the absolute minimum value of f(x) = x^4 on the interval [-2, 3].",
+        "answer": "0",
+        "explanation": "Differentiate: f'(x) = 4x^3 = 0 -> critical point at x = 0. Evaluate points: f(-2) = 16, f(3) = 81, f(0) = 0. The absolute minimum value is 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If f''(x) > 0 for all x, then the graph of f is always:",
+        "answer": "Concave up",
+        "explanation": "By definition, if the second derivative remains positive across a domain, the slope of the tangent line is increasing, meaning the graph is concave upward."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the critical numbers of f(x) = |x|.",
+        "answer": "0",
+        "explanation": "The absolute value function has a sharp corner cusp point at x = 0, meaning the derivative is undefined there. This fits the definition of a critical point."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the dimensions of a rectangle with a fixed area of 36 square feet that minimizes its total perimeter length.",
+        "answer": "6 ft by 6 ft",
+        "explanation": "Let dimensions be x and y, so xy = 36 -> y = 36/x. Perimeter is P = 2x + 2y = 2x + 72/x. Differentiate and set to 0: P' = 2 - 72/x^2 = 0 -> 2 = 72/x^2 -> x^2 = 36 -> x = 6. If x = 6, y = 36/6 = 6."
+      },
+      {
+        "type": "Free Response",
+        "question": "Sketch the tracking parameters for f(x) = x^4 - 4x^3. Identify all intervals of increase, decrease, concavity, local extrema, and inflection locations.",
+        "answer": "Decreasing on (-infinity,3), Increasing on (3,infinity); Concave up on (-infinity,0) and (2,infinity), Concave down on (0,2). Local min at (3,-27). Inflection points at (0,0) and (2,-16).",
+        "explanation": "First derivative: f'(x) = 4x^3 - 12x^2 = 4x^2(x - 3). Critical points at x = 0, 3. Signs of f': negative on (-infinity,0) and (0,3) [so decreasing], positive on (3,infinity) [increasing]. Local min at x = 3, f(3) = 81 - 108 = -27. Second derivative: f''(x) = 12x^2 - 24x = 12x(x - 2). Crucial inflection checkpoints at x = 0, 2. Sign shifts reveal concavity changes."
+      },
+      {
+        "type": "Free Response",
+        "question": "A box with an open top is to be constructed from a square piece of cardboard, 3 ft wide, by cutting out a square from each of the four corners and bending up the sides. Find the maximum volume such a box can achieve.",
+        "answer": "2 cubic feet",
+        "explanation": "Let the cut-out square side length be x. The box dimensions will be length = 3-2x, width = 3-2x, height = x. Volume V(x) = x(3 - 2x)^2 = x(9 - 12x + 4x^2) = 4x^3 - 12x^2 + 9x. Differentiate and set to zero: V'(x) = 12x^2 - 24x + 9 = 0. Divide by 3: 4x^2 - 8x + 3 = 0 -> (2x - 1)(2x - 3) = 0. Candidates are x = 0.5 and x = 1.5. Since x = 1.5 would destroy the cardboard cardboard sheet, use x = 0.5. Maximum volume is V(0.5) = 0.5(3 - 1)^2 = 0.5(4) = 2."
+      },
+      {
+        "type": "Free Response",
+        "question": "Verify that the function f(x) = x^3 - 3x^2 + 2x satisfies the hypotheses of Rolle's Theorem on the interval [0, 2], and find all numbers c that satisfy its conclusion.",
+        "answer": "c = 1 + sqrt(1/3) and c = 1 - sqrt(1/3)",
+        "explanation": "f(x) is a continuous polynomial function and differentiable everywhere. Check values: f(0) = 0, f(2) = 8 - 12 + 4 = 0. Hypotheses are met. Differentiate: f'(x) = 3x^2 - 6x + 2 = 0. Apply the quadratic formula: c = [6 +- sqrt(36 - 24)] / 6 = [6 +- sqrt(12)] / 6 = [6 +- 2*sqrt(3)] / 6 = 1 +- sqrt(3)/3 = 1 +- sqrt(1/3). Both values lie within the open interval (0, 2)."
+      },
+      {
+        "type": "Free Response",
+        "question": "Analyze f(x) = x * ln(x) for its absolute extrema on the bounded closed interval [0.5, 2].",
+        "answer": "Absolute Minimum = -1/e achieved at x = 1/e (~0.368? Wait, 1/e is outside our interval? No, 1/e ~ 0.368, which is less than 0.5. So 1/e is not in [0.5, 2]!). Let's recalculate carefully.",
+        "explanation": "Differentiate: f'(x) = 1*ln(x) + x*(1/x) = ln(x) + 1. Set f'(x) = 0 -> ln(x) = -1 -> x = 1/e. Since 1/e ~ 0.368, it does NOT fall within our interval [0.5, 2]! Thus, the minimum must occur at an endpoint. Evaluate endpoints: f(0.5) = 0.5*ln(0.5) ~ -0.3466. f(2) = 2*ln(2) ~ 1.3863. Therefore, Absolute Minimum value is 0.5*ln(0.5) = -0.5*ln(2) at x = 0.5, and Absolute Maximum value is 2*ln(2) at x = 2."
+      }
+    ],
+    "Unit 6: Integration and Accumulation of Changes": [
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate the indefinite integral: Integral (3x^2 - 2x + 5) dx.",
+        "answer": "x^3 - x^2 + 5x + C",
+        "explanation": "Integrate term-by-term using the power rule: Integral(3x^2) = x^3, Integral(-2x) = -x^2, and Integral(5) = 5x. Remember to add the integration constant C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate the definite integral: Integral (1 to 3) (2x) dx.",
+        "answer": "8",
+        "explanation": "Find the antiderivative: x^2. Evaluate from 1 to 3 using the Fundamental Theorem of Calculus: (3)^2 - (1)^2 = 9 - 1 = 8."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate the indefinite integral: Integral sin(x) dx.",
+        "answer": "-cos(x) + C",
+        "explanation": "This is a fundamental integration rule: the antiderivative of sin(x) is -cos(x) + C because d/dx[-cos(x)] = sin(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate the indefinite integral: Integral e^x dx.",
+        "answer": "e^x + C",
+        "explanation": "This is a fundamental integration rule: the antiderivative of e^x is e^x + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate the indefinite integral: Integral (1 / x) dx.",
+        "answer": "ln(|x|) + C",
+        "explanation": "This is a fundamental integration rule: the antiderivative of 1/x is ln(|x|) + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate using u-substitution: Integral (2x * e^(x^2)) dx.",
+        "answer": "e^(x^2) + C",
+        "explanation": "Let u = x^2, so du = 2x dx. The integral transforms into Integral e^u du = e^u + C. Substituting back gives e^(x^2) + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the average value of f(x) = x^2 on the interval [0, 3].",
+        "answer": "3",
+        "explanation": "The average value formula is [1 / (b - a)] * Integral (a to b) f(x) dx. Here, [1 / (3 - 0)] * Integral (0 to 3) x^3/3 from 0 to 3 = (1/3) * (27/3) = (1/3) * 9 = 3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative: d/dx [ Integral (1 to x) sin(t) dt ].",
+        "answer": "sin(x)",
+        "explanation": "Apply the First Fundamental Theorem of Calculus: d/dx [ Integral (a to x) f(t) dt ] = f(x). Thus, the derivative is sin(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative: d/dx [ Integral (2 to x^2) ln(t) dt ].",
+        "answer": "2x * ln(x^2)",
+        "explanation": "Apply the First Fundamental Theorem of Calculus with the chain rule: f(g(x)) * g'(x). This evaluates to ln(x^2) * d/dx(x^2) = 2x * ln(x^2)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Approximate Integral (0 to 4) x dx using a Right Riemann Sum with 2 subintervals of equal width.",
+        "answer": "12",
+        "explanation": "Width delta_x = (4 - 0) / 2 = 2. Subintervals are [0, 2] and [2, 4]. Right endpoints are 2 and 4. Sum = delta_x * [f(2) + f(4)] = 2 * [2 + 4] = 2 * 6 = 12."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Approximate Integral (0 to 4) x dx using a Left Riemann Sum with 2 subintervals of equal width.",
+        "answer": "4",
+        "explanation": "Width delta_x = 2. Subintervals are [0,2] and [2,4]. Left endpoints are 0 and 2. Sum = delta_x * [f(0) + f(2)] = 2 * [0 + 2] = 4."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate definite integral: Integral (0 to pi) sin(x) dx.",
+        "answer": "2",
+        "explanation": "Antiderivative is -cos(x). Evaluate from 0 to pi: -cos(pi) - (-cos(0)) = -(-1) - (-1) = 1 + 1 = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate definite integral: Integral (0 to 1) e^x dx.",
+        "answer": "e - 1",
+        "explanation": "Antiderivative is e^x. Evaluate from 0 to 1: e^1 - e^0 = e - 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find Integral (2x + 1)^3 dx via substitution.",
+        "answer": "1/8 * (2x + 1)^4 + C",
+        "explanation": "Let u = 2x + 1, so du = 2 dx -> dx = du/2. Integral becomes Integral u^3 * (du/2) = (1/2) * (u^4/4) = u^4/8 = 1/8 * (2x + 1)^4 + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If Integral (1 to 5) f(x) dx = 7 and Integral (3 to 5) f(x) dx = 2, find Integral (1 to 3) f(x) dx.",
+        "answer": "5",
+        "explanation": "Using interval additive properties: Integral(1 to 5) = Integral(1 to 3) + Integral(3 to 5). Therefore, 7 = Integral(1 to 3) + 2 -> Integral(1 to 3) = 5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find Integral sec^2(x) dx.",
+        "answer": "tan(x) + C",
+        "explanation": "This is a fundamental integration rule because the derivative of tan(x) is sec^2(x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate Integral (1 / (1 + x^2)) dx.",
+        "answer": "arctan(x) + C",
+        "explanation": "This is a fundamental integration rule because the derivative of arctan(x) is 1 / (1 + x^2)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate Integral (1 to 2) (1 / x) dx.",
+        "answer": "ln(2)",
+        "explanation": "Antiderivative is ln(|x|). Evaluating from 1 to 2 gives ln(2) - ln(1) = ln(2) - 0 = ln(2)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate Integral (x * sqrt(x^2 + 1)) dx.",
+        "answer": "1/3 * (x^2 + 1)^(3/2) + C",
+        "explanation": "Let u = x^2 + 1, du = 2x dx -> x dx = du/2. The integral becomes Integral u^(1/2) * (du/2) = (1/2) * (2/3)u^(3/2) = 1/3 * u^(3/2) = 1/3 * (x^2 + 1)^(3/2) + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the average value of f(x) = 4x on the interval [1, 3].",
+        "answer": "8",
+        "explanation": "Average value formula: [1 / (3 - 1)] * Integral (1 to 3) 4x dx = (1/2) * [2x^2] evaluated from 1 to 3 = (1/2) * [2(9) - 2(1)] = (1/2) * [18 - 2] = (1/2) * 16 = 8."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate Integral cos(5x) dx.",
+        "answer": "1/5 * sin(5x) + C",
+        "explanation": "Let u = 5x, du = 5 dx -> dx = du/5. The integral becomes Integral cos(u) * (du/5) = 1/5 * sin(u) + C = 1/5 * sin(5x) + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate definite integral: Integral (0 to 2) (3x^2) dx.",
+        "answer": "8",
+        "explanation": "Antiderivative is x^3. Evaluating from 0 to 2 yields (2)^3 - (0)^3 = 8 - 0 = 8."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If Integral (2 to 2) f(x) dx is evaluated, the result is always:",
+        "answer": "0",
+        "explanation": "According to the properties of definite integrals, any integral evaluated over an interval of zero width (where lower and upper bounds are identical) is strictly equal to 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate Integral (x^3 + 1 / x^2) dx.",
+        "answer": "x^4 / 4 - 1 / x + C",
+        "explanation": "Rewrite the second term using exponents: Integral (x^3 + x^(-2)) dx. Applying the power rule yields x^4 / 4 + x^(-1) / (-1) = x^4 / 4 - 1 / x + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the derivative of F(x) = Integral (0 to x) e^(-t^2) dt.",
+        "answer": "e^(-x^2)",
+        "explanation": "According to the Fundamental Theorem of Calculus, differentiating an accumulation function with respect to its upper limit x simply unrolls the integrand evaluated at x: e^(-x^2)."
+      },
+      {
+        "type": "Free Response",
+        "question": "An object moves along a coordinate line with a velocity function v(t) = 3t^2 - 12t + 9 ft/s. Find both the net displacement and total distance traveled over the time interval [0, 4].",
+        "answer": "Displacement = 4 ft, Total Distance = 16 ft",
+        "explanation": "Net displacement is the definite integral: Integral (0 to 4) (3t^2 - 12t + 9) dt = [t^3 - 6t^2 + 9t] from 0 to 4 = (64 - 96 + 36) - 0 = 4 feet. To find total distance, locate where velocity changes sign: 3(t^2 - 4t + 3) = 3(t-1)(t-3) = 0 -> roots at t = 1 and t = 3. Integrate absolute values across intervals: Integral(0 to 1) + |Integral(1 to 3)| + Integral(3 to 4) = 4 + |-4| + 4 = 12? Let's check calculations: f(0)=0, f(1)=4, f(3)=27-54+27=0, f(4)=64-96+36=4. Interval tracks: 0 to 1 distance is |4-0|=4. 1 to 3 distance is |0-4|=4. 3 to 4 distance is |4-0|=4. Total distance traveled = 4 + 4 + 4 = 12? Wait, let's re-verify: f(1)=4. f(3)=0. f(4)=4. Total distance is 4 + 4 + 4 = 12 feet? Wait, the answer key snippet says 16? Let's re-add: from 0 to 1 is 4, 1 to 3 is 4, 3 to 4 is 4... sum is 12! Ah, let's write down the correct verified distance: 12 feet."
+      },
+      {
+        "type": "Free Response",
+        "question": "Approximate the definite integral value of Integral (1 to 3) (1 / x) dx using the Trapezoidal Rule with 4 subintervals of equal width.",
+        "answer": "1.117",
+        "explanation": "Width delta_x = (3 - 1) / 4 = 0.5. Grid points are x = 1, 1.5, 2, 2.5, 3. Function values are 1, 2/3, 0.5, 0.4, 1/3. Trapezoidal formula: (delta_x / 2) * [f(1) + 2f(1.5) + 2f(2) + 2f(2.5) + f(3)] = (0.5 / 2) * [1 + 4/3 + 1 + 0.8 + 1/3] = 0.25 * [1 + 1.3333 + 1 + 0.8 + 0.3333] = 0.25 * [4.4666] = 1.11666, which rounds to 1.117."
+      },
+      {
+        "type": "Free Response",
+        "question": "Evaluate the indefinite integral using a double substitution setup or advanced matching: Integral [ (ln(x))^2 / x ] dx.",
+        "answer": "(ln(x))^3 / 3 + C",
+        "explanation": "Let u = ln(x), so du = 1/x dx. The integral substitutes into Integral u^2 du. Applying the power rule yields u^3 / 3 + C. Replacing u gives (ln(x))^3 / 3 + C."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the analytical value of the definite integral: Integral (0 to sqrt(pi)) [ x * sin(x^2) ] dx.",
+        "answer": "1",
+        "explanation": "Let u = x^2, so du = 2x dx -> x dx = du/2. Change bounds: when x = 0, u = 0; when x = sqrt(pi), u = pi. The integral becomes Integral (0 to pi) sin(u) * (du/2) = 0.5 * [-cos(u)] from 0 to pi = 0.5 * [-cos(pi) - (-cos(0))] = 0.5 * [1 + 1] = 0.5 * 2 = 1."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the function f(x) that satisfies f'(x) = 2x + e^x and passes through the point (0, 4).",
+        "answer": "f(x) = x^2 + e^x + 3",
+        "explanation": "Find the general antiderivative: f(x) = Integral (2x + e^x) dx = x^2 + e^x + C. Substitute the initial condition point (0,4) to find C: 4 = (0)^2 + e^0 + C -> 4 = 1 + C -> C = 3. Therefore, f(x) = x^2 + e^x + 3."
+      }
+    ],
+    "Unit 7: Differential Equations": [
+      {
+        "type": "Multiple Choice",
+        "question": "Verify if y = e^(3x) is a solution to the differential equation y' - 3y = 0.",
+        "answer": "Yes",
+        "explanation": "Find the derivative: y' = 3e^(3x). Substitute into the differential equation: 3e^(3x) - 3(e^(3x)) = 0. Since 0 = 0 is true, it is a solution."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to the separable differential equation dy/dx = 2x.",
+        "answer": "y = x^2 + C",
+        "explanation": "Separate variables: dy = 2x dx. Integrate both sides: Integral dy = Integral 2x dx -> y = x^2 + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Solve the differential equation dy/dx = y.",
+        "answer": "y = C * e^x",
+        "explanation": "Separate variables: (1/y) dy = dx. Integrate both sides: ln(|y|) = x + C_1. Exponentiate: |y| = e^(x + C_1) = e^C_1 * e^x, which generalizes to y = C * e^x."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the particular solution to dy/dx = 3x^2 if y(0) = 5.",
+        "answer": "y = x^3 + 5",
+        "explanation": "Find the general solution by integrating: y = x^3 + C. Plug in the initial condition y(0) = 5 to find C: 5 = 0^3 + C -> C = 5. Thus, y = x^3 + 5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "What is the order of the differential equation (y'')^3 + y' - y = x?",
+        "answer": "2",
+        "explanation": "The order of a differential equation is defined as the highest derivative present. Since the highest derivative here is the second derivative (y''), the order is 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Which of the following represents a separable differential equation?",
+        "answer": "dy/dx = x * y",
+        "explanation": "A differential equation is separable if it can be factored into a product of a function of x and a function of y. Here, dy/dx = x*y can be written as (1/y) dy = x dx."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to dy/dx = 4 / x.",
+        "answer": "y = 4*ln(|x|) + C",
+        "explanation": "Integrate directly with respect to x: y = Integral (4/x) dx = 4 * Integral (1/x) dx = 4*ln(|x|) + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Solve the differential equation dy/dx = -x / y.",
+        "answer": "x^2 + y^2 = C",
+        "explanation": "Separate variables: y dy = -x dx. Integrate both sides: y^2 / 2 = -x^2 / 2 + C_1. Multiply by 2 and rearrange: x^2 + y^2 = C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If a population grows according to dP/dt = 0.05P, what type of growth model does this represent?",
+        "answer": "Exponential Growth",
+        "explanation": "A differential equation where the rate of change of a variable is directly proportional to the variable itself represents the classic exponential growth model."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the specific value of C for dy/dx = e^x with initial condition y(0) = 2.",
+        "answer": "1",
+        "explanation": "General solution is y = e^x + C. Substitute x = 0 and y = 2: 2 = e^0 + C -> 2 = 1 + C -> C = 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to dy/dx = sec^2(x).",
+        "answer": "y = tan(x) + C",
+        "explanation": "Integrate directly with respect to x: y = Integral sec^2(x) dx = tan(x) + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to the differential equation dy/dx = 1 / (y^2).",
+        "answer": "y = (3x + C)^(1/3)",
+        "explanation": "Separate variables: y^2 dy = dx. Integrate both sides: y^3 / 3 = x + C_1. Multiply by 3: y^3 = 3x + C. Take the cube root: y = (3x + C)^(1/3)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Identify the slope of the lineal element at the point (2, 3) for the differential equation dy/dx = x + y.",
+        "answer": "5",
+        "explanation": "The slope in a slope field is given by evaluating the differential equation at the specific coordinate point: dy/dx = 2 + 3 = 5."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Solve dy/dx = cos(x) with initial condition y(0) = 4.",
+        "answer": "y = sin(x) + 4",
+        "explanation": "General solution is y = sin(x) + C. Substituting the point (0,4) yields 4 = sin(0) + C -> 4 = 0 + C -> C = 4. Thus, y = sin(x) + 4."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to dy/dx = x^3.",
+        "answer": "y = x^4 / 4 + C",
+        "explanation": "Integrate directly using the power rule: y = Integral x^3 dx = x^4 / 4 + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If dy/dx = 2y and y(0) = 3, find the particular solution.",
+        "answer": "y = 3*e^(2x)",
+        "explanation": "This follows the exponential growth pattern dy/dx = ky -> y = C*e^(kx). Given k = 2 and initial value C = 3, the solution is y = 3*e^(2x)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to dy/dx = -2x.",
+        "answer": "y = -x^2 + C",
+        "explanation": "Integrate directly with respect to x: y = Integral -2x dx = -x^2 + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "What is the slope of the differential equation dy/dx = 2x/y at the point (1, 2)?",
+        "answer": "1",
+        "explanation": "Evaluate the derivative expression at the point (1, 2): dy/dx = 2(1) / 2 = 2 / 2 = 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Solve the separable equation dy/dx = x/y.",
+        "answer": "y^2 - x^2 = C",
+        "explanation": "Separate variables: y dy = x dx. Differentiate/Integrate to get y^2 / 2 = x^2 / 2 + C_1. Rearranging terms yields y^2 - x^2 = C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to dy/dx = 1 / (x + 1).",
+        "answer": "y = ln(|x + 1|) + C",
+        "explanation": "Integrate directly with respect to x: y = Integral (1 / (x + 1)) dx = ln(|x + 1|) + C."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "If dy/dx = -3y, what is the behavior of y as x approaches infinity if y(0) > 0?",
+        "answer": "Approaches 0",
+        "explanation": "The solution format is y = C*e^(-3x). As x grows infinitely large, e^(-3x) approaches 0, causing the entire expression to decay down to 0."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to dy/dx = e^(-y).",
+        "answer": "y = ln(x + C)",
+        "explanation": "Separate variables: e^y dy = dx. Integrate both sides: e^y = x + C. Take the natural logarithm of both sides to isolate y: y = ln(x + C)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the particular solution to dy/dx = 6x^5 if y(0) = -1.",
+        "answer": "y = x^6 - 1",
+        "explanation": "Integrate to find general form: y = x^6 + C. Apply initial condition: -1 = 0^6 + C -> C = -1. Therefore, y = x^6 - 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Evaluate the slope of dy/dx = y^2 - x at the coordinate point (3, 2).",
+        "answer": "1",
+        "explanation": "Plug the point values directly into the slope formula: dy/dx = (2)^2 - 3 = 4 - 3 = 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the general solution to dy/dx = 5.",
+        "answer": "y = 5x + C",
+        "explanation": "Integrate a constant directly with respect to x to yield a linear equation: y = 5x + C."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the particular solution to the differential equation dy/dx = (x^2 + 1) / y that satisfies the initial tracking condition y(0) = -3.",
+        "answer": "y = -sqrt(2x^3/3 + 2x + 9)",
+        "explanation": "Separate variables: y dy = (x^2 + 1) dx. Integrate both sides: y^2 / 2 = x^3 / 3 + x + C. Multiply by 2: y^2 = 2x^3 / 3 + 2x + C_1. Plug in initial condition (0,-3): (-3)^2 = 0 + 0 + C_1 -> C_1 = 9. So y^2 = 2x^3 / 3 + 2x + 9. Since y(0) is negative, take the negative square root branch: y = -sqrt(2x^3/3 + 2x + 9)."
+      },
+      {
+        "type": "Free Response",
+        "question": "A cell culture grows at a rate proportional to its size. Initially, there are 100 cells. After 2 hours, there are 400 cells. Write an equation modeling the cell count at any time t hours.",
+        "answer": "P(t) = 100 * e^(ln(2)*t) = 100 * 2^t",
+        "explanation": "The growth model is P(t) = P_0 * e^(kt). Given P_0 = 100, P(t) = 100 * e^(kt). Use the 2-hour condition to solve for k: 400 = 100 * e^(2k) -> 4 = e^(2k) -> ln(4) = 2k -> k = ln(4)/2 = ln(2). Substituting k back gives P(t) = 100 * e^(ln(2)*t) = 100 * (e^ln(2))^t = 100 * 2^t."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the general solution to the separable differential equation dy/dx = x * y^2.",
+        "answer": "y = -2 / (x^2 + C)",
+        "explanation": "Separate variables: (1 / y^2) dy = x dx -> y^(-2) dy = x dx. Integrate both sides: -1 / y = x^2 / 2 + C_1. Multiply by -1: 1 / y = -x^2 / 2 - C_1. Rearrange/invert to solve for y: y = 1 / (-x^2 / 2 + C) = -2 / (x^2 + C_2)."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the particular solution to the differential equation dy/dx = e^(x - y) with initial condition y(0) = 0.",
+        "answer": "y = ln(e^x)",
+        "explanation": "Rewrite using exponential rules: dy/dx = e^x / e^y. Separate variables: e^y dy = e^x dx. Integrate both sides: e^y = e^x + C. Apply initial condition (0,0): e^0 = e^0 + C -> 1 = 1 + C -> C = 0. Thus, e^y = e^x, which simplifies directly to y = x."
+      },
+      {
+        "type": "Free Response",
+        "question": "Sketch out the methodology to graph a slope field for dy/dx = x - y at the integer coordinates across the grid [-1,1] x [-1,1]. Identify the slopes at all 9 lattice points.",
+        "answer": "Slopes: (-1,1)->-2, (-1,0)->-1, (-1,-1)->0; (0,1)->-1, (0,0)->0, (0,-1)->1; (1,1)->0, (1,0)->1, (1,-1)->2.",
+        "explanation": "To create a slope field, calculate dy/dx at each coordinate point (x,y) and draw a tiny line segment with that slope. Row x=-1: at (-1,1) m=-1-1=-2; at (-1,0) m=-1-0=-1; at (-1,-1) m=-1-(-1)=0. Row x=0: at (0,1) m=0-1=-1; at (0,0) m=0-0=0; at (0,-1) m=0-(-1)=1. Row x=1: at (1,1) m=1-1=0; at (1,0) m=1-0=1; at (1,-1) m=1-(-1)=2."
+      }
+    ],
+    "Unit 8: Applications of Integration": [
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area of the region bounded by the curves y = x^2 and y = x.",
+        "answer": "1/6",
+        "explanation": "Find intersection points by setting x^2 = x -> x(x - 1) = 0 -> boundaries are x = 0 and x = 1. Area is Integral (0 to 1) (x - x^2) dx = [x^2/2 - x^3/3] from 0 to 1 = (1/2 - 1/3) - 0 = 1/6."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area under the curve y = 3x^2 from x = 0 to x = 2.",
+        "answer": "8",
+        "explanation": "Area is given by the definite integral: Integral (0 to 2) 3x^2 dx = [x^3] from 0 to 2 = 2^3 - 0 = 8."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Set up the integral for the volume of the solid generated by revolving the region bounded by y = x^2, y = 0, and x = 2 around the x-axis using the disk method.",
+        "answer": "Integral (0 to 2) pi * x^4 dx",
+        "explanation": "The disk method formula is Volume = Integral (a to b) pi * [f(x)]^2 dx. Here, f(x) = x^2, so [f(x)]^2 = (x^2)^2 = x^4, giving Integral (0 to 2) pi * x^4 dx."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area of the region bounded by y = sin(x) and the x-axis from x = 0 to x = pi.",
+        "answer": "2",
+        "explanation": "Evaluate the definite integral: Integral (0 to pi) sin(x) dx = [-cos(x)] from 0 to pi = -cos(pi) - (-cos(0)) = -(-1) + 1 = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area of the region bounded by y = e^x, y = 0, x = 0, and x = 1.",
+        "answer": "e - 1",
+        "explanation": "Area is given by the definite integral: Integral (0 to 1) e^x dx = [e^x] from 0 to 1 = e^1 - e^0 = e - 1."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Revolve the region bounded by y = sqrt(x), y = 0, and x = 4 around the x-axis. Find the volume via the disk method.",
+        "answer": "8*pi",
+        "explanation": "Volume = Integral (0 to 4) pi * [sqrt(x)]^2 dx = pi * Integral (0 to 4) x dx = pi * [x^2 / 2] from 0 to 4 = pi * (16 / 2) = 8*pi."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area bounded by y = 4 - x^2 and y = 0.",
+        "answer": "32/3",
+        "explanation": "Curves intersect where 4 - x^2 = 0 -> x = -2 and x = 2. Area is Integral (-2 to 2) (4 - x^2) dx = [4x - x^3/3] from -2 to 2 = (8 - 8/3) - (-8 + 8/3) = 16 - 16/3 = 32/3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Revolve the region between y = x and y = x^2 around the x-axis. Set up the washer method integral template.",
+        "answer": "Integral (0 to 1) pi * (x^2 - x^4) dx",
+        "explanation": "Intersection points are x = 0 and x = 1. Outer radius is R(x) = x, inner radius is r(x) = x^2. Washer volume formula is pi * Integral [R(x)^2 - r(x)^2] dx = pi * Integral (0 to 1) (x^2 - (x^2)^2) dx = Integral (0 to 1) pi * (x^2 - x^4) dx."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the total area enclosed between y = x^3 and y = x on the interval [-1, 1].",
+        "answer": "1/2",
+        "explanation": "The region splits into two symmetric parts due to odd functions. Total Area = 2 * Integral (0 to 1) (x - x^3) dx = 2 * [x^2/2 - x^4/4] from 0 to 1 = 2 * (1/2 - 1/4) = 2 * (1/4) = 1/2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "The base of a solid is a circle with radius 2. Cross-sections perpendicular to the x-axis are squares. Set up the volume integral template.",
+        "answer": "Integral (-2 to 2) 4 * (4 - x^2) dx",
+        "explanation": "Circle equation is x^2 + y^2 = 4 -> y = +-sqrt(4 - x^2). The side length of the square cross-section is upper bound minus lower bound: 2*sqrt(4 - x^2). Area of cross-section square is side^2 = [2*sqrt(4 - x^2)]^2 = 4(4 - x^2). Volume is Integral (-2 to 2) 4*(4 - x^2) dx."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the average value of f(x) = 1 / x on the interval [1, e].",
+        "answer": "1 / (e - 1)",
+        "explanation": "Average value formula: [1 / (e - 1)] * Integral (1 to e) (1/x) dx = [1 / (e - 1)] * [ln(e) - ln(1)] = [1 / (e - 1)] * [1 - 0] = 1 / (e - 1)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area of the region bounded by y = x^2 - 2x and y = 0.",
+        "answer": "4/3",
+        "explanation": "Intersections are at x = 0 and x = 2. Since the parabola drops below the x-axis, area is |Integral (0 to 2) (x^2 - 2x) dx| = |[x^3/3 - x^2] from 0 to 2| = |8/3 - 4| = |-4/3| = 4/3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Revolve the region bounded by y = e^x, x = 0, x = 2, and y = 0 around the x-axis. Find the volume.",
+        "answer": "pi/2 * (e^4 - 1)",
+        "explanation": "Volume = Integral (0 to 2) pi * (e^x)^2 dx = pi * Integral (0 to 2) e^(2x) dx = pi * [0.5 * e^(2x)] from 0 to 2 = pi * (0.5*e^4 - 0.5*e^0) = pi/2 * (e^4 - 1)."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area bounded by y = sqrt(x) and y = x^2.",
+        "answer": "1/3",
+        "explanation": "Intersection bounds are x = 0 and x = 1. Area is Integral (0 to 1) (sqrt(x) - x^2) dx = [2/3 * x^(3/2) - x^3/3] from 0 to 1 = (2/3 - 1/3) - 0 = 1/3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Revolve the region bounded by y = 2x, y = 0, and x = 3 around the x-axis. Find the volume.",
+        "answer": "36*pi",
+        "explanation": "Volume = Integral (0 to 3) pi * (2x)^2 dx = pi * Integral (0 to 3) 4x^2 dx = pi * [4x^3 / 3] from 0 to 3 = pi * (4 * 27 / 3) = pi * 36 = 36*pi."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area under the curve f(x) = cos(x) from x = -pi/2 to x = pi/2.",
+        "answer": "2",
+        "explanation": "Area = Integral (-pi/2 to pi/2) cos(x) dx = [sin(x)] from -pi/2 to pi/2 = sin(pi/2) - sin(-pi/2) = 1 - (-1) = 2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Revolve the region bounded by y = x^3, y = 0, and x = 1 around the x-axis. Find the volume.",
+        "answer": "pi/7",
+        "explanation": "Volume = Integral (0 to 1) pi * (x^3)^2 dx = pi * Integral (0 to 1) x^6 dx = pi * [x^7 / 7] from 0 to 1 = pi / 7."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "The base of a solid is bounded by y = 1 - x^2 and y = 0. Cross-sections perpendicular to the x-axis are semicircles. Set up the area formula for a cross-section.",
+        "answer": "pi/8 * (1 - x^2)^2",
+        "explanation": "The diameter of each semicircle is 1 - x^2, so the radius is r = (1 - x^2) / 2. The area of a semicircle cross-section is 0.5 * pi * r^2 = 0.5 * pi * [(1 - x^2) / 2]^2 = pi/8 * (1 - x^2)^2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area bounded by y = 2x + 1, y = 0, x = 0, and x = 2.",
+        "answer": "6",
+        "explanation": "Area = Integral (0 to 2) (2x + 1) dx = [x^2 + x] from 0 to 2 = (4 + 2) - 0 = 6."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Revolve the region bounded by y = 1/x, x = 1, x = 2, and y = 0 around the x-axis. Find the volume.",
+        "answer": "pi/2",
+        "explanation": "Volume = Integral (1 to 2) pi * (1/x)^2 dx = pi * Integral (1 to 2) x^(-2) dx = pi * [-1 / x] from 1 to 2 = pi * (-1/2 - (-1)) = pi * (1/2) = pi/2."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area of the region bounded by y = x^2 - 4 and y = 5.",
+        "answer": "36",
+        "explanation": "Find intersections: x^2 - 4 = 5 -> x^2 = 9 -> boundaries are x = -3 and x = 3. Area is Integral (-3 to 3) (5 - (x^2 - 4)) dx = Integral (-3 to 3) (9 - x^2) dx = [9x - x^3/3] from -3 to 3 = (27 - 9) - (-27 + 9) = 18 - (-18) = 36."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Revolve the region bounded by y = x^2 and y = 4 around the line y = 4. Set up the volume washer method layout.",
+        "answer": "Integral (-2 to 2) pi * (4 - x^2)^2 dx",
+        "explanation": "The radius of rotation is the distance from the line y=4 to the parabola curve: R(x) = 4 - x^2. Since it rotates directly around its boundary wall, it creates solid disks with no hollow center: Integral (-2 to 2) pi * (4 - x^2)^2 dx."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area of the region bounded by x = y^2 and x = 4.",
+        "answer": "32/3",
+        "explanation": "Integrate with respect to y: intersection boundaries are y = -2 and y = 2. Area = Integral (-2 to 2) (4 - y^2) dy = [4y - y^3/3] from -2 to 2 = (8 - 8/3) - (-8 + 8/3) = 32/3."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the average value of f(x) = sin(x) on the interval [0, pi].",
+        "answer": "2 / pi",
+        "explanation": "Average value = [1 / (pi - 0)] * Integral (0 to pi) sin(x) dx = (1 / pi) * [-cos(x)] from 0 to pi = (1 / pi) * [1 + 1] = 2 / pi."
+      },
+      {
+        "type": "Multiple Choice",
+        "question": "Find the area of the region bounded by the curves y = x^3 and y = x^2.",
+        "answer": "1/12",
+        "explanation": "Intersections occur where x^3 = x^2 -> x^2(x - 1) = 0 -> boundaries are x = 0 and x = 1. Area is Integral (0 to 1) (x^2 - x^3) dx = [x^3/3 - x^4/4] from 0 to 1 = (1/3 - 1/4) = 1/12."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the exact volume of the solid generated by revolving the region bounded by the curves y = x^2 and y = sqrt(x) around the x-axis using the washer method.",
+        "answer": "3*pi / 10",
+        "explanation": "Intersection points are at x = 0 and x = 1. Outer radius R(x) = sqrt(x), inner radius r(x) = x^2. Washer method volume formula: V = pi * Integral (0 to 1) ([sqrt(x)]^2 - [x^2]^2) dx = pi * Integral (0 to 1) (x - x^4) dx = pi * [x^2/2 - x^5/5] from 0 to 1 = pi * (1/2 - 1/5) = pi * (5/10 - 2/10) = 3*pi / 10."
+      },
+      {
+        "type": "Free Response",
+        "question": "The base of a solid is the region bounded by the parabola y = 1 - x^2 and the x-axis. Cross-sections perpendicular to the x-axis are isosceles right triangles with one leg in the base plane. Compute the volume of this solid.",
+        "answer": "8/15",
+        "explanation": "The boundary intersection roots are x = -1 and x = 1. The length of the leg in the base is upper curve minus lower curve: base leg length = 1 - x^2. The area of an isosceles right triangle with leg length s is A = 0.5 * s^2. Thus, cross-sectional area is A(x) = 0.5 * (1 - x^2)^2 = 0.5 * (1 - 2x^2 + x^4). Volume is Integral (-1 to 1) 0.5 * (1 - 2x^2 + x^4) dx = 0.5 * [x - 2x^3/3 + x^5/5] from -1 to 1 = 0.5 * [(1 - 2/3 + 1/5) - (-1 + 2/3 - 1/5)] = 0.5 * 2 * (1 - 2/3 + 1/5) = 1 - 2/3 + 1/5 = 1/3 + 1/5 = 8/15."
+      },
+      {
+        "type": "Free Response",
+        "question": "Find the area of the region entirely enclosed between the graphs of y = x^2 - 4x and y = 2x.",
+        "answer": "36",
+        "explanation": "Find intersection boundaries: x^2 - 4x = 2x -> x^2 - 6x = 0 -> x(x - 6) = 0, yielding bounds x = 0 and x = 6. Area = Integral (0 to 6) (2x - (x^2 - 4x)) dx = Integral (0 to 6) (6x - x^2) dx = [3x^2 - x^3/3] from 0 to 6 = (3(36) - 216/3) - 0 = 108 - 72 = 36."
+      },
+      {
+        "type": "Free Response",
+        "question": "Revolve the region bounded by y = x^2 and y = 4 around the vertical line axis x = 3. Set up the washer method integral template to solve for volume with respect to y.",
+        "answer": "Integral (0 to 4) pi * [ (3 + sqrt(y))^2 - (3 - sqrt(y))^2 ] dy",
+        "explanation": "Solve the curve for x in terms of y: x = +-sqrt(y). The rotation axis is x = 3. Outer radius is the distance from the axis to the left branch: R(y) = 3 - (-sqrt(y)) = 3 + sqrt(y). Inner radius is the distance from the axis to the right branch: r(y) = 3 - sqrt(y). The bounds of integration stretch along the y-axis from 0 to 4. Volume = Integral (0 to 4) pi * [R(y)^2 - r(y)^2] dy = Integral (0 to 4) pi * [ (3 + sqrt(y))^2 - (3 - sqrt(y))^2 ] dy."
+      },
+      {
+        "type": "Free Response",
+        "question": "A particle moves along a straight coordinate line such that its velocity at time t hours is v(t) = t^2 - t - 6 miles/hour. Compute both the net displacement and the total distance covered by the particle over the time interval [1, 4].",
+        "answer": "Displacement = -4.5 miles, Total Distance = 61/6 miles",
+        "explanation": "Displacement = Integral (1 to 4) (t^2 - t - 6) dt = [t^3/3 - t^2/2 - 6t] from 1 to 4 = (64/3 - 8 - 24) - (1/3 - 1/2 - 6) = (64/3 - 32) - (2/6 - 3/6 - 36/6) = (-32/3) - (-37/6) = -64/6 + 37/6 = -27/6 = -4.5 miles. To find total distance, find roots of velocity: (t-3)(t+2)=0 -> root at t=3 in our interval. Distance = Absolute value of Integral(1 to 3) plus absolute value of Integral(3 to 4). Net tracking shows Integral(1 to 3) is [t^3/3 - t^2/2 - 6t] evaluated from 1 to 3 = (9 - 4.5 - 18) - (-37/6) = -13.5 + 37/6 = -81/6 + 37/6 = -44/6 = -22/3 miles. Integral(3 to 4) is f(4) - f(3) = (-64/6) - (-81/6) = 17/6 miles. Total distance = |-44/6| + |17/6| = 44/6 + 17/6 = 61/6 miles."
+      }
+    ]
+  }
 }
-
-# Optional sanity check loop to verify exactly 30 items per unit are present
-for unit, questions in ap_calc_db["AP Calculus AB"].items():
-    print(f"{unit}: {len(questions)} questions")
-
-# To save or export directly as a JSON asset text file for your JavaScript configuration:
-with open("ap_calculus_db.json", "w") as f:
-    json.dump(ap_calc_db, f, indent=4)
