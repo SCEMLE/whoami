@@ -16,47 +16,65 @@
             align-items: center;
         }
         h1 { 
-            color: #696D7D; /* Blue Slate Headings */
-            margin-bottom: 10px; 
+            color: #68B0AB; /* Main Title in Tropical Teal */
+            font-size: 32px;
+            margin-bottom: 8px; 
         }
         p { 
-            color: #696D7D; /* Using Blue Slate with slight opacity */
-            opacity: 0.8;
-            font-size: 18px; 
-            margin-bottom: 40px; 
+            color: #696D7D; /* Subtitle in Blue Slate */
+            font-size: 16px; 
+            margin-bottom: 40px;
+            font-weight: 500;
         }
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
             max-width: 800px;
             width: 100%;
         }
         .subject-card {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(105, 109, 125, 0.05);
             text-decoration: none;
             color: inherit;
             text-align: center;
-            border: 2px solid #C8D5B9; /* Tea Green Border */
-            transition: all 0.2s ease-in-out;
+            border: 2px solid #C8D5B9; /* Tea Green Frame */
+            transition: all 0.25s ease-in-out;
         }
         .subject-card:hover {
-            transform: translateY(-5px);
-            border-color: #68B0AB; /* Tropical Teal Hover Accent */
-            box-shadow: 0 6px 12px rgba(104, 176, 171, 0.2);
+            transform: translateY(-4px);
+            border-color: #68B0AB; /* Changes to Tropical Teal on hover */
+            box-shadow: 0 8px 16px rgba(104, 176, 171, 0.15);
         }
         .subject-card h2 { 
-            color: #696D7D; /* Blue Slate Card Titles */
-            margin: 0 0 10px 0; 
-            font-size: 20px; 
+            color: #696D7D; /* Blue Slate Card Title */
+            margin: 0 0 12px 0; 
+            font-size: 22px; 
         }
         .subject-card span { 
-            color: #68B0AB; /* Tropical Teal Link Text */
+            color: #68B0AB; /* Tropical Teal Button Text */
             font-weight: bold; 
-            font-size: 14px; 
+            font-size: 14px;
+            background-color: rgba(104, 176, 171, 0.1); /* Subtle Teal pill background */
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .disabled-card {
+            background: #fdfdfd;
+            border: 2px dashed #e2e2e2;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .disabled-card h2 {
+            color: #95a5a6;
+        }
+        .disabled-card span {
+            color: #95a5a6;
+            background: #f1f2f6;
         }
     </style>
 </head>
@@ -71,10 +89,10 @@
             <span>8 Units • 240 Questions →</span>
         </a>
 
-        <a href="#" class="subject-card" style="opacity: 0.5; cursor: not-allowed; border-color: #eaecee;">
+        <div class="subject-card disabled-card">
             <h2>AP US History</h2>
             <span>Coming Soon...</span>
-        </a>
+        </div>
     </div>
 
 </body>
