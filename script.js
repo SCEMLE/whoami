@@ -1,4 +1,4 @@
-econst DATA_URL = "questions.json";
+const DATA_URL = "questions.json";
 
 let masterQuestionsList = {}; 
 let filteredQuestions = [];   
@@ -133,4 +133,31 @@ function displayActiveQuestion() {
     const activeQuestion = filteredQuestions[currentQuestionIndex];
     if (!activeQuestion) return;
 
-    const cleanAnswer = activeQuestion.
+    const cleanAnswer = activeQuestion.answer ? String(activeQuestion.answer).trim() : "";
+    typeOutput.textContent = activeQuestion.type || "Multiple Choice";
+    questionOutput.textContent = activeQuestion.question || "";
+    progressLabel.textContent = `${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
+
+    if (Array.isArray(activeQuestion.generatedOptionsList)) {
+        activeQuestion.generatedOptionsList.forEach(choice => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.textContent = choice;
+            
+            if (activeQuestion.userAttempted) {
+                btn.disabled = true;
+                if (choice === cleanAnswer) btn.classList.add("correct");
+                else if (choice === activeQuestion.chosenAnswer) btn.classList.add("incorrect");
+            } else {
+                btn.addEventListener("click", () => handleAnswerValidation(btn, choice, activeQuestion));
+            }
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    if (activeQuestion.userAttempted) {
+        if (activeQuestion.chosenAnswer === cleanAnswer) {
+            feedbackOutput.textContent = "Correct! 🎉";
+            feedbackOutput.style.color = "#2ecc71";
+        } else {
+            feedbackOutput.textContent = `Incorrect
