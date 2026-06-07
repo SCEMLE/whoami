@@ -19,7 +19,6 @@ const rightButton = document.getElementById("rightButton");
 const progressLabel = document.getElementById("progressLabel");
 const correctCounter = document.getElementById("correctCounter");
 const incorrectCounter = document.getElementById("incorrectCounter");
-const bgMusic = document.getElementById("bgMusic");
 
 async function loadInitializationData() {
     try {
@@ -112,11 +111,6 @@ function generateDynamicChoices(currentQuestion, currentSubject) {
 
 function startStudyingSession() {
     if (!subjectDropdown || !unitDropdown) return;
-
-    if (bgMusic && bgMusic.paused) {
-        bgMusic.volume = 0.20;
-        bgMusic.play().catch(err => console.log("Audio waiting for interaction:", err));
-    }
 
     const selectedSubject = subjectDropdown.value;
     const selectedUnit = unitDropdown.value;
