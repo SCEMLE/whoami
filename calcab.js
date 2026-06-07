@@ -202,6 +202,23 @@ function startStudyingSession() {
 }
 
 /**
+ * Initializes or resets a study deck session based on user menu selections
+ */
+function startStudyingSession() {
+    if (!subjectDropdown || !unitDropdown) return;
+
+    // ADD THESE LINES RIGHT HERE:
+    if (bgMusic && bgMusic.paused) {
+        bgMusic.volume = 0.25; 
+        bgMusic.play().catch(err => console.log("Audio waiting for click: ", err));
+    }
+
+    const selectedSubject = subjectDropdown.value;
+    const selectedUnit = unitDropdown.value;
+    filteredQuestions = [];
+    // ... rest of the function continues normally
+
+/**
  * Handles rendering the current question state and historical inputs to the DOM
  */
 function displayActiveQuestion() {
