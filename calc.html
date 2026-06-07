@@ -5,151 +5,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AP Calculus Study Hub</title>
     <style>
-        :root {
-            --bg-primary: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            
-            /* Interactive Button Palette */
-            --btn-default-bg: #f1f5f9;
-            --btn-default-text: #334155;
-            --btn-default-hover: #e2e8f0;
-            
-            --palette-correct: #10b981;   /* Emerald Green */
-            --palette-wrong: #ef4444;     /* Vibrant Coral Red */
-            --palette-info: #3b82f6;      /* Accent Blue Theme */
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-main);
+            background-color: #f4f7f6;
+            color: #333;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
-            min-height: 100vh;
+            justify-content: center;
         }
-
-        /* Sidebar Layout Structure */
-        .sidebar {
-            width: 260px;
-            background-color: #0f172a;
-            color: #ffffff;
-            padding: 30px 20px;
-            box-sizing: border-box;
-        }
-
-        .sidebar h2 {
-            font-size: 1.25rem;
-            margin-bottom: 40px;
-            color: var(--palette-info);
-            letter-spacing: 0.5px;
-        }
-
-        .sidebar a {
-            display: block;
-            color: #94a3b8;
-            text-decoration: none;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar a.active, .sidebar a:hover {
-            background-color: #1e293b;
-            color: #ffffff;
-        }
-
-        /* Main Workspace Container */
-        .main-content {
-            flex: 1;
-            padding: 40px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
         .container {
+            max-width: 600px;
             width: 100%;
-            max-width: 650px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        .back-link {
-            text-decoration: none;
-            color: var(--palette-info);
-            font-weight: bold;
-            font-size: 14px;
-            transition: color 0.2s;
-        }
-        .back-link:hover {
-            color: #2563eb;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 1.85rem;
-            font-weight: 700;
-        }
-
-        /* Tracker Stats styling */
+        h1 { text-align: center; color: #2c3e50; margin-top: 10px; }
         .tracker {
             display: flex;
-            gap: 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            background: var(--bg-card);
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            align-self: flex-start;
-        }
-        .correct-count { color: var(--palette-correct); }
-        .incorrect-count { color: var(--palette-wrong); }
-
-        /* Filter Controls */
-        .controls {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .controls select {
-            flex: 1;
+            justify-content: space-around;
+            background: #f8f9fa;
             padding: 10px;
             border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-card);
-            font-size: 0.9rem;
-            color: var(--text-main);
-            outline: none;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
         }
-
-        .controls button {
-            background-color: var(--palette-info);
+        .correct-count { color: #2ecc71; }
+        .incorrect-count { color: #e74c3c; }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        select, button {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s;
+            font-weight: bold;
         }
-        .controls button:hover { background-color: #2563eb; }
-
-        /* Question Panel Card */
+        button:hover { background-color: #2980b9; }
         .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            background: #fdfefe;
+            border: 2px solid #eaecee;
+            padding: 25px;
+            border-radius: 8px;
+            min-height: 160px;
+            margin-bottom: 25px;
+        }
+        #typeOutput {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #7f8c8d;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        #questionOutput { font-size: 17px; line-height: 1.6; font-weight: 500; margin-bottom: 15px; }
+        
+        /* Multiple Choice Button Styles */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .option-btn {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #dcdde1;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: normal;
+            transition: all 0.15s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #f1f2f6;
+            border-color: #3498db;
+        }
+        .option-btn.correct {
+            background-color: #2ecc71 !important;
+            color: white !important;
+            border-color: #2ecc71;
+        }
+        .option-btn.incorrect {
+            background-color: #e74c3c !important;
+            color: white !important;
+            border-color: #e74c3c;
         }
 
-        #typeOutput {
+        #feedbackOutput { margin-top: 15px; font-weight: bold; font-size: 16px; }
+        #explanationOutput {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #fcf8e3;
+            border-left: 4px solid #f0ad4e;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .secondary-btn { background-color: #95a5a6; width: auto; min-width: 90px; }
+        .secondary-btn:hover { background-color: #7f8c8d; }
+        #progressLabel { font-weight: bold; color: #7f8c8d; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" style="text-decoration: none; color: #3498db; font-weight: bold; font-size: 14px;">← Back to Portal</a>
+    <h1>AP Calculus Practice</h1>
+    
+    <div class="tracker">
+        <span>Correct: <span id="correctCounter" class="correct-count">0</span></span>
+        <span>Incorrect: <span id="incorrectCounter" class="incorrect-count">0</span></span>
+    </div>
+
+    <div class="controls">
+        <select id="subjectDropdown"></select>
+        <select id="unitDropdown"></select>
+        <button id="submitButton">Start Studying</button>
+    </div>
+
+    <div class="card">
+        <div id="typeOutput">Problem Type</div>
+        <div id="questionOutput">Pick an AP unit above, then click Start Studying!</div>
+        
+        <div class="options-container" id="optionsContainer"></div>
+
+        <div id="feedbackOutput"></div>
+        <div id="explanationOutput"></div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="leftButton" class="secondary-btn">◀ Prev</button>
+        <span id="progressLabel"></span>
+        <button id="rightButton" class="secondary-btn">Next ▶</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
