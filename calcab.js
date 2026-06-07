@@ -32,12 +32,16 @@ async function loadInitializationData() {
         }
         masterQuestionsList = await response.json();
         
-        // Populate the setup UI
+        // Populate the setup UI drop-downs
         populateSubjectDropdown();
+
+        // FIX: Start the session automatically so the quiz doesn't load up completely blank!
+        startStudyingSession();
+        
     } catch (err) {
         console.error("Fetch Error:", err);
         if (questionOutput) {
-            questionOutput.textContent = "Error loading questions.json file. Make sure the file exists and is formatted correctly.";
+            questionOutput.textContent = "Error loading calcab.json file. Make sure the file exists in the correct folder and is formatted cleanly.";
         }
     }
 }
@@ -61,7 +65,11 @@ function populateSubjectDropdown() {
     subjectDropdown.selectedIndex = 0;
 
     // Attach listener for user switches, then build the initial unit mapping
-    subjectDropdown.addEventListener("change", populateUnitDropdown);
+    subjectDropdown.addEventListener("change", () => {
+        populateUnitDropdown();
+        startStudyingSession(); // Auto-refresh when user picks a different subject
+    });
+    
     populateUnitDropdown();
 }
 
@@ -89,6 +97,9 @@ function populateUnitDropdown() {
     let dropdownHTML = `<option value="ALL">All Units</option>`;
     dropdownHTML += units.map(u => `<option value="${u}">${u}</option>`).join("");
     unitDropdown.innerHTML = dropdownHTML;
+    
+    // Ensure "All Units" is selected by default on rebuild
+    unitDropdown.value = "ALL";
 }
 
 /**
@@ -158,6 +169,8 @@ function startStudyingSession() {
         } else if (masterQuestionsList[selectedSubject][selectedUnit]) {
             // Clone isolated single unit data track
             filteredQuestions = [...masterQuestionsList[selectedSubject][selectedUnit]];
+            // Shuffle the single unit to make it unique each run
+            filteredQuestions.sort(() => Math.random() - 0.5);
         }
     }
 
@@ -306,7 +319,7 @@ if (rightButton) {
     });
 }
 
-// Form Submission / Session Init Controller Hook
+// Form/Submit Filter Trigger Action Hook
 if (submitButton) {
     submitButton.addEventListener("click", startStudyingSession);
 }
