@@ -1,171 +1,341 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>AP Calculus Study Hub</title>
+
     <style>
+
         body {
+
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
             background-color: #f4f7f6;
+
             color: #333;
+
             margin: 0;
+
             padding: 20px;
+
             display: flex;
+
             justify-content: center;
+
         }
+
         .container {
+
             max-width: 600px;
+
             width: 100%;
+
             background: white;
+
             padding: 30px;
+
             border-radius: 12px;
+
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
         }
+
         h1 { text-align: center; color: #2c3e50; margin-top: 10px; }
+
         .tracker {
+
             display: flex;
+
             justify-content: space-around;
+
             background: #f8f9fa;
+
             padding: 10px;
+
             border-radius: 6px;
+
             margin-bottom: 15px;
+
             font-weight: bold;
+
             font-size: 14px;
+
         }
+
         .correct-count { color: #2ecc71; }
+
         .incorrect-count { color: #e74c3c; }
+
         .controls {
+
             display: flex;
+
             flex-direction: column;
+
             gap: 12px;
+
             margin-bottom: 25px;
+
         }
+
         select, button {
+
             padding: 12px;
+
             font-size: 16px;
+
             border-radius: 6px;
+
             border: 1px solid #ccc;
+
             width: 100%;
+
             box-sizing: border-box;
+
         }
+
         button {
+
             background-color: #3498db;
+
             color: white;
+
             border: none;
+
             cursor: pointer;
+
             font-weight: bold;
+
         }
+
         button:hover { background-color: #2980b9; }
+
         .card {
+
             background: #fdfefe;
+
             border: 2px solid #eaecee;
+
             padding: 25px;
+
             border-radius: 8px;
+
             min-height: 160px;
+
             margin-bottom: 25px;
+
         }
+
         #typeOutput {
+
             font-size: 11px;
+
             text-transform: uppercase;
+
             color: #7f8c8d;
+
             letter-spacing: 1.5px;
+
             margin-bottom: 12px;
+
             font-weight: bold;
+
         }
+
         #questionOutput { font-size: 17px; line-height: 1.6; font-weight: 500; margin-bottom: 15px; }
+
         
+
         .options-container {
+
             display: flex;
+
             flex-direction: column;
+
             gap: 10px;
+
             margin-top: 15px;
+
         }
+
         .option-btn {
+
             background-color: #f8f9fa;
+
             color: #333;
+
             border: 1px solid #dcdde1;
+
             text-align: left;
+
             padding: 12px 15px;
+
             font-weight: normal;
+
             transition: all 0.15s ease;
+
             cursor: pointer;
+
             width: 100%;
+
             box-sizing: border-box;
+
             border-radius: 6px;
+
             font-size: 15px;
+
         }
+
         .option-btn:hover:not(:disabled) {
+
             background-color: #f1f2f6;
+
             border-color: #3498db;
+
         }
+
         .option-btn.correct {
+
             background-color: #2ecc71 !important;
+
             color: white !important;
+
             border-color: #2ecc71;
+
         }
+
         .option-btn.incorrect {
+
             background-color: #e74c3c !important;
+
             color: white !important;
+
             border-color: #e74c3c;
+
         }
+
+
 
         #feedbackOutput { margin-top: 15px; font-weight: bold; font-size: 16px; }
+
         #explanationOutput {
+
             margin-top: 15px;
+
             padding: 12px;
+
             background-color: #fcf8e3;
+
             border-left: 4px solid #f0ad4e;
+
             font-size: 14px;
+
             line-height: 1.5;
+
             display: none;
+
             border-radius: 0 6px 6px 0;
+
         }
+
         .nav-buttons {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             gap: 10px;
+
         }
+
         .secondary-btn { background-color: #95a5a6; width: auto; min-width: 90px; }
+
         .secondary-btn:hover { background-color: #7f8c8d; }
+
         #progressLabel { font-weight: bold; color: #7f8c8d; font-size: 14px; }
+
     </style>
+
 </head>
+
 <body>
 
+
+
 <div class="container">
+
     <a href="index.html" style="text-decoration: none; color: #3498db; font-weight: bold; font-size: 14px;">← Back to Portal</a>
+
     <h1>AP Calculus Practice</h1>
+
     
+
     <div class="tracker">
+
         <span>Correct: <span id="correctCounter" class="correct-count">0</span></span>
+
         <span>Incorrect: <span id="incorrectCounter" class="incorrect-count">0</span></span>
+
     </div>
+
+
 
     <div class="controls">
+
         <select id="subjectDropdown"></select>
+
         <select id="unitDropdown"></select>
+
         <button id="submitButton">Start Studying</button>
+
     </div>
+
+
 
     <div class="card">
+
         <div id="typeOutput">Problem Type</div>
+
         <div id="questionOutput">Pick an AP course, select a specific unit (or "All Units"), then click Start Studying!</div>
+
         
+
         <div class="options-container" id="optionsContainer"></div>
 
+
+
         <div id="feedbackOutput"></div>
+
         <div id="explanationOutput"></div>
+
     </div>
+
+
 
     <div class="nav-buttons">
+
         <button id="leftButton" class="secondary-btn">◀ Prev</button>
+
         <span id="progressLabel">0 / 0</span>
+
         <button id="rightButton" class="secondary-btn">Next ▶</button>
+
     </div>
+
 </div>
 
+
+
 <script src="script.js"></script>
+
 </body>
+
 </html>
