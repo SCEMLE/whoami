@@ -137,4 +137,78 @@
             border-radius: 0 8px 8px 0;
             font-size: 14px;
             line-height: 1.5;
-            color: #615055
+            color: #615055;
+            display: none;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .secondary-btn { 
+            background-color: #CDD5D1; 
+            color: #615055;
+            width: auto; 
+            min-width: 90px; 
+            border: none;
+            font-weight: 700;
+        }
+        .secondary-btn:hover { 
+            background-color: #946E83; 
+            color: white;
+        }
+        #progressLabel { font-weight: 700; color: #615055; font-size: 14px; }
+        
+        .music-wrapper {
+            margin-top: 20px;
+            border-top: 2px dashed #CDD5D1;
+            padding-top: 20px;
+            overflow: hidden; 
+            height: 60px; 
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" style="text-decoration: none; color: #946E83; font-weight: 700; font-size: 14px;">← Back to Portal</a>
+    <h1>AP Calculus Practice</h1>
+    
+    <div class="tracker">
+        <span>Correct: <span id="correctCounter" class="correct-count">0</span></span>
+        <span>Incorrect: <span id="incorrectCounter" class="incorrect-count">0</span></span>
+    </div>
+
+    <div class="controls">
+        <select id="subjectDropdown"></select>
+        <select id="unitDropdown"></select>
+        <button id="submitButton">Start Studying</button>
+    </div>
+
+    <div class="card">
+        <div id="typeOutput">Problem Type</div>
+        <div id="questionOutput">Pick an AP unit above, then click Start Studying!</div>
+        
+        <div class="options-container" id="optionsContainer"></div>
+
+        <div id="feedbackOutput"></div>
+        <div id="explanationOutput"></div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="leftButton" class="secondary-btn">◀ Prev</button>
+        <span id="progressLabel"></span>
+        <button id="rightButton" class="secondary-btn">Next ▶</button>
+    </div>
+
+    <div class="music-wrapper">
+        <iframe width="100%" height="60" src="https://www.youtube.com/embed/9kzE8isXlQY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="margin-top: -1px;"></iframe>
+    </div>
+</div>
+
+<script src="calcab.js"></script>
+</body>
+</html>
