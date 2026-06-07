@@ -6,6 +6,7 @@ let currentQuestionIndex = 0;
 let correctCount = 0;
 let incorrectCount = 0;
 
+// DOM Elements
 const subjectDropdown = document.getElementById("subjectDropdown");
 const unitDropdown = document.getElementById("unitDropdown");
 const submitButton = document.getElementById("submitButton");
@@ -20,40 +21,80 @@ const progressLabel = document.getElementById("progressLabel");
 const correctCounter = document.getElementById("correctCounter");
 const incorrectCounter = document.getElementById("incorrectCounter");
 
+/**
+ * Loads the database JSON file on page load
+ */
 async function loadInitializationData() {
     try {
         const response = await fetch(DATA_URL);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         masterQuestionsList = await response.json();
+        
+        // Populate the setup UI
         populateSubjectDropdown();
     } catch (err) {
         console.error("Fetch Error:", err);
-        if (questionOutput) questionOutput.textContent = "Error loading questions.json file.";
+        if (questionOutput) {
+            questionOutput.textContent = "Error loading questions.json file. Make sure the file exists and is formatted correctly.";
+        }
     }
 }
 
+/**
+ * Fills the subject dropdown based on the top-level keys in the JSON data
+ */
 function populateSubjectDropdown() {
     if (!subjectDropdown || !masterQuestionsList) return;
+    
     const subjects = Object.keys(masterQuestionsList);
-    if (subjects.length === 0) return;
+    if (subjects.length === 0) {
+        console.warn("No subjects found in the master questions list.");
+        return;
+    }
 
+    // Build options list
     subjectDropdown.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join("");
+    
+    // Explicitly guarantee the first option is highlighted active
+    subjectDropdown.selectedIndex = 0;
+
+    // Attach listener for user switches, then build the initial unit mapping
     subjectDropdown.addEventListener("change", populateUnitDropdown);
     populateUnitDropdown();
 }
 
+/**
+ * Fills the unit dropdown depending on which subject is currently active
+ */
 function populateUnitDropdown() {
     if (!subjectDropdown || !unitDropdown || !masterQuestionsList) return;
-    const selectedSubject = subjectDropdown.value;
-    if (!masterQuestionsList[selectedSubject]) return;
+    
+    let selectedSubject = subjectDropdown.value;
+    
+    // Fallback security check in case subject value reads empty
+    if (!selectedSubject || !masterQuestionsList[selectedSubject]) {
+        const fallbackSubject = Object.keys(masterQuestionsList)[0];
+        if (fallbackSubject) {
+            subjectDropdown.value = fallbackSubject;
+            selectedSubject = fallbackSubject;
+        } else {
+            return;
+        }
+    }
 
-    const units = Object.keys(masterQuestionsList[selectedSubject]);
+    const units = Object.keys(masterQuestionsList[selectedSubject] || {});
     
     let dropdownHTML = `<option value="ALL">All Units</option>`;
     dropdownHTML += units.map(u => `<option value="${u}">${u}</option>`).join("");
     unitDropdown.innerHTML = dropdownHTML;
 }
 
+/**
+ * Dynamic Multiple Choice Distractor Engine
+ * Pulls answers from other database items to generate plausible alternatives
+ */
 function generateDynamicChoices(currentQuestion, currentSubject) {
     let globalAnswerPool = [];
     const realAnswer = currentQuestion.answer ? String(currentQuestion.answer).trim() : "0";
@@ -65,45 +106,62 @@ function generateDynamicChoices(currentQuestion, currentSubject) {
                 currentUnitArray.forEach(q => {
                     if (q && q.answer) {
                         const cleanAns = String(q.answer).trim();
-                        if (cleanAns !== realAnswer) globalAnswerPool.push(cleanAns);
+                        // Gather answer alternatives that are not the target answer
+                        if (cleanAns !== realAnswer) {
+                            globalAnswerPool.push(cleanAns);
+                        }
                     }
                 });
             }
         });
     }
 
+    // De-duplicate alternatives array and shuffle random distribution
     globalAnswerPool = [...new Set(globalAnswerPool)].sort(() => Math.random() - 0.5);
     let choices = globalAnswerPool.slice(0, 3);
     
+    // Fallback bank to inject standard math defaults if data pool is too shallow
     const fallbacks = ["0", "DNE", "1", "e^x", "C"];
     while (choices.length < 3) {
         const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-        if (!choices.includes(fallback) && fallback !== realAnswer) choices.push(fallback);
+        if (!choices.includes(fallback) && fallback !== realAnswer) {
+            choices.push(fallback);
+        }
     }
     
+    // Merge real answer into choice set and perform final random shuffle
     choices.push(realAnswer);
     choices = [...new Set(choices)].slice(0, 4).sort(() => Math.random() - 0.5);
     return choices;
 }
 
+/**
+ * Initializes or resets a study deck session based on user menu selections
+ */
 function startStudyingSession() {
+    if (!subjectDropdown || !unitDropdown) return;
+
     const selectedSubject = subjectDropdown.value;
     const selectedUnit = unitDropdown.value;
     filteredQuestions = [];
 
-  if (masterQuestionsList[selectedSubject]) {
+    if (masterQuestionsList[selectedSubject]) {
         if (selectedUnit === "ALL") {
+            // Aggregate all units for the chosen subject
             Object.keys(masterQuestionsList[selectedSubject]).forEach(u => {
                 if (Array.isArray(masterQuestionsList[selectedSubject][u])) {
                     filteredQuestions = filteredQuestions.concat(masterQuestionsList[selectedSubject][u]);
                 }
             });
+            // Shuffle full cross-unit combination deck
             filteredQuestions.sort(() => Math.random() - 0.5);
         } else if (masterQuestionsList[selectedSubject][selectedUnit]) {
+            // Clone isolated single unit data track
             filteredQuestions = [...masterQuestionsList[selectedSubject][selectedUnit]];
         }
     }
 
+    // Verify session deck contains payload elements
     if (filteredQuestions.length > 0) {
         currentQuestionIndex = 0;
         filteredQuestions.forEach(q => {
@@ -115,16 +173,22 @@ function startStudyingSession() {
         });
         displayActiveQuestion();
     } else {
-        typeOutput.textContent = "Empty";
-        questionOutput.textContent = "No questions found.";
-        optionsContainer.innerHTML = "";
-        feedbackOutput.textContent = "";
-        explanationOutput.style.display = "none";
-        progressLabel.textContent = "0 / 0";
+        // Fallback display if database array is empty
+        if (typeOutput) typeOutput.textContent = "Empty";
+        if (questionOutput) questionOutput.textContent = "No questions found for this selection.";
+        if (optionsContainer) optionsContainer.innerHTML = "";
+        if (feedbackOutput) feedbackOutput.textContent = "";
+        if (explanationOutput) explanationOutput.style.display = "none";
+        if (progressLabel) progressLabel.textContent = "0 / 0";
     }
 }
 
+/**
+ * Handles rendering the current question state and historical inputs to the DOM
+ */
 function displayActiveQuestion() {
+    if (!optionsContainer || !feedbackOutput || !explanationOutput || !typeOutput || !questionOutput || !progressLabel) return;
+
     optionsContainer.innerHTML = "";
     feedbackOutput.textContent = "";
     explanationOutput.style.display = "none";
@@ -138,6 +202,7 @@ function displayActiveQuestion() {
     questionOutput.textContent = activeQuestion.question || "";
     progressLabel.textContent = `${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
 
+    // Render interactive dynamic choice button stack
     if (Array.isArray(activeQuestion.generatedOptionsList)) {
         activeQuestion.generatedOptionsList.forEach(choice => {
             const btn = document.createElement("button");
@@ -145,16 +210,22 @@ function displayActiveQuestion() {
             btn.textContent = choice;
             
             if (activeQuestion.userAttempted) {
+                // Freeze buttons and visually match saved selections if already answered
                 btn.disabled = true;
-                if (choice === cleanAnswer) btn.classList.add("correct");
-                else if (choice === activeQuestion.chosenAnswer) btn.classList.add("incorrect");
+                if (choice === cleanAnswer) {
+                    btn.classList.add("correct");
+                } else if (choice === activeQuestion.chosenAnswer) {
+                    btn.classList.add("incorrect");
+                }
             } else {
+                // Bind real-time click processing
                 btn.addEventListener("click", () => handleAnswerValidation(btn, choice, activeQuestion));
             }
             optionsContainer.appendChild(btn);
         });
     }
 
+    // Restore contextual text flags if item already has historical submission data
     if (activeQuestion.userAttempted) {
         if (activeQuestion.chosenAnswer === cleanAnswer) {
             feedbackOutput.textContent = "Correct! 🎉";
@@ -167,7 +238,12 @@ function displayActiveQuestion() {
     }
 }
 
+/**
+ * Validates selected answer clicks, increments tracking scores, and locks button interface
+ */
 function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
+    if (!optionsContainer || !feedbackOutput || !correctCounter || !incorrectCounter) return;
+
     const allOptionButtons = optionsContainer.querySelectorAll(".option-btn");
     allOptionButtons.forEach(b => b.disabled = true);
 
@@ -188,6 +264,7 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
         incorrectCount++;
         incorrectCounter.textContent = incorrectCount;
 
+        // Auto-highlight correct answer option path to user
         allOptionButtons.forEach(b => {
             if (b.textContent === cleanAnswer) b.classList.add("correct");
         });
@@ -195,17 +272,21 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
     showExplanationPanel(questionObj);
 }
 
+/**
+ * Exposes the explanation details UI container block
+ */
 function showExplanationPanel(questionObj) {
     if (!explanationOutput) return;
+    
     if (questionObj && questionObj.explanation) {
         explanationOutput.innerHTML = `<strong>Step-by-Step Explanation:</strong><br>${questionObj.explanation}`;
-        explanationOutput.style.display = "block";
     } else {
         explanationOutput.innerHTML = "<em>No explicit explanation found for this problem entry.</em>";
-        explanationOutput.style.display = "block";
     }
+    explanationOutput.style.display = "block";
 }
 
+// Left/Previous Navigation Controller Action Hook
 if (leftButton) {
     leftButton.addEventListener("click", () => {
         if (currentQuestionIndex > 0) {
@@ -215,6 +296,7 @@ if (leftButton) {
     });
 }
 
+// Right/Next Navigation Controller Action Hook
 if (rightButton) {
     rightButton.addEventListener("click", () => {
         if (currentQuestionIndex < filteredQuestions.length - 1) {
@@ -224,8 +306,10 @@ if (rightButton) {
     });
 }
 
+// Form Submission / Session Init Controller Hook
 if (submitButton) {
     submitButton.addEventListener("click", startStudyingSession);
 }
 
+// Main Global Execution Initialization Hook
 document.addEventListener("DOMContentLoaded", loadInitializationData);
