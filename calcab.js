@@ -239,3 +239,31 @@ function showExplanationPanel(questionObj) {
     if (questionObj && questionObj.explanation) {
         explanationOutput.innerHTML = `<strong>Step-by-Step Explanation:</strong><br>${questionObj.explanation}`;
     } else {
+        explanationOutput.innerHTML = "<em>No explicit explanation found.</em>";
+    }
+    explanationOutput.style.display = "block";
+}
+
+if (leftButton) {
+    leftButton.addEventListener("click", () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            displayActiveQuestion();
+        }
+    });
+}
+
+if (rightButton) {
+    rightButton.addEventListener("click", () => {
+        if (currentQuestionIndex < filteredQuestions.length - 1) {
+            currentQuestionIndex++;
+            displayActiveQuestion();
+        }
+    });
+}
+
+if (submitButton) {
+    submitButton.addEventListener("click", startStudyingSession);
+}
+
+document.addEventListener("DOMContentLoaded", loadInitializationData);
