@@ -25,7 +25,7 @@ async function loadInitializationData() {
     try {
         const response = await fetch(DATA_URL);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error("HTTP error! status: " + response.status);
         }
         masterQuestionsList = await response.json();
         populateSubjectDropdown();
@@ -43,7 +43,7 @@ function populateSubjectDropdown() {
     const subjects = Object.keys(masterQuestionsList);
     if (subjects.length === 0) return;
 
-    subjectDropdown.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join("");
+    subjectDropdown.innerHTML = subjects.map(s => '<option value="' + s + '">' + s + '</option>').join("");
     subjectDropdown.selectedIndex = 0;
 
     subjectDropdown.addEventListener("change", () => {
@@ -68,8 +68,8 @@ function populateUnitDropdown() {
     }
 
     const units = Object.keys(masterQuestionsList[selectedSubject] || {});
-    let dropdownHTML = `<option value="ALL">All Units</option>`;
-    dropdownHTML += units.map(u => `<option value="${u}">${u}</option>`).join("");
+    let dropdownHTML = '<option value="ALL">All Units</option>';
+    dropdownHTML += units.map(u => '<option value="' + u + '">' + u + '</option>').join("");
     unitDropdown.innerHTML = dropdownHTML;
     unitDropdown.value = "ALL";
 }
@@ -170,10 +170,11 @@ function displayActiveQuestion() {
     const cleanAnswer = activeQuestion.answer ? String(activeQuestion.answer).trim() : "";
     typeOutput.textContent = activeQuestion.type || "Multiple Choice";
     questionOutput.textContent = activeQuestion.question || "";
-    progressLabel.textContent = `${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
+    progressLabel.textContent = (currentQuestionIndex + 1) + " / " + filteredQuestions.length;
 
-    if (Array.isArray(activeQuestion.generatedOptionsList)) {
-        activeQuestion.generatedOptionsList.forEach(choice => {
+    if (activeQuestion.generatedOptionsList && Array.isArray(activeQuestion.generatedOptionsList)) {
+        for (let i = 0; i < activeQuestion.generatedOptionsList.length; i++) {
+            const choice = activeQuestion.generatedOptionsList[i];
             const btn = document.createElement("button");
             btn.className = "option-btn";
             btn.textContent = choice;
@@ -186,10 +187,12 @@ function displayActiveQuestion() {
                     btn.classList.add("incorrect");
                 }
             } else {
-                btn.addEventListener("click", () => handleAnswerValidation(btn, choice, activeQuestion));
+                btn.addEventListener("click", function() {
+                    handleAnswerValidation(btn, choice, activeQuestion);
+                });
             }
             optionsContainer.appendChild(btn);
-        });
+        }
     }
 
     if (activeQuestion.userAttempted) {
@@ -197,7 +200,7 @@ function displayActiveQuestion() {
             feedbackOutput.textContent = "Correct! 🎉";
             feedbackOutput.style.color = "#2ecc71";
         } else {
-            feedbackOutput.textContent = `Incorrect. Correct answer: ${cleanAnswer}`;
+            feedbackOutput.textContent = "Incorrect. Correct answer: " + cleanAnswer;
             feedbackOutput.style.color = "#e74c3c";
         }
         showExplanationPanel(activeQuestion);
@@ -222,7 +225,7 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
         correctCounter.textContent = correctCount;
     } else {
         clickedBtn.classList.add("incorrect");
-        feedbackOutput.textContent = `Incorrect. Correct answer: ${cleanAnswer}`;
+        feedbackOutput.textContent = "Incorrect. Correct answer: " + cleanAnswer;
         feedbackOutput.style.color = "#e74c3c";
         incorrectCount++;
         incorrectCounter.textContent = incorrectCount;
@@ -237,7 +240,7 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
 function showExplanationPanel(questionObj) {
     if (!explanationOutput) return;
     if (questionObj && questionObj.explanation) {
-        explanationOutput.innerHTML = `<strong>Step-by-Step Explanation:</strong><br>${questionObj.explanation}`;
+        explanationOutput.innerHTML = "<strong>Step-by-Step Explanation:</strong><br>" + questionObj.explanation;
     } else {
         explanationOutput.innerHTML = "<em>No explicit explanation found.</em>";
     }
