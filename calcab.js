@@ -3,9 +3,12 @@ const DATA_URL = "calcab.json";
 let masterQuestionsList = {}; 
 let filteredQuestions = [];   
 let currentQuestionIndex = 0;
-let correctCount = 0;
-let incorrectCount = 0;
 
+// Persistent Session Data Engine - Scores now load from localStorage
+let correctCount = parseInt(localStorage.getItem("ap_calc_correct") || "0", 10);
+let incorrectCount = parseInt(localStorage.getItem("ap_calc_incorrect") || "0", 10);
+
+// Existing DOM Connectors
 const subjectDropdown = document.getElementById("subjectDropdown");
 const unitDropdown = document.getElementById("unitDropdown");
 const submitButton = document.getElementById("submitButton");
@@ -20,6 +23,39 @@ const progressLabel = document.getElementById("progressLabel");
 const correctCounter = document.getElementById("correctCounter");
 const incorrectCounter = document.getElementById("incorrectCounter");
 
+// Account & Review Feature DOM Connectors
+const usernameDisplay = document.getElementById("usernameDisplay");
+const streakDisplay = document.getElementById("streakDisplay");
+const showExplanationBtn = document.getElementById("showExplanationBtn");
+
+// Core State Metrics For Streak and Profile Identification
+let currentUser = localStorage.getItem("ap_user") || "Guest";
+let userStreak = parseInt(localStorage.getItem("ap_streak") || "0", 10);
+
+// Initialize UI Elements & Sync Saved Scores
+function syncSessionUI() {
+    if (usernameDisplay) usernameDisplay.textContent = currentUser;
+    if (streakDisplay) streakDisplay.textContent = userStreak;
+    if (correctCounter) correctCounter.textContent = correctCount;
+    if (incorrectCounter) incorrectCounter.textContent = incorrectCount;
+}
+
+// Log Missed Questions to the Central Dashboard Object
+function logMissedQuestion(questionText, correctAnswer) {
+    const currentActiveSubject = subjectDropdown ? subjectDropdown.value : "AP Calculus AB";
+    let globalLog = JSON.parse(localStorage.getItem("ap_global_missed_log") || "{}");
+    
+    if (!globalLog[currentActiveSubject]) {
+        globalLog[currentActiveSubject] = [];
+    }
+    
+    const duplicate = globalLog[currentActiveSubject].some(item => item.question === questionText);
+    if (!duplicate) {
+        globalLog[currentActiveSubject].push({ question: questionText, answer: correctAnswer });
+        localStorage.setItem("ap_global_missed_log", JSON.stringify(globalLog));
+    }
+}
+
 async function loadInitializationData() {
     try {
         const response = await fetch(DATA_URL);
@@ -29,6 +65,7 @@ async function loadInitializationData() {
         masterQuestionsList = await response.json();
         populateSubjectDropdown();
         startStudyingSession();
+        syncSessionUI();
     } catch (err) {
         console.error("Fetch Error:", err);
         if (questionOutput) {
@@ -193,6 +230,9 @@ function displayActiveQuestion() {
         if (activeQuestion.chosenAnswer === cleanAnswer) {
             feedbackOutput.textContent = "Correct! 🎉";
             feedbackOutput.style.color = "#2ecc71";
+        } else if (activeQuestion.chosenAnswer === null) {
+            feedbackOutput.textContent = "Explanation revealed below!";
+            feedbackOutput.style.color = "#615055";
         } else {
             feedbackOutput.textContent = "Incorrect. Correct answer: " + cleanAnswer;
             feedbackOutput.style.color = "#e74c3c";
@@ -217,16 +257,20 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
         feedbackOutput.style.color = "#2ecc71";
         correctCount++;
         correctCounter.textContent = correctCount;
+        localStorage.setItem("ap_calc_correct", correctCount); // Save update
     } else {
         clickedBtn.classList.add("incorrect");
         feedbackOutput.textContent = "Incorrect. Correct answer: " + cleanAnswer;
         feedbackOutput.style.color = "#e74c3c";
         incorrectCount++;
         incorrectCounter.textContent = incorrectCount;
+        localStorage.setItem("ap_calc_incorrect", incorrectCount); // Save update
 
         allOptionButtons.forEach(b => {
             if (b.textContent === cleanAnswer) b.classList.add("correct");
         });
+
+        logMissedQuestion(questionObj.question, cleanAnswer);
     }
     showExplanationPanel(questionObj);
 }
@@ -241,26 +285,5 @@ function showExplanationPanel(questionObj) {
     explanationOutput.style.display = "block";
 }
 
-if (leftButton) {
-    leftButton.addEventListener("click", () => {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            displayActiveQuestion();
-        }
-    });
-}
-
-if (rightButton) {
-    rightButton.addEventListener("click", () => {
-        if (currentQuestionIndex < filteredQuestions.length - 1) {
-            currentQuestionIndex++;
-            displayActiveQuestion();
-        }
-    });
-}
-
-if (submitButton) {
-    submitButton.addEventListener("click", startStudyingSession);
-}
-
-document.addEventListener("DOMContentLoaded", loadInitializationData);
+// Show Explanation Button Click Listener Setup
+if (show
