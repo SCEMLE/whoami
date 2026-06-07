@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function initGoogleAuth() {
         if (typeof google !== 'undefined') {
             google.accounts.id.initialize({
-                client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // Replace with your developer client ID
+                client_id: "534730689520-9q2rpbik8e5manubq777i981endjirn9.apps.googleusercontent.com", // Replace with your developer client ID
                 callback: window.handleCredentialResponse
             });
             google.accounts.id.renderButton(
