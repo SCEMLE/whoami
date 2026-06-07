@@ -28,7 +28,12 @@ async function loadInitializationData() {
         populateSubjectDropdown();
     } catch (err) {
         console.error("Fetch Error:", err);
-        if (questionOutput) questionOutput.textContent = "Error loading your question file.";
+        if (questionOutput) {
+            questionOutput.innerHTML = `<strong>Error loading data file.</strong><br>
+            Please check that:<br>
+            1. Your file is named exactly <code>calcab.json</code><br>
+            2. You are using a local environment tracker like <strong>Live Server</strong> instead of opening the file locally.`;
+        }
     }
 }
 
@@ -138,7 +143,6 @@ function displayActiveQuestion() {
     questionOutput.textContent = activeQuestion.question || "";
     progressLabel.textContent = `${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
 
-    // --- MODE A: MULTIPLE CHOICE ---
     if (activeQuestion.type === "Multiple Choice") {
         if (Array.isArray(activeQuestion.generatedOptionsList)) {
             activeQuestion.generatedOptionsList.forEach(choice => {
@@ -157,7 +161,6 @@ function displayActiveQuestion() {
             });
         }
     } 
-    // --- MODE B: FREE RESPONSE ---
     else if (activeQuestion.type === "Free Response") {
         const inputWrapper = document.createElement("div");
         inputWrapper.style.display = "flex";
@@ -203,7 +206,6 @@ function displayActiveQuestion() {
         optionsContainer.appendChild(inputWrapper);
     }
 
-    // --- RE-DISPLAY RESULTS ON HISTORICAL QUESTION NAVIGATION ---
     if (activeQuestion.userAttempted) {
         const userClean = activeQuestion.chosenAnswer ? String(activeQuestion.chosenAnswer).trim().toLowerCase() : "";
         const systemClean = cleanAnswer.toLowerCase();
@@ -250,4 +252,50 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
 function handleFreeResponseValidation(userChoice, questionObj) {
     questionObj.userAttempted = true;
     questionObj.chosenAnswer = userChoice;
-    const cleanAnswer = questionObj.
+    const cleanAnswer = questionObj.answer ? String(questionObj.answer).trim() : "";
+
+    if (userChoice.toLowerCase() === cleanAnswer.toLowerCase()) {
+        correctCount++;
+        correctCounter.textContent = correctCount;
+    } else {
+        incorrectCount++;
+        incorrectCounter.textContent = incorrectCount;
+    }
+    
+    displayActiveQuestion(); 
+}
+
+function showExplanationPanel(questionObj) {
+    if (!explanationOutput) return;
+    if (questionObj && questionObj.explanation) {
+        explanationOutput.innerHTML = `<strong>Step-by-Step Explanation:</strong><br>${questionObj.explanation}`;
+        explanationOutput.style.display = "block";
+    } else {
+        explanationOutput.innerHTML = "<em>No explicit explanation found for this problem entry.</em>";
+        explanationOutput.style.display = "block";
+    }
+}
+
+if (leftButton) {
+    leftButton.addEventListener("click", () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            displayActiveQuestion();
+        }
+    });
+}
+
+if (rightButton) {
+    rightButton.addEventListener("click", () => {
+        if (currentQuestionIndex < filteredQuestions.length - 1) {
+            currentQuestionIndex++;
+            displayActiveQuestion();
+        }
+    });
+}
+
+if (submitButton) {
+    submitButton.addEventListener("click", startStudyingSession);
+}
+
+document.addEventListener("DOMContentLoaded", loadInitializationData);
