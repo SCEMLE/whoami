@@ -5,15 +5,19 @@ let index = 0;
 let correctCount = 0;
 let incorrectCount = 0;
 
+// 1. Fetch data safely with error reporting
 fetch('./questions.json')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error("Network status code: " + response.status);
+        return response.json();
+    })
     .then(data => {
         masterQuestionsList = data;
         buildDropdowns();
     })
     .catch(error => {
-        console.error("Error connecting to database:", error);
-        document.getElementById("questionOutput").textContent = "Error loading equations database.";
+        console.error("Database connection failure:", error);
+        document.getElementById("questionOutput").textContent = "Error reading questions.json. Verify it sits in the same directory folder!";
     });
 
 function buildDropdowns() {
@@ -42,8 +46,8 @@ function updateUnitDropdown() {
 
     const units = Object.keys(masterQuestionsList[selectedSubject]);
     units.sort((a, b) => {
-        const numA = parseInt(a.replace("Unit ", ""));
-        const numB = parseInt(b.replace("Unit ", ""));
+        const numA = parseInt(a.replace("Unit ", "")) || 0;
+        const numB = parseInt(b.replace("Unit ", "")) || 0;
         return numA - numB;
     });
 
@@ -55,6 +59,7 @@ function updateUnitDropdown() {
     });
 }
 
+// 2. Question filter and array shuffle matrix
 function filterQuestions() {
     const selectedSubject = document.getElementById("subjectDropdown").value;
     const selectedUnitValue = document.getElementById("unitDropdown").value;
@@ -79,7 +84,7 @@ function filterQuestions() {
         }
     }
 
-    // Prepare each question with generated choices
+    // Map matching parameters to individual problem sessions
     filteredQuestions.forEach(q => {
         q.userAttempted = false;
         q.userCorrect = null;
@@ -90,33 +95,40 @@ function filterQuestions() {
     displayQuestion();
 }
 
-// Pulls 3 fake answers from alternative questions within the matching dataset to build choices
 function generateMultipleChoiceOptions(currentQuestion, subject) {
     let pool = [];
-    const units = Object.keys(masterQuestionsList[subject]);
+    const units = Object.keys(masterQuestionsList[subject] || {});
     
     units.forEach(u => {
-        masterQuestionsList[subject][u].forEach(q => {
-            if (q.answer !== currentQuestion.answer) {
+        (masterQuestionsList[subject][u] || []).forEach(q => {
+            if (q.answer && q.answer !== currentQuestion.answer) {
                 pool.push(q.answer);
             }
         });
     });
 
-    // Deduplicate pool values
-    pool = [...new Set(pool)];
-    
-    // Shuffle the unique fakes and pick up to 3
+    pool = [...new Set(pool)]; // Deduplicate values
     pool.sort(() => Math.random() - 0.5);
+    
     let distractors = pool.slice(0, 3);
     
-    // Combine with correct option, and shuffle entirely
-    let choices = [currentQuestion.answer, ...distractors];
-    choices.sort(() => Math.random() - 0.5);
+    // Safety fallback properties if parsing fields are empty
+    while (distractors.length < 3) {
+        distractors.push("DNE", "0", "1");
+    }
     
+    let choices = [currentQuestion.answer, ...distractors];
+    choices = [...new Set(choices)].slice(0, 4);
+    
+    while (choices.length < 4) {
+        choices.push((Math.random() * 10).toFixed(0));
+    }
+
+    choices.sort(() => Math.random() - 0.5);
     return choices;
 }
 
+// 3. User display interfaces
 function displayQuestion() {
     const typeLabel = document.getElementById("typeOutput");
     const questionLabel = document.getElementById("questionOutput");
@@ -132,7 +144,7 @@ function displayQuestion() {
 
     if (filteredQuestions.length === 0) {
         typeLabel.textContent = "Empty";
-        questionLabel.textContent = "No math problems found matching this selection.";
+        questionLabel.textContent = "No mathematical parameters found matching your selection.";
         progressLabel.textContent = "";
         return;
     }
@@ -142,7 +154,6 @@ function displayQuestion() {
     questionLabel.textContent = currentQ.question;
     progressLabel.textContent = `${index + 1} / ${filteredQuestions.length}`;
 
-    // Render option buttons
     currentQ.generatedChoices.forEach(choice => {
         const btn = document.createElement("button");
         btn.className = "option-btn";
@@ -150,7 +161,6 @@ function displayQuestion() {
         
         if (currentQ.userAttempted) {
             btn.disabled = true;
-            // Style colors based on what happened
             if (choice === currentQ.answer) {
                 btn.classList.add("correct");
             } else if (choice === currentQ.chosenAnswer) {
@@ -182,8 +192,6 @@ function handleOptionSelection(selectedChoice, clickedButton) {
     currentQ.chosenAnswer = selectedChoice;
 
     const feedbackLabel = document.getElementById("feedbackOutput");
-
-    // Disable all choice selections instantly
     const buttons = document.querySelectorAll(".option-btn");
     buttons.forEach(btn => btn.disabled = true);
 
@@ -200,7 +208,6 @@ function handleOptionSelection(selectedChoice, clickedButton) {
         document.getElementById("incorrectCounter").textContent = incorrectCount;
         clickedButton.classList.add("incorrect");
         
-        // Find and highlight correct selection choice option
         buttons.forEach(btn => {
             if (btn.textContent === currentQ.answer) {
                 btn.classList.add("correct");
@@ -216,7 +223,7 @@ function handleOptionSelection(selectedChoice, clickedButton) {
 
 function showExplanation(questionObj) {
     const explanationLabel = document.getElementById("explanationOutput");
-    explanationLabel.innerHTML = `<strong>Explanation:</strong> ${questionObj.explanation || "No explanation breakdown provided for this equation."}`;
+    explanationLabel.innerHTML = `<strong>Explanation:</strong> ${questionObj.explanation || "No clarification matrix provided for this calculation item."}`;
     explanationLabel.style.display = "block";
 }
 
