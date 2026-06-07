@@ -54,13 +54,18 @@ function populateSubjectDropdown() {
     populateUnitDropdown();
 }
 
-// 3. Populate units based on the selected subject key
+// 3. Populate units based on the selected subject key + add "All Units"
 function populateUnitDropdown() {
     const selectedSubject = subjectDropdown.value;
     if (!masterQuestionsList[selectedSubject]) return;
 
     const units = Object.keys(masterQuestionsList[selectedSubject]);
-    unitDropdown.innerHTML = units.map(u => `<option value="${u}">${u}</option>`).join("");
+    
+    // Add "All Units" option right at the top of the dropdown string
+    let dropdownHTML = `<option value="ALL">All Units</option>`;
+    dropdownHTML += units.map(u => `<option value="${u}">${u}</option>`).join("");
+    
+    unitDropdown.innerHTML = dropdownHTML;
 }
 
 // 4. Build a robust pool of distractors across all 240 questions
@@ -88,156 +93,4 @@ function generateDynamicChoices(currentQuestion, currentSubject) {
     const fallbacks = ["0", "DNE", "1", "e^x", "C"];
     while (choices.length < 3) {
         const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-        if (!choices.includes(fallback) && fallback !== currentQuestion.answer.trim()) {
-            choices.push(fallback);
-        }
-    }
-    
-    // Combine with the real correct answer
-    choices.push(currentQuestion.answer.trim());
-    
-    // Final duplicate scrub and shuffle
-    choices = [...new Set(choices)].slice(0, 4); 
-    choices.sort(() => Math.random() - 0.5);
-    
-    return choices;
-}
-
-// 5. Filter your dataset when clicking "Start Studying"
-function startStudyingSession() {
-    const selectedSubject = subjectDropdown.value;
-    const selectedUnit = unitDropdown.value;
-
-    if (masterQuestionsList[selectedSubject] && masterQuestionsList[selectedSubject][selectedUnit]) {
-        filteredQuestions = [...masterQuestionsList[selectedSubject][selectedUnit]];
-    } else {
-        filteredQuestions = [];
-    }
-
-    if (filteredQuestions.length > 0) {
-        currentQuestionIndex = 0;
-        
-        // Map elements out safely
-        filteredQuestions.forEach(q => {
-            q.userAttempted = false;
-            q.chosenAnswer = null;
-            if (!q.generatedOptionsList) {
-                q.generatedOptionsList = generateDynamicChoices(q, selectedSubject);
-            }
-        });
-
-        displayActiveQuestion();
-    } else {
-        typeOutput.textContent = "Empty";
-        questionOutput.textContent = "No matching questions found for this selection.";
-        optionsContainer.innerHTML = "";
-        feedbackOutput.textContent = "";
-        explanationOutput.style.display = "none";
-        progressLabel.textContent = "0 / 0";
-    }
-}
-
-// 6. Render the active question and choice buttons
-function displayActiveQuestion() {
-    optionsContainer.innerHTML = "";
-    feedbackOutput.textContent = "";
-    explanationOutput.style.display = "none";
-    explanationOutput.innerHTML = "";
-
-    const activeQuestion = filteredQuestions[currentQuestionIndex];
-
-    typeOutput.textContent = activeQuestion.type || "Problem Details";
-    questionOutput.textContent = activeQuestion.question;
-    progressLabel.textContent = `${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
-
-    activeQuestion.generatedOptionsList.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = choice;
-        
-        if (activeQuestion.userAttempted) {
-            btn.disabled = true;
-            if (choice === activeQuestion.answer.trim()) {
-                btn.classList.add("correct");
-            } else if (choice === activeQuestion.chosenAnswer) {
-                btn.classList.add("incorrect");
-            }
-        } else {
-            btn.addEventListener("click", () => handleAnswerValidation(btn, choice, activeQuestion));
-        }
-        
-        optionsContainer.appendChild(btn);
-    });
-
-    if (activeQuestion.userAttempted) {
-        if (activeQuestion.chosenAnswer === activeQuestion.answer.trim()) {
-            feedbackOutput.textContent = "Correct! 🎉";
-            feedbackOutput.style.color = "#2ecc71";
-        } else {
-            feedbackOutput.textContent = `Incorrect. The correct answer was: ${activeQuestion.answer}`;
-            feedbackOutput.style.color = "#e74c3c";
-        }
-        showExplanationPanel(activeQuestion);
-    }
-}
-
-// 7. Evaluate answer accuracy
-function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
-    if (questionObj.userAttempted) return;
-
-    const allOptionButtons = optionsContainer.querySelectorAll(".option-btn");
-    allOptionButtons.forEach(b => b.disabled = true);
-
-    questionObj.userAttempted = true;
-    questionObj.chosenAnswer = userChoice;
-
-    if (userChoice === questionObj.answer.trim()) {
-        clickedBtn.classList.add("correct");
-        feedbackOutput.textContent = "Correct! 🎉";
-        feedbackOutput.style.color = "#2ecc71";
-        correctCount++;
-        correctCounter.textContent = correctCount;
-    } else {
-        clickedBtn.classList.add("incorrect");
-        feedbackOutput.textContent = `Incorrect. The correct answer was: ${questionObj.answer}`;
-        feedbackOutput.style.color = "#e74c3c";
-        incorrectCount++;
-        incorrectCounter.textContent = incorrectCount;
-
-        allOptionButtons.forEach(b => {
-            if (b.textContent === questionObj.answer.trim()) {
-                b.classList.add("correct");
-            }
-        });
-    }
-
-    showExplanationPanel(questionObj);
-}
-
-function showExplanationPanel(questionObj) {
-    if (questionObj.explanation) {
-        explanationOutput.innerHTML = `<strong>Step-by-Step Explanation:</strong><br>${questionObj.explanation}`;
-        explanationOutput.style.display = "block";
-    } else {
-        explanationOutput.innerHTML = "<em>No explicit explanation found for this problem entry.</em>";
-        explanationOutput.style.display = "block";
-    }
-}
-
-// 8. Navigation Event Listeners
-leftButton.addEventListener("click", () => {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        displayActiveQuestion();
-    }
-});
-
-rightButton.addEventListener("click", () => {
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
-        currentQuestionIndex++;
-        displayActiveQuestion();
-    }
-});
-
-submitButton.addEventListener("click", startStudyingSession);
-document.addEventListener("DOMContentLoaded", loadInitializationData);
+        if (!
