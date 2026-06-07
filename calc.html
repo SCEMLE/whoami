@@ -74,8 +74,6 @@
             font-weight: bold;
         }
         #questionOutput { font-size: 17px; line-height: 1.6; font-weight: 500; margin-bottom: 15px; }
-        
-        /* Multiple Choice Button Styles */
         .options-container {
             display: flex;
             flex-direction: column;
@@ -105,7 +103,6 @@
             color: white !important;
             border-color: #e74c3c;
         }
-
         #feedbackOutput { margin-top: 15px; font-weight: bold; font-size: 16px; }
         #explanationOutput {
             margin-top: 15px;
@@ -121,10 +118,17 @@
             justify-content: space-between;
             align-items: center;
             gap: 10px;
+            margin-bottom: 25px;
         }
         .secondary-btn { background-color: #95a5a6; width: auto; min-width: 90px; }
         .secondary-btn:hover { background-color: #7f8c8d; }
         #progressLabel { font-weight: bold; color: #7f8c8d; font-size: 14px; }
+        
+        .music-wrapper {
+            margin-top: 20px;
+            border-top: 1px dashed #dcdde1;
+            padding-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -136,34 +140,3 @@
     <div class="tracker">
         <span>Correct: <span id="correctCounter" class="correct-count">0</span></span>
         <span>Incorrect: <span id="incorrectCounter" class="incorrect-count">0</span></span>
-    </div>
-
-    <div class="controls">
-        <select id="subjectDropdown"></select>
-        <select id="unitDropdown"></select>
-        <button id="submitButton">Start Studying</button>
-    </div>
-
-    <div class="card">
-        <div id="typeOutput">Problem Type</div>
-        <div id="questionOutput">Pick an AP unit above, then click Start Studying!</div>
-        
-        <div class="options-container" id="optionsContainer"></div>
-
-        <div id="feedbackOutput"></div>
-        <div id="explanationOutput"></div>
-    </div>
-
-    <div class="nav-buttons">
-        <button id="leftButton" class="secondary-btn">◀ Prev</button>
-        <span id="progressLabel"></span>
-        <button id="rightButton" class="secondary-btn">Next ▶</button>
-    </div>
-</div>
-<div style="margin-top: 20px; display: flex; justify-content: center;">
-    <iframe id="bgMusicEmbed" width="100%" height="80" src="https://www.youtube.com/embed/9kzE8isXlQY?enablejsapi=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius: 8px; max-width: 600px;"></iframe>
-</div>
-
-<script src="calcab.js"></script>
-</body>
-</html>
