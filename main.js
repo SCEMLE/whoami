@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Dynamic Breakdown of Incorrect Answers by Subject
+    // Dynamic Breakdown of Incorrect Answers by Subject (Calculus, History, etc.)
     function renderGlobalMissedQuestions() {
         if (!reviewLogsContainer) return;
         
@@ -121,10 +121,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h3 style="border-bottom:2px solid #946E83; padding-bottom:5px;">${subject}</h3>`;
                 
                 listItems.forEach(item => {
+                    // Generates clean cross-reference metadata to locate what page the mistake happened on
+                    const originPage = item.sourcePage || (subject.includes("History") ? "ushistory.html" : "calc.html");
+                    
                     htmlContent += `
                         <div class="missed-item" style="margin-bottom: 12px; padding: 8px; border-left: 3px solid #e74c3c; background: rgba(0,0,0,0.02);">
                             <strong>Question:</strong> ${item.question}<br>
-                            <span style="color: #946E83;"><strong>Correct Answer:</strong> ${item.answer}</span>
+                            <span style="color: #946E83;"><strong>Correct Answer:</strong> ${item.answer}</span><br>
+                            <small style="color: #7f8c8d; font-size: 11px;">Source File reference: <a href="${originPage}" style="color: #946E83; font-weight: 600;">${originPage}</a></small>
                         </div>`;
                 });
                 htmlContent += `</div>`;
@@ -138,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearBtn.textContent = "Clear All Saved Questions";
         clearBtn.style.cssText = "margin-top: 15px; background: #e74c3c; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;";
         clearBtn.addEventListener("click", () => {
-            if (confirm("Are you sure you want to clear your missed questions logs?")) {
+            if (confirm("Are you sure you want to clear your missed questions logs across all templates?")) {
                 localStorage.removeItem("ap_global_missed_log");
                 renderGlobalMissedQuestions();
             }
