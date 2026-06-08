@@ -28,9 +28,7 @@ const clearReviewBtn = document.getElementById("clearReviewBtn");
 
 // Logs missed questions along with the specific page source to the central hub
 function logMissedQuestion(questionText, correctAnswer) {
-    const currentActiveSubject = subjectDropdown ? subjectDropdown.value : "AP U.S. History";
-    
-    // Extracts the current filename (e.g., "ushistory.html") dynamically
+    const currentActiveSubject = subjectDropdown && subjectDropdown.value ? subjectDropdown.value : "AP U.S. History";
     const currentFilePage = window.location.pathname.split("/").pop() || "ushistory.html";
     
     let globalLog = JSON.parse(localStorage.getItem("ap_global_missed_log") || "{}");
@@ -39,14 +37,13 @@ function logMissedQuestion(questionText, correctAnswer) {
         globalLog[currentActiveSubject] = [];
     }
     
-    // Check for duplicates within this specific subject
     const duplicate = globalLog[currentActiveSubject].some(item => item.question === questionText);
     
     if (!duplicate) {
         globalLog[currentActiveSubject].push({ 
             question: questionText, 
             answer: correctAnswer,
-            sourcePage: currentFilePage // Saves filename so main.js can generate direct review links
+            sourcePage: currentFilePage
         });
         localStorage.setItem("ap_global_missed_log", JSON.stringify(globalLog));
         renderLocalMissedQuestions();
@@ -57,7 +54,7 @@ function logMissedQuestion(questionText, correctAnswer) {
 function renderLocalMissedQuestions() {
     if (!reviewListContent) return;
     
-    const currentActiveSubject = subjectDropdown ? subjectDropdown.value : "AP U.S. History";
+    const currentActiveSubject = subjectDropdown && subjectDropdown.value ? subjectDropdown.value : "AP U.S. History";
     const globalLog = JSON.parse(localStorage.getItem("ap_global_missed_log") || "{}");
     const localMissedLog = globalLog[currentActiveSubject] || [];
 
@@ -85,17 +82,15 @@ async function loadInitializationData() {
         }
         masterQuestionsList = await response.json();
         
-        // Populate persistent counters on load
         if (correctCounter) correctCounter.textContent = correctCount;
         if (incorrectCounter) incorrectCounter.textContent = incorrectCount;
         
         populateSubjectDropdown();
-        startStudyingSession();
         renderLocalMissedQuestions();
     } catch (err) {
         console.error("Fetch Error:", err);
         if (questionOutput) {
-            questionOutput.textContent = "Error loading ushistory.json file. Make sure it exists and is formatted cleanly.";
+            questionOutput.textContent = "Error loading apush.json file. Make sure it exists locally and is formatted as valid JSON object arrays.";
         }
     }
 }
@@ -103,17 +98,23 @@ async function loadInitializationData() {
 function populateSubjectDropdown() {
     if (!subjectDropdown || !masterQuestionsList) return;
     const subjects = Object.keys(masterQuestionsList);
-    if (subjects.length === 0) return;
+    
+    if (subjects.length === 0) {
+        if (questionOutput) questionOutput.textContent = "Your JSON file loaded but contains no subject data arrays.";
+        return;
+    }
 
-    subjectDropdown.innerHTML = subjects.map(s => '<option value="' + s + '">' + s + '</option>').join("");
+    subjectDropdown.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join("");
     subjectDropdown.selectedIndex = 0;
 
     subjectDropdown.addEventListener("change", () => {
         populateUnitDropdown();
         startStudyingSession();
-        renderLocalMissedQuestions(); // Refreshes the local sheet log view for the new subject
+        renderLocalMissedQuestions();
     });
+    
     populateUnitDropdown();
+    startStudyingSession(); // Execute session startup after dropdown configuration completes
 }
 
 function populateUnitDropdown() {
@@ -132,7 +133,7 @@ function populateUnitDropdown() {
 
     const units = Object.keys(masterQuestionsList[selectedSubject] || {});
     let dropdownHTML = '<option value="ALL">All Periods</option>';
-    dropdownHTML += units.map(u => '<option value="' + u + '">' + u + '</option>').join("");
+    dropdownHTML += units.map(u => `<option value="${u}">${u}</option>`).join("");
     unitDropdown.innerHTML = dropdownHTML;
     unitDropdown.value = "ALL";
 }
@@ -160,11 +161,10 @@ function generateDynamicChoices(currentQuestion, currentSubject) {
     globalAnswerPool = [...new Set(globalAnswerPool)].sort(() => Math.random() - 0.5);
     let choices = globalAnswerPool.slice(0, 3);
     
-    // Era-appropriate historical fallbacks if your question pool is ever empty or small
     const fallbacks = [
         "The implementation of salutary neglect", 
         "The escalation of sectional political tensions", 
-        "A expansion of federal executive authority", 
+        "An expansion of federal executive authority", 
         "The impact of trans-Atlantic trade dynamics", 
         "The growth of progressive social reforms"
     ];
@@ -213,7 +213,7 @@ function startStudyingSession() {
         displayActiveQuestion();
     } else {
         if (typeOutput) typeOutput.textContent = "Empty";
-        if (questionOutput) questionOutput.textContent = "No history questions found.";
+        if (questionOutput) questionOutput.textContent = "No history questions found for this configuration.";
         if (optionsContainer) optionsContainer.innerHTML = "";
         if (feedbackOutput) feedbackOutput.textContent = "";
         if (explanationOutput) explanationOutput.style.display = "none";
@@ -280,7 +280,7 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
 
     questionObj.userAttempted = true;
     questionObj.chosenAnswer = userChoice;
-    const cleanAnswer = questionObj.answer ? String(questionObj.answer).trim() : "";
+    const cleanAnswer = questionObj.answer ? String(cleanAnswer).trim() : String(questionObj.answer);
 
     if (userChoice === cleanAnswer) {
         clickedBtn.classList.add("correct");
@@ -301,7 +301,6 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
             if (b.textContent === cleanAnswer) b.classList.add("correct");
         });
 
-        // Track and save the missed question with its metadata
         logMissedQuestion(questionObj.question, cleanAnswer);
     }
     showExplanationPanel(questionObj);
@@ -317,13 +316,11 @@ function showExplanationPanel(questionObj) {
     explanationOutput.style.display = "block";
 }
 
-// Clear button logic local to this specific practice sheet template
 if (clearReviewBtn) {
     clearReviewBtn.addEventListener("click", () => {
-        const currentActiveSubject = subjectDropdown ? subjectDropdown.value : "AP U.S. History";
+        const currentActiveSubject = subjectDropdown && subjectDropdown.value ? subjectDropdown.value : "AP U.S. History";
         let globalLog = JSON.parse(localStorage.getItem("ap_global_missed_log") || "{}");
         
-        // Reset only this specific subject's array sequence within the shared storage object
         globalLog[currentActiveSubject] = [];
         localStorage.setItem("ap_global_missed_log", JSON.stringify(globalLog));
         renderLocalMissedQuestions();
