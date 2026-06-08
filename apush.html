@@ -175,4 +175,67 @@
             border-bottom: 1px solid #CDD5D1;
             padding-bottom: 5px;
         }
-        #clearReviewBtn
+        #clearReviewBtn {
+            margin-top: 10px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .music-wrapper {
+            margin-top: 20px;
+            border-top: 2px dashed #CDD5D1;
+            padding-top: 20px;
+            overflow: hidden; 
+            height: 60px; 
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" style="text-decoration: none; color: #946E83; font-weight: 700; font-size: 14px;">← Back to Portal</a>
+    <h1>AP U.S. History Practice</h1>
+    
+    <div class="tracker">
+        <span>Correct: <span id="correctCounter" class="correct-count">0</span></span>
+        <span>Incorrect: <span id="incorrectCounter" class="incorrect-count">0</span></span>
+    </div>
+
+    <div class="controls">
+        <select id="subjectDropdown"></select>
+        <select id="unitDropdown"></select>
+        <button id="submitButton">Start Studying</button>
+    </div>
+
+    <div class="card">
+        <div id="typeOutput">Question Style</div>
+        <div id="questionOutput">Pick an APush historical period above, then click Start Studying!</div>
+        
+        <div class="options-container" id="optionsContainer"></div>
+
+        <div id="feedbackOutput"></div>
+        <div id="explanationOutput"></div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="leftButton" class="secondary-btn">◀ Prev</button>
+        <span id="progressLabel"></span>
+        <button id="rightButton" class="secondary-btn">Next ▶</button>
+    </div>
+
+    <div class="local-review-panel" id="localReviewPanel">
+        <h3>History Sheet Log (Incorrect Answers)</h3>
+        <div id="reviewListContent"><em>No incorrect entries logged for this subject yet!</em></div>
+        <button id="clearReviewBtn" class="secondary-btn">Wipe Sheet Log</button>
+    </div>
+
+    <div class="music-wrapper">
+        <iframe width="100%" height="60" src="https://www.youtube.com/embed/9kzE8isXlQY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="margin-top: -1px;"></iframe>
+    </div>
+</div>
+
+<script src="ushistory.js"></script>
+</body>
+</html>
