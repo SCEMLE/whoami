@@ -280,7 +280,9 @@ function handleAnswerValidation(clickedBtn, userChoice, questionObj) {
 
     questionObj.userAttempted = true;
     questionObj.chosenAnswer = userChoice;
-    const cleanAnswer = questionObj.answer ? String(cleanAnswer).trim() : String(questionObj.answer);
+    
+    // FIXED: Safely parsing from questionObj.answer to prevent early reference initialization errors
+    const cleanAnswer = questionObj.answer ? String(questionObj.answer).trim() : "";
 
     if (userChoice === cleanAnswer) {
         clickedBtn.classList.add("correct");
