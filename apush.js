@@ -1,4 +1,4 @@
-const DATA_URL = "data/apush.json";
+const DATA_URL = "apush.json";
 
 let masterQuestionsList = {}; 
 let filteredQuestions = [];   
